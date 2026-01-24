@@ -10,7 +10,7 @@ This branch contains source code compatible with Cloudflare Workers.
 
 The project is now hosted at [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/), and the updated privacy policy can be found at [privacy.md](privacy.md).
 
-# 🚀 To start the project from sources:
+## 🚀 To begin:
 
 ### 1. Create or login to your cloudflare account: [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up)
 
@@ -36,11 +36,9 @@ git clone https://github.com/Nde-Code/MeteoritesAPI.git
 wrangler login
 ```
 
-> Make sure to do this securely on a trusted network.
+## ⚙️ Setting up the configuration:
 
-## 6. Setting up the configuration:
-
-First, create the `wrangler.jsonc` file, which contains the full configuration for your project. It should look like this:
+First, create the [wrangler.jsonc](../wrangler.jsonc) file, which contains the full configuration for your project. It should look like this:
 ```jsonc
 {
 	"name": "project_name",
@@ -135,8 +133,8 @@ wrangler kv namespace create YOUR_KV_NAME
 
 And complete the `wrangler.jsonc` file with the following configuration:
 
-* **`binding`** → The variable name you’ll use inside your code (here: `YOUR_KV_NAME`).
-* **`id`** → The unique namespace ID from your Cloudflare dashboard.
+* **`binding`**: The variable name you’ll use inside your code (here: `YOUR_KV_NAME`).
+* **`id`**: The unique namespace ID from your Cloudflare dashboard.
 
 ### Environment Variables:
 
@@ -168,59 +166,34 @@ wrangler secret put HASH_KEY
 wrangler secret put ADMIN_KEY
 ```
 
-> Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
-
-### Setting up project:
-
-### For those who want to create their own instance using Deno.
-
-> ### For those looking for the Wrangler (Cloudflare Workers) version, check out: [https://github.com/Nde-Code/nsh/tree/cf-workers](https://github.com/Nde-Code/nsh/tree/cf-workers)
-
-### 1. Install deno, clone the project and go in the folder:
-
-First of all, you need to have [Deno](https://deno.com/) installed on your system.
-
-> Take a look at this page: [https://docs.deno.com/runtime/getting_started/installation/](https://docs.deno.com/runtime/getting_started/installation/)
-
-> I use VSCode as the code editor for this project, and the configuration is provided in [`.vscode/settings.json`](.vscode/settings.json). Make sure you have the Deno extension installed as well.
-
-Once that's done, clone this repository and go into the folder using:
-
-```bash
-git clone https://github.com/Nde-Code/nsh.git
-cd nsh
-```
-
-### 2. Edit the `config.ts` file:
-
-Open the file `config.ts` and normally you should see in:
+### Software configuration file [config.ts](../config.ts):
 
 ```ts
 export const config: Config = {
 
-  FIREBASE_URL: Deno.env.get("FIREBASE_HOST_LINK") ?? "",
+  FIREBASE_URL: "",
 
-  FIREBASE_HIDDEN_PATH: Deno.env.get("FIREBASE_HIDDEN_PATH") ?? "",
+  FIREBASE_HIDDEN_PATH: "",
 
-  HASH_KEY: Deno.env.get("HASH_KEY") ?? "",
+  HASH_KEY: "",
 
-  ADMIN_KEY: Deno.env.get("ADMIN_KEY") ?? "",
+  ADMIN_KEY: "",
 
   LANG_CODE: 'en',
     
-  RATE_LIMIT_INTERVAL_S: 1, // min: 1
+  RATE_LIMIT_INTERVAL_S: 1,
 
-  MAX_DAILY_WRITES: 20, // min: 1
+  MAX_DAILY_WRITES: 10,
 
-  IPS_PURGE_TIME_DAYS: 1, // min: 1
+  IPS_PURGE_TIME_DAYS: 1,
 
-  FIREBASE_TIMEOUT_MS: 6000, // min: 1000
+  FIREBASE_TIMEOUT_MS: 6000,
 
-  FIREBASE_ENTRIES_LIMIT: 1000, // min: 50
+  FIREBASE_ENTRIES_LIMIT: 1000,
 
-  SHORT_URL_ID_LENGTH: 14, // min: 10
+  SHORT_URL_ID_LENGTH: 14,
 
-  MAX_URL_LENGTH: 2000 // min: 100
+  MAX_URL_LENGTH: 2000
 
 };
 ```
@@ -233,23 +206,36 @@ export const config: Config = {
 
   - `en` = `English` (Currently)
 
-- **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests. Currently: one request per second.
+- **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
+  - **Currently**: one request per second.
 
-- **MAX_DAILY_WRITES** in [day]: Daily writing rate limit (only applies if the link is not already in the database). Currently: 20 writes per day.
+- **MAX_DAILY_WRITES** in [day]: Daily writing rate limit (only applies if the link is not already in the database).
+  - **Max**: 20 writes per day.
 
-- **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the `Deno.kv` store that contains hashed IPs used for rate limiting. Currently: 1 day.
+- **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the `Deno.kv` store that contains hashed IPs used for rate limiting.
+  - **Currently**: 1 day.
 
-- **FIREBASE_TIMEOUT_MS** in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database. Currently: 6 seconds.
+- **FIREBASE_TIMEOUT_MS** in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
+  - **Currently**: 6 seconds.
 
-- **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database. Currently: 1000 entries.
+- **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database.
+  - **Max**: 1000 entries.
 
-- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `sha256`. Currently: 14 characters.
+- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `sha256`.
+  - **Currently**: 14 characters.
 
-- **MAX_URL_LENGTH**: The maximum allowed URL length in the Firebase Realtime Database. Currently: 2000 characters.
+- **MAX_URL_LENGTH**: The maximum allowed URL length in the Firebase Realtime Database.
+  - **Max**: 2000 characters.
 
-### Ensure that you respect the `min` value specified in the comment; otherwise, you will get an error message with your configuration.
+> Ensure that you respect the `min` value specified in the comment; otherwise, you will get an error message with your configuration.
 
-### 3. Create a Firebase Realtime Database to store the links:
+to send your secret to the Cloudflare Workers platform.
+
+> Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
+
+## 💻 Setting up the project from sources:
+
+### 1. Create a Firebase Realtime Database to store the links:
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and create an account.  
    > _(If you already have a Google account, you're good to go.)_
@@ -317,40 +303,7 @@ Here is a brief summary of these rules:
 | **Update**    | Only `is_verified` can change; `long_url` and `post_date` must stay the same           |
 | **Extra fields** | Not allowed                                                                         |
 
-### 4. Create and edit the `.env` file:
-
-```env
-FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
-FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
-HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
-ADMIN_KEY="THE_ADMIN_KEY_TO_DELETE_AND_VERIFY"
-```
-
-With:
-
-- **FIREBASE_HOST_LINK**: The URL of your Firebase Realtime Database.
-
-- **FIREBASE_HIDDEN_PATH**: A secret directory where data is stored. This approach follows the principle of `security through obscurity`. **The value must match exactly in the Firebase Realtime Database security `Rules`.**
-
-- **HASH_KEY**: The `SALT` value used to hash IP addresses. Ensure this value is both secure and robust.
-
-- **ADMIN_KEY**: An administrative key that grants the owner permission to `delete`, `list` and `verify` links.
-
-### 5. Run the project:
-
-When setup is complete, start the project with:
-
-```bash
-deno task dev
-```
-
-# 🔧 Code adjustments for Wrangler compatibility:
-
-Cloudflare Workers use the V8 isolate engine called [workerd](https://github.com/cloudflare/workerd) to run applications. They don’t use traditional Node.js runtimes like Deno, Node.js, or Bun under the hood. Cloudflare Workers runtime is based on something similar to `Deno` (thanks to Web APIs), so it's easy to edit and adjust your code to make it compatible. Therefore, to make this project compatible, every use of `Deno.*` must be replaced with an equivalent API that works in the Cloudflare Workers environment.
-
-This section explains how the code was transformed to be compatible with Cloudflare Workers.
-
-## 1. First of all, initialize TypeScript types
+### 2. Initialize TypeScript types:
 
 To benefit from TypeScript definitions in your editor and avoid compilation errors, you can add the Cloudflare Workers type definitions by running:
 
@@ -434,104 +387,7 @@ Here's a brief summary of what the `tsconfig.json` file do:
 
 This project doesn't rely on any external libraries or dependencies, so there's no `package.json` or npm-related files.
 
-## 2. Merge original Deno source code to make it Wrangler-compatible:
-
-Let's briefly summarize how the code was adapted for compatibility with Cloudflare Workers.
-
-### 1. The `.serve()` method needs to be replaced:
-```ts
-Deno.serve(handler);
-```
-by:
-```ts
-export default {
-
-	async fetch(req: Request, env: Env): Promise<Response> {
-
-		return handler(req, env);
-
-	}
-
-};
-```
-### 2. Create an `Env` type (feel free to check: [https://developers.cloudflare.com/workers/configuration/environment-variables/](https://developers.cloudflare.com/workers/configuration/environment-variables/)):
-```ts
- export interface Env {
-
-    FIREBASE_HOST_LINK: string;
-
-    FIREBASE_HIDDEN_PATH: string;
-
-    ADMIN_KEY: string;
-
-    HASH_KEY: string;
-
-    RATE_LIMIT_KV: KVNamespace;
-    
-}
-```
-
-in the `types/types.ts` file, define your types and import them into `main.ts`.
-Then, set your variables inside the `handler` function with `env`:
-
-```ts
-async function handler(req: Request, env: Env): Promise<Response> {
-
-    config.FIREBASE_URL = env.FIREBASE_HOST_LINK ?? "";
-
-    config.FIREBASE_HIDDEN_PATH = env.FIREBASE_HIDDEN_PATH ?? "";
-
-    config.ADMIN_KEY = env.ADMIN_KEY ?? "";
-
-    config.HASH_KEY = env.HASH_KEY ?? "";
-
-    // ...
-
-}
-``` 
-
-Then remove `Deno.env.get(...)` and replace it with `""` in `config.ts` (see it [here](config.ts)).
-
-### 3. The `utilities/rate.ts` file is the only one that **has been completely rewritten**.  
-You likely won't need to make any further changes to it.  
-If you'd like to review it, you can find it here: [utilities/rate.ts](utilities/rate.ts).
-To complete, replace each of the following lines:
-```js
-if (!(await checkTimeRateLimit(hashedIP)))
-if (!(await checkDailyRateLimit(hashedIP)))
-```
-
-by:
-```js
-if (!(await checkTimeRateLimit(hashedIP))) // It's the same, it doesn't change.
-if (!(await checkDailyRateLimit(env.YOUR_KV_NAME, hashedIP)))
-```
-
-and make sure to replace `YOUR_KV_NAME` with the value you specified for this field in the `wrangler.jsonc` file.
-
-The anti-spam rate limiting works with the edge cache.  
-Feel free to check out the documentation for more details:
-
-  - [https://developers.cloudflare.com/workers/runtime-apis/cache/](https://developers.cloudflare.com/workers/runtime-apis/cache/)
-
-  - [https://developers.cloudflare.com/workers/examples/cache-api/](https://developers.cloudflare.com/workers/examples/cache-api/)
-
-  - [https://developers.cloudflare.com/workers/reference/how-the-cache-works/](https://developers.cloudflare.com/workers/reference/how-the-cache-works/)
- 
-### 4. To retrieve the IP address in Cloudflare Workers, use the following code:
-```ts
-const ip: string = req.headers.get("cf-connecting-ip") ?? "unknown";
-```
-
-Instead of using the value from the `connInfo: Deno.ServeHandlerInfo` parameter:
-
-```ts
-const ip: string = (connInfo.remoteAddr.transport === "tcp") ? connInfo.remoteAddr.hostname : "unknown";
-```
-
-> You can check: [https://community.cloudflare.com/t/ip-address-of-the-remote-origin-of-the-request/13080/3](https://community.cloudflare.com/t/ip-address-of-the-remote-origin-of-the-request/13080/3) for more information.
-
-# 📌 Run the project and deploy it:
+### 3. Run the project and deploy it once it's ready:
 
 To run locally, run:
 
