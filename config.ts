@@ -14,7 +14,7 @@ export const config: Config = {
     
     RATE_LIMIT_INTERVAL_S: 1,
 
-    MAX_DAILY_WRITES: 20,
+    MAX_DAILY_WRITES: 10,
 
     IPS_PURGE_TIME_DAYS: 1,
 
