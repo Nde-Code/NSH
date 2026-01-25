@@ -52,13 +52,13 @@ The API is available in two versions, each with its own usage details:
 |-----------------|------------|----------------|----------------|
 | [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [privacy.md](docs/privacy.md) |
 
-To use this API endpoints you can use:
+To use this API you can use:
 
-- JavaScript: CORS is `enabled` and for all domains.
+- **JavaScript** in the browser: CORS is enabled for all domains (but only for the posting URL, of course).
 
-- cURL: [https://curl.se/](https://curl.se/)
+- **cURL** from a terminal: [https://curl.se/](https://curl.se/)
 
-- Postman **(Recommended)**: [https://www.postman.com/](https://www.postman.com/)
+- **Postman** *(Recommended)*: [https://www.postman.com/](https://www.postman.com/)
 
 ### Here’s a complete list of the available methods:
 | Method | Endpoint           | Description                                                                 | Request Body                                 | Response                                                                                                                                       |
