@@ -50,7 +50,7 @@ The API is available in two versions, each with its own usage details:
 
 | Public endpoint: | Rate limit: | Owner: | Privacy policy: |
 |-----------------|------------|----------------|----------------|
-| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [privacy.md](https://github.com/Nde-Code/NSH) |
+| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [privacy.md](docs/privacy.md) |
 
 To use this API endpoints you can use:
 

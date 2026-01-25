@@ -125,8 +125,8 @@ wrangler kv namespace create YOUR_KV_NAME
 
 And complete the `wrangler.jsonc` file with the following configuration:
 
-* **`binding`**: The variable name you’ll use inside your code (here: `YOUR_KV_NAME`).
-* **`id`**: The unique namespace ID from your Cloudflare dashboard.
+* `binding`: The variable name you’ll use inside your code (here: `YOUR_KV_NAME`).
+* `id`: The unique namespace ID from your Cloudflare dashboard.
 
 ### Environment Variables:
 
@@ -198,9 +198,9 @@ export const config: Config = {
 
 - **LANG_CODE**: Supported language translations are available for responses. Currently, the following languages are supported:
 
+  - `en` = `English` **(Default)**
+  
   - `fr` = `Français` 
-
-  - `en` = `English` (Currently)
 
 - **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
   - **Currently**:
@@ -222,7 +222,7 @@ export const config: Config = {
   - **Currently**:
     - **Max**: 1000 entries.
 
-- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `sha256`.
+- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `SHA-256`.
   - **Currently**: 
     - **Default**: 14 characters.
 
@@ -230,7 +230,7 @@ export const config: Config = {
   - **Currently**: 
     - **Max**: 2000 characters.
 
-> Ensure that you respect the `min` value specified in the comment; otherwise, you will get an error message with your configuration.
+> Ensure these values and rules are respected; otherwise, your configuration will trigger an error message.
 
 ## 💻 Setting up the project from sources:
 
