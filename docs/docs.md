@@ -342,7 +342,7 @@ Here's a brief summary of what the `tsconfig.json` file do:
   Prevents TypeScript from emitting compiled JS files locally. The build and bundling is handled by **Wrangler/esbuild**, so this is only for type checking.
 
 * **`allowImportingTsExtensions: true`**
-  Allows importing `.ts` files directly, which is required for Deno-style and relative imports.
+  Allows importing `.ts` files directly, which is required for relative imports.
 
 * **`target: "ES2020"`**
   Uses modern JavaScript syntax supported by the Worker runtime.
