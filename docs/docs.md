@@ -1,14 +1,6 @@
-# 🛠️ A Cloudflare Workers-compatible version of the project:
+# The developer documentation:
 
-This branch contains source code compatible with Cloudflare Workers.
-
-> For those who don't know what Cloudflare Workers and edge computing are, take a look at: [https://workers.cloudflare.com/](https://workers.cloudflare.com/) and [https://developers.cloudflare.com/workers/](https://developers.cloudflare.com/workers/)
-
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/nsh&branch=cf-workers)
-
-> Make sure that if you use this, Cloudflare has created a KV namespace and allows you to set environment variables. Read the documentation before using this widget.
-
-The project is now hosted at [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/), and the updated privacy policy can be found at [privacy.md](privacy.md).
+Here is the complete developer guide for anyone who wants to contribute or create their own version of this project and make it work on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
 ## 🚀 To begin:
 
@@ -166,6 +158,10 @@ wrangler secret put HASH_KEY
 wrangler secret put ADMIN_KEY
 ```
 
+to send your secret to the Cloudflare Workers platform.
+
+> Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
+
 ### Software configuration file [config.ts](../config.ts):
 
 ```ts
@@ -207,38 +203,41 @@ export const config: Config = {
   - `en` = `English` (Currently)
 
 - **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
-  - **Currently**: one request per second.
+  - **Currently**:
+    - **Max**: one request per second.
 
 - **MAX_DAILY_WRITES** in [day]: Daily writing rate limit (only applies if the link is not already in the database).
-  - **Max**: 20 writes per day.
+  - **Currently**:
+    - **Max**: 10 writes per day.
 
 - **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the `Deno.kv` store that contains hashed IPs used for rate limiting.
-  - **Currently**: 1 day.
+  - **Currently**:
+    - **Default**: 1 day.
 
 - **FIREBASE_TIMEOUT_MS** in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
-  - **Currently**: 6 seconds.
+  - **Currently**:
+    - **Max**: 6 seconds before timeout.
 
 - **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database.
-  - **Max**: 1000 entries.
+  - **Currently**:
+    - **Max**: 1000 entries.
 
 - **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `sha256`.
-  - **Currently**: 14 characters.
+  - **Currently**: 
+    - **Default**: 14 characters.
 
 - **MAX_URL_LENGTH**: The maximum allowed URL length in the Firebase Realtime Database.
-  - **Max**: 2000 characters.
+  - **Currently**: 
+    - **Max**: 2000 characters.
 
 > Ensure that you respect the `min` value specified in the comment; otherwise, you will get an error message with your configuration.
-
-to send your secret to the Cloudflare Workers platform.
-
-> Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
 
 ## 💻 Setting up the project from sources:
 
 ### 1. Create a Firebase Realtime Database to store the links:
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and create an account.  
-   > _(If you already have a Google account, you're good to go.)_
+   > *(If you already have a Google account, you're good to go.)*
 
 2. Create a **project** and set up a `Realtime Database`.
 
@@ -411,6 +410,6 @@ wrangler deploy
 
 and your project is now deployed and accessible to anyone with the link.
 
-# 🧩 To finish:
+## 📌 At the end:
 
 If you encounter any issues or problems, feel free top open an issue: [https://github.com/Nde-Code/nsh/issues](https://github.com/Nde-Code/nsh/issues)

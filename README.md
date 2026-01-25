@@ -81,7 +81,7 @@ To access protected endpoints, you must include an API or ADMIN key in **the req
 
 ## 🖥️ Documentation for developers:
 
-Those interested in working on or launching this project from source using the Wrangler CLI can refer to the developer documentation by clicking [here](../NSH/docs/docs.md).
+Those interested in working on or launching this project from source using the Wrangler CLI can refer to the developer documentation by clicking [here](docs/docs.md).
 
 ## ⚖️ License:
 
