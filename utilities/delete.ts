@@ -20,7 +20,9 @@ export async function deleteInFirebaseRTDB(FIREBASE_URL: string, ID: string): Pr
 
         });
 
-        printLogLine("INFO", `The link(${ID}) has been deleted successfully.`);
+        if (res.ok) printLogLine("INFO", `The link(${ID}) has been deleted successfully.`);
+        
+        else printLogLine("WARN", `Deletion returned status ${res.status} for link(${ID}).`);
 
         return res.ok;
 

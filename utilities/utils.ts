@@ -2,6 +2,26 @@ import { Config } from "../types/types.ts";
 
 import { config } from "../config.ts";
 
+export function createJsonResponse(body: object, status: number = 200, headers: HeadersInit = {}): Response {
+
+    return new Response(JSON.stringify(body), {
+
+        status,
+
+        headers: {
+
+            "Content-Type": "application/json",
+
+            "Access-Control-Allow-Origin": "*",
+
+            ...headers,
+
+        },
+
+    });
+
+}
+
 export function isConfigValidWithMinValues(config: Config, rules: Partial<Record<keyof Config, number>>): boolean {
 
     for (const [key, minValue] of Object.entries(rules)) {

@@ -210,7 +210,7 @@ export const config: Config = {
   - **Currently**:
     - **Max**: 10 writes per day.
 
-- **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the `Deno.kv` store that contains hashed IPs used for rate limiting.
+- **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the [KV](https://developers.cloudflare.com/kv/) store that contains hashed IPs used for rate limiting.
   - **Currently**:
     - **Default**: 1 day.
 
@@ -237,11 +237,11 @@ export const config: Config = {
 ### 1. Create a Firebase Realtime Database to store the links:
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and create an account.  
-   > *(If you already have a Google account, you're good to go.)*
+  > *(If you already have a Google account, you're good to go.)*
 
 2. Create a **project** and set up a `Realtime Database`.
 
-   > 🔍 If you get stuck, feel free to check out the official [Firebase documentation](https://firebase.google.com/docs/build?hl=en), or search on Google, YouTube, etc.
+  > If you get stuck, feel free to check out the official [Firebase documentation](https://firebase.google.com/docs/build?hl=en), or search on Google, YouTube, etc.
 
 3. Once your database is ready, go to the **`Rules`** tab and paste the following code in the editor:
 ```JSON
@@ -311,9 +311,6 @@ wrangler types
 ```
 
 > Be sure that your `wrangler.jsonc` is correctly configured before running this command.
-
-⚠️ **Note:** Cloudflare mentions that you can share this file with others: [https://developers.cloudflare.com/workers/languages/typescript/](https://developers.cloudflare.com/workers/languages/typescript/).  
-However, I once checked this file before committing and found secrets inside (may be due to a mistake I made), so be cautious when planning to share it.
 
 and put in `tsconfig.json`: 
 

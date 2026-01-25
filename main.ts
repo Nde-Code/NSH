@@ -9,6 +9,8 @@ import { setIsVerifiedTrue, VerificationStatus } from "./utilities/verify.ts";
 import { Env, Config, LinkDetails, UrlPostBody, UrlDatabaseMap } from "./types/types.ts";
 
 import {
+
+	createJsonResponse,
 	
 	isConfigValidWithMinValues,
 	
@@ -29,8 +31,6 @@ import {
 } from "./utilities/utils.ts";
 
 import { checkTimeRateLimit, checkDailyRateLimit, hashIp } from "./utilities/rate.ts";
-
-import { createJsonResponse } from "./utilities/create_json.ts";
 
 import { config } from "./config.ts";
 
