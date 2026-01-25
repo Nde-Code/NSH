@@ -1,10 +1,12 @@
-# 🔗 URL Shortener API with Firebase RTDB:
+# URL Shortener API with Firebase RTDB:
 
 A simple and lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
+> I host the project on the free Workers plan. Normally, there are no issues with resources because the software consumes very few resources. It's very lightweight; both memory and CPU consumption are minimal. Usually, the only thing you need to take into consideration is the number of requests you might need, depending on your use case. 
+
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/nsh&branch=cf-workers)
 
-## 📦 Features:
+## 🚀 Features:
 
 - Provides protection by limiting the daily request quota and preventing burst traffic, such as spam or rapid-fire requests.
 
@@ -75,11 +77,17 @@ To access protected endpoints, you must include an API or ADMIN key in **the req
 
 - `x-api-key: <API_or_ADMIN_KEY>`
 
+> Of course, on my personal instance, trying to access these admin endpoints is forbidden.
+
+## 🖥️ Documentation for developers:
+
+Those interested in working on or launching this project from source using the Wrangler CLI can refer to the developer documentation by clicking [here](../NSH/docs/docs.md).
+
 ## ⚖️ License:
 
 This project is licensed under the [Apache License v2.0](LICENSE).
 
-## 📞 Contact:
+## 🎯 Reach me:
 
 Created and maintained by [Nde-Code](https://nde-code.github.io/).
 
