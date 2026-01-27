@@ -108,22 +108,22 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (apiKey !== config.ADMIN_KEY) {
 
-			printLogLine("WARN", "Invalid API or Admin key provided for listing URL(s) !")
-			
+			printLogLine("WARN", "Invalid API or Admin key provided for listing URL(s) !");
+
 			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_API_KEY_FOR_URLS_DB'), 401);
+
+		}
+
+		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(config.FIREBASE_URL);
+
+		if (!data) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+
+		const filteredData = { ...data };
+
+		delete filteredData["_url_counter"];
+
+		return createJsonResponse(filteredData, 200);
 		
-		}
-
-		else {
-
-			const data: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL);
-	
-			if (!data) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
-	
-			else return createJsonResponse(data, 200);
-
-		}
-
 	}
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
