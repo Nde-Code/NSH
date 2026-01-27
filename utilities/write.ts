@@ -32,7 +32,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(FIREBASE_URL: 
 
         if (!res.ok) return null;
 
-        printLogLine("INFO", `The link(${ID}) has been posted successfully.`);
+        if (ID !== "_url_counter") printLogLine("INFO", `The link(${ID}) has been posted successfully.`);
 
         return (await res.json()) as T;
 
