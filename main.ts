@@ -30,7 +30,7 @@ import {
 
 } from "./utilities/utils.ts";
 
-import { checkTimeRateLimit, checkDailyRateLimit, hashIp } from "./utilities/rate.ts";
+import { RateLimitResult, checkTimeRateLimit, checkDailyRateLimit, hashIp } from "./utilities/rate.ts";
 
 import { config } from "./config.ts";
 
@@ -88,7 +88,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 				"Access-Control-Allow-Origin": "*",
 
-				"Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+				"Access-Control-Allow-Methods": "POST, OPTIONS",
 
 				"Access-Control-Allow-Headers": "Content-Type",
 
@@ -248,8 +248,12 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		if (completeDB && Object.keys(completeDB).length > config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'DB_LIMIT_REACHED'), 507);
 		
-		if (!(await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'WRITE_LIMIT_EXCEEDED'), 429);
-
+		const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP);
+		
+		if (rateResult === "USER_LIMIT") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'WRITE_LIMIT_EXCEEDED'), 429);
+    
+		else if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'SERVICE_TEMP_UNAVAILABLE'), 503);
+		
 		const firebaseData: LinkDetails = {
 
 			long_url: normalizedURL,

@@ -409,4 +409,4 @@ and your project is now deployed and accessible to anyone with the link.
 
 ## 📌 At the end:
 
-If you encounter any issues or problems, feel free top open an issue: [https://github.com/Nde-Code/nsh/issues](https://github.com/Nde-Code/nsh/issues)
+If you encounter any issues or problems, feel free top open an issue: [https://github.com/Nde-Code/NSH/issues](https://github.com/Nde-Code/NSH/issues)

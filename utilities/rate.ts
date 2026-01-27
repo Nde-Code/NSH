@@ -14,6 +14,8 @@ interface CloudflareCache {
 
 }
 
+export type RateLimitResult = "OK" | "USER_LIMIT" | "KV_QUOTA_EXCEEDED";
+
 async function safeKvPut(kv: KVNamespace, key: string, value: string, expirationTtl: number, errorMessage = "KV put failed..."): Promise<boolean> {
     
     try {
@@ -35,7 +37,7 @@ async function safeKvPut(kv: KVNamespace, key: string, value: string, expiration
 export async function checkTimeRateLimit(hashedIp: string, limitSeconds = config.RATE_LIMIT_INTERVAL_S): Promise<boolean> {
     
     const cache = caches as unknown as CloudflareCache;
-    
+
     const cacheKey = new Request(`https://ratelimit/${hashedIp}`);
 
     const hit: Response | undefined = await cache.default.match(cacheKey);
@@ -43,20 +45,20 @@ export async function checkTimeRateLimit(hashedIp: string, limitSeconds = config
     if (hit) return false;
 
     await cache.default.put(cacheKey,
-
+        
         new Response("ok", {
 
-            headers: { "Cache-Control": `max-age=${limitSeconds}` }
+                headers: { "Cache-Control": `max-age=${limitSeconds}` }
+                
+            }
 
-        })
-
-    );
+        ));
 
     return true;
 
 }
 
-export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string): Promise<boolean> {
+export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string): Promise<RateLimitResult> {
 
     const now: number = Date.now();
 
@@ -64,7 +66,19 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string): Pr
 
     type WindowData = { startTimestamp: number; count: number };
 
-    const json: string | null = await kv.get(key);
+    let json: string | null;
+
+    try {
+
+        json = await kv.get(key);
+
+    } catch {
+
+        printLogLine("ERROR", "KV read failed (possible quota reached)");
+
+        return "KV_QUOTA_EXCEEDED";
+
+    }
 
     let windowData: WindowData;
 
@@ -72,8 +86,10 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string): Pr
 
         windowData = { startTimestamp: now, count: 1 };
 
-        return await safeKvPut(kv, key, JSON.stringify(windowData), config.IPS_PURGE_TIME_DAYS * 24 * 60 * 60, "The KV hasn't been updated to initialize the daily window.");
+        const success = await safeKvPut(kv, key, JSON.stringify(windowData), config.IPS_PURGE_TIME_DAYS * 24 * 60 * 60, "KV put failed initializing daily window");
         
+        return success ? "OK" : "KV_QUOTA_EXCEEDED";
+
     }
 
     windowData = JSON.parse(json);
@@ -82,24 +98,28 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string): Pr
 
         windowData = { startTimestamp: now, count: 1 };
 
-        return await safeKvPut(kv, key, JSON.stringify(windowData), config.IPS_PURGE_TIME_DAYS * 24 * 60 * 60, "The KV hasn't been updated to reset the daily window.");
-    
+        const success: boolean = await safeKvPut(kv, key, JSON.stringify(windowData), config.IPS_PURGE_TIME_DAYS * 24 * 60 * 60, "KV put failed resetting daily window");
+        
+        return success ? "OK" : "KV_QUOTA_EXCEEDED";
+
     }
 
-    if (windowData.count >= config.MAX_DAILY_WRITES) return false;
+    if (windowData.count >= config.MAX_DAILY_WRITES) return "USER_LIMIT";
 
     windowData.count++;
 
     const remainingTtl = Math.floor((config.IPS_PURGE_TIME_DAYS * 24 * 60 * 60 * 1000 - (now - windowData.startTimestamp)) / 1000);
 
-    return await safeKvPut(kv, key, JSON.stringify(windowData), remainingTtl, "The KV hasn't been updated to increment the daily counter.");
+    const success: boolean = await safeKvPut(kv, key, JSON.stringify(windowData), remainingTtl, "KV put failed incrementing daily counter");
+
+    return success ? "OK" : "KV_QUOTA_EXCEEDED";
 
 }
 
 export async function hashIp(ip: string, salt = config.HASH_KEY): Promise<string> {
 
     const encoder = new TextEncoder();
-    
+
     const data = encoder.encode(ip + salt);
 
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);

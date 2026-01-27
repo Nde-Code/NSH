@@ -4,7 +4,7 @@ A simple and lightweight URL shortener API built with [Wrangler](https://develop
 
 > I host the project on the free Workers plan. Normally, there are no issues with resources because the software consumes very few resources. It's very lightweight; both memory and CPU consumption are minimal. Usually, the only thing you need to take into consideration is the number of requests you might need, depending on your use case. 
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/nsh&branch=cf-workers)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 
 ## 🚀 Features:
 
@@ -63,7 +63,7 @@ To use this API you can use:
 ### Here’s a complete list of the available methods:
 | Method | Endpoint           | Description                                                                 | Request Body                                 | Response                                                                                                                                       |
 |--------|--------------------|-----------------------------------------------------------------------------|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| **POST**   | `/post-url`        | Create a short URL from a long one.                                         | `{ "long_url": "https://example.com" }`      | `200 OK`: `{ "<localized_success>": "https://.../:code" }`  <br> `400 Bad Request`: Invalid body, missing `long_url`, unexpected field, or invalid URL format <br> `429 Too Many Requests`: Rate limit exceeded <br> `507 Insufficient Storage`: Database limit reached |
+| **POST**   | `/post-url`        | Create a short URL from a long one.                                         | `{ "long_url": "https://example.com" }`      | `200 OK`: `{ "<localized_success>": "https://.../:code" }` <br> `503 Unavailable`: KV db unavailable <br> `400 Bad Request`: Invalid body, missing `long_url`, unexpected field, or invalid URL format <br> `429 Too Many Requests`: Rate limit exceeded <br> `507 Insufficient Storage`: Database limit reached |
 | **GET**    | `/urls`            | Retrieve the full list of stored links. <br> **API/ADMIN key required**                               | *None*                                       | `200 OK`: `{ [code]: { long_url: string, post_date: string, is_verified: boolean } }` if link(s) or <br> `no URL(s)` otherwise <br> `401 Unauthorized`: Invalid API key  <br> `429 Too Many Requests`: Rate limit exceeded                                     |
 | **GET**    | `/url/:code`       | Redirect to the original long URL associated with the short code.           | *None*                                       | `301 Moved Permanently` (if `is_verified = false`) <br> `302 Found` (otherwise) <br> `404 Not Found`: Invalid or unknown code                  |
 | **PATCH**    | `/verify/:code`    | Mark the URL as verified (`is_verified = true`). <br> **API/ADMIN key required** | *None*                                       | `200 OK`: Verified successfully / Already verified <br> `404 Not Found` <br> `401 Unauthorized`: Invalid API key <br> `429 Too Many Requests`: Rate limit exceeded                              |

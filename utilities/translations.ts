@@ -64,11 +64,13 @@ export const translations = {
 
             DB_LIMIT_REACHED: "The database has reached the limit of entries.",
 
-           WRITE_LIMIT_EXCEEDED: `Rate limit exceeded: only ${config.MAX_DAILY_WRITES} write request${config.MAX_DAILY_WRITES > 1 ? 's' : ''} allowed per day.`,
+            WRITE_LIMIT_EXCEEDED: `Rate limit exceeded: only ${config.MAX_DAILY_WRITES} write request${config.MAX_DAILY_WRITES > 1 ? 's' : ''} allowed per day.`,
+
+            SERVICE_TEMP_UNAVAILABLE: "The service is temporarily unavailable. Please try again later.",
 
             LINK_NOT_GENERATED: "Link could not be generated. Retry again later...",
 
-            ROOT_URL_MESSAGE: "Welcome to the API root. For documentation and usage details, visit: https://github.com/Nde-Code/nsh.",
+            ROOT_URL_MESSAGE: "Welcome to the API root. For documentation and usage details, visit: https://github.com/Nde-Code/NSH.",
 
             INVALID_API_ENDPOINT: "The requested endpoint is invalid.",
 
@@ -132,9 +134,11 @@ export const translations = {
             
             WRITE_LIMIT_EXCEEDED: `Limite atteinte: ${config.MAX_DAILY_WRITES} requête${config.MAX_DAILY_WRITES > 1 ? 's' : ''} d'écriture autorisée${config.MAX_DAILY_WRITES > 1 ? 's' : ''} par jour.`,
            
+            SERVICE_TEMP_UNAVAILABLE: "Le service est temporairement indisponible. Veuillez réessayer plus tard.",
+
             LINK_NOT_GENERATED: "Le lien n'a pas pu être généré. Réessayez plus tard...",
 
-            ROOT_URL_MESSAGE: "Bienvenue à la racine de l'API. Consultez: https://github.com/Nde-Code/nsh pour plus d'informations.",
+            ROOT_URL_MESSAGE: "Bienvenue à la racine de l'API. Consultez: https://github.com/Nde-Code/NSH pour plus d'informations.",
             
             INVALID_API_ENDPOINT: "La terminaison demandée est invalide.",
 
