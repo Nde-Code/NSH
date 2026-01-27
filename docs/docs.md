@@ -244,7 +244,7 @@ export const config: Config = {
   > If you get stuck, feel free to check out the official [Firebase documentation](https://firebase.google.com/docs/build?hl=en), or search on Google, YouTube, etc.
 
 3. Once your database is ready, go to the **`Rules`** tab and paste the following code in the editor:
-```JSON
+```js
 {
   
   "rules": {
@@ -252,6 +252,16 @@ export const config: Config = {
     "YOUR_SECRET_PATH": {
         
       ".read": true,
+
+      "_url_counter": {
+        
+        ".read": true,
+          
+        ".write": "newData.exists() && newData.child('url_count').isNumber()",
+          
+        ".validate": "newData.child('url_count').isNumber()"
+        
+  		}, 
           
       "$shortcode": {
           

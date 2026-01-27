@@ -227,9 +227,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		const normalizedURL: string | null = normalizeURL(data.long_url);
 
 		if (!normalizedURL) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_LONG_URL_FIELD'), 400);
-
+		
 		if (!isValidUrl(normalizedURL)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
-
+		
 		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'TOO_LONG_URL'), 400);
 
 		const urlKey: string = (await sha256(normalizedURL)).slice(0, config.SHORT_URL_ID_LENGTH);
@@ -239,21 +239,31 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		if (existing) {
 
 			if (existing.long_url === normalizedURL) return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: `${url.origin}/url/${urlKey}` }, 200);
-				
-			else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'HASH_COLLISION'), 500);
 			
+			else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'HASH_COLLISION'), 500);
+		
 		}
-		
-		const completeDB: UrlDatabaseMap | null = await readInFirebaseRTDB<UrlDatabaseMap>(config.FIREBASE_URL);
-		
-		if (completeDB && Object.keys(completeDB).length > config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'DB_LIMIT_REACHED'), 507);
-		
+
+		let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "_url_counter");
+
+		if (!countData) {
+
+			await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: 0 });
+
+			countData = { url_count: 0 };
+
+		}
+
+		const currentCount: number = countData.url_count;
+
+		if (currentCount >= config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'DB_LIMIT_REACHED'), 507);
+
 		const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP);
-		
+
 		if (rateResult === "USER_LIMIT") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'WRITE_LIMIT_EXCEEDED'), 429);
-    
-		else if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'SERVICE_TEMP_UNAVAILABLE'), 503);
 		
+		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'SERVICE_TEMP_UNAVAILABLE'), 503);
+
 		const firebaseData: LinkDetails = {
 
 			long_url: normalizedURL,
@@ -266,12 +276,12 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const result: LinkDetails | null = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, urlKey, firebaseData);
 
-		const firebaseResponse: string | null = (result !== null && result.long_url === firebaseData.long_url && result.post_date === firebaseData.post_date && result.is_verified === firebaseData.is_verified) ? `${url.origin}/url/${urlKey}` : null;
+		if (!result) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'LINK_NOT_GENERATED'), 500);
 
-		if (firebaseResponse === null) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'LINK_NOT_GENERATED'), 500);
+		await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: currentCount + 1 });
 
-		else return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: firebaseResponse }, 201);
-
+		return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: `${url.origin}/url/${urlKey}` }, 201);
+	
 	}
 
 	if (req.method === "GET" && pathname === "/") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'ROOT_URL_MESSAGE'), 200)
