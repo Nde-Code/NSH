@@ -258,9 +258,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const normalizedURL: string | null = normalizeURL(data.long_url);
 
-		if (!normalizedURL) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_LONG_URL_FIELD'), 400);
-		
-		if (!isValidUrl(normalizedURL)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
+		if (!normalizedURL || !isValidUrl(normalizedURL)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
 		
 		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'TOO_LONG_URL'), 400);
 

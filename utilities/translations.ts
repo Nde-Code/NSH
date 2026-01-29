@@ -52,8 +52,6 @@ export const translations = {
 
             INVALID_POST_BODY: "The body of the POST request is not valid. Please refer to the documentation before sending the request.",
 
-            MISSING_LONG_URL_FIELD: "The field 'long_url' is required but missing.",
-
             UNEXPECTED_FIELD_IN_BODY: "The body contains unexpected field.",
 
             NOT_A_VALID_URL: "The provided long_url is not in a valid URL format.",
@@ -119,9 +117,7 @@ export const translations = {
             LINK_DELETED: "Le lien a été supprimé avec succès.",
             
             INVALID_POST_BODY: "Le corps de la requête POST est invalide. Veuillez consulter la documentation avant d'envoyer la requête.",
-            
-            MISSING_LONG_URL_FIELD: "Le champ 'long_url' est requis mais manquant.",
-            
+                        
             UNEXPECTED_FIELD_IN_BODY: "Le corps contient un champ inattendu.",
            
             NOT_A_VALID_URL: "Le champ 'long_url' fourni n'est pas une URL valide.",
