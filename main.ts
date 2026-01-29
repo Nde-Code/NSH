@@ -115,19 +115,33 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		}
 
 		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(config.FIREBASE_URL);
-		
-		if (!data) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
 
 		const filteredData: Record<string, LinkDetails> = {};
 
-		for (const key in data) {
+		if (data) {
 
-			if (key !== "_url_counter") filteredData[key] = data[key];
+			for (const key in data) {
+
+				if (key !== "_url_counter") filteredData[key] = data[key];
+
+			}
 
 		}
 
-		return createJsonResponse(filteredData, 200);
+		let hasLinks = false;
 
+		for (const _ in filteredData) {
+
+			hasLinks = true;
+
+			break;
+
+		}
+
+		if (!data || !hasLinks) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+
+		return createJsonResponse(filteredData, 200);
+		
 	}
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
@@ -165,26 +179,34 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		const ID: string | boolean = extractValidID(pathname);
 
 		if (ID === false) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_ID'), 400);
-		
+
 		const apiKey: string | null = getApiKeyFromRequest(req);
 
 		if (apiKey !== config.ADMIN_KEY) {
 
 			printLogLine("WARN", "Invalid API or Admin key provided for deletion !");
-			
+
 			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_API_KEY_FOR_DELETION'), 401);
-		
+
 		}
 
-		else {
+		const data: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, ID);
 
-			const data: boolean  = await deleteInFirebaseRTDB(config.FIREBASE_URL, ID);
+		if (data === true) {
 
-			if (data === true) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_DELETED'), 200)
+			let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "_url_counter");
 			
-			else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_LINK_FOUND_WITH_ID_IN_DB'), 404);
+			let currentCount = countData?.url_count ?? 0;
+
+			currentCount = Math.max(0, currentCount - 1); 
+			
+			await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: currentCount });
+
+			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_DELETED'), 200);
 
 		}
+		
+		else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_LINK_FOUND_WITH_ID_IN_DB'), 404);
 	
 	}
 

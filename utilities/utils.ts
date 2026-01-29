@@ -108,7 +108,7 @@ export function normalizeURL(input: string): string | null {
 
 }
 
-export function simpleURLHash(str: string, len = 14): string {
+export function simpleURLHash(str: string, len = config.SHORT_URL_ID_LENGTH): string {
 
     let hash = 0;
 
@@ -116,11 +116,13 @@ export function simpleURLHash(str: string, len = 14): string {
 
         hash = (hash << 5) - hash + str.charCodeAt(i);
 
-        hash |= 0; 
+        hash |= 0;
 
     }
 
-    return Math.abs(hash).toString(36).slice(0, len);
+    const key: string = Math.abs(hash).toString(36);
+
+    return key.padEnd(len, "0").slice(0, len);
 
 }
 
