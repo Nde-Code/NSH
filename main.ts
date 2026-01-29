@@ -22,7 +22,7 @@ import {
 	
 	normalizeURL,
 	
-	sha256,
+	simpleURLHash,
 	
 	parseJsonBody,
 	
@@ -115,15 +115,19 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		}
 
 		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(config.FIREBASE_URL);
-
+		
 		if (!data) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
 
-		const filteredData = { ...data };
+		const filteredData: Record<string, LinkDetails> = {};
 
-		delete filteredData["_url_counter"];
+		for (const key in data) {
+
+			if (key !== "_url_counter") filteredData[key] = data[key];
+
+		}
 
 		return createJsonResponse(filteredData, 200);
-		
+
 	}
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
@@ -232,7 +236,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'TOO_LONG_URL'), 400);
 
-		const urlKey: string = (await sha256(normalizedURL)).slice(0, config.SHORT_URL_ID_LENGTH);
+		const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
 
 		const existing: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, urlKey);
 

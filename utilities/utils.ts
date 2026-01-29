@@ -108,15 +108,19 @@ export function normalizeURL(input: string): string | null {
 
 }
 
-export async function sha256(input: string): Promise<string> {
+export function simpleURLHash(str: string, len = 14): string {
 
-	const encoder: TextEncoder = new TextEncoder();
+    let hash = 0;
 
-	const data = encoder.encode(input);
+    for (let i = 0; i < str.length; i++) {
 
-	const hashBuffer: ArrayBuffer = await crypto.subtle.digest("SHA-256", data);
+        hash = (hash << 5) - hash + str.charCodeAt(i);
 
-	return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        hash |= 0; 
+
+    }
+
+    return Math.abs(hash).toString(36).slice(0, len);
 
 }
 
