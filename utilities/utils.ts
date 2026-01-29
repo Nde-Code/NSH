@@ -2,6 +2,8 @@ import { Config } from "../types/types.ts";
 
 import { config } from "../config.ts";
 
+const ID_REGEX: RegExp = new RegExp(`^[a-zA-Z0-9_-]{${config.SHORT_URL_ID_LENGTH}}$`);
+
 export function createJsonResponse(body: object, status: number = 200, headers: HeadersInit = {}): Response {
 
     return new Response(JSON.stringify(body), {
@@ -24,11 +26,13 @@ export function createJsonResponse(body: object, status: number = 200, headers: 
 
 export function isConfigValidWithMinValues(config: Config, rules: Partial<Record<keyof Config, number>>): boolean {
 
-    for (const [key, minValue] of Object.entries(rules)) {
+    for (const key in rules) {
+
+        const minValue = rules[key as keyof Config];
 
         const value = config[key as keyof Config];
 
-        if (typeof value !== "number" || value < (minValue ?? 0)) return false;
+        if (typeof value !== "number" || (minValue !== undefined && value < minValue)) return false;
 
     }
 
@@ -36,27 +40,19 @@ export function isConfigValidWithMinValues(config: Config, rules: Partial<Record
 
 }
 
-export function printLogLine(level: "INFO" | "WARN" | "ERROR", text: string) {
-
-    const now: Date = new Date();
-
-    const timestamp: string = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
-
-    console.log(`[${timestamp}][${level}] ${text}`);
-
-}
+export function printLogLine(level: "INFO" | "WARN" | "ERROR", text: string): void { console.log(`[${level}] ${text}`); }
 
 export function extractValidID(path: string): string | false {
 
-	const parts: string[] = path.split("/").filter(Boolean);
+    const parts = path.split("/").filter(Boolean); 
 
-	const id: string | undefined = parts[1];
+    if (parts.length !== 2) return false;
 
-	if (!id) return false;
+    const id = parts[1]; 
 
-	if (!new RegExp(`^[a-zA-Z0-9_-]{${config.SHORT_URL_ID_LENGTH}}$`).test(id)) return false;
-
-	return id;
+    if (id.length !== config.SHORT_URL_ID_LENGTH || !ID_REGEX.test(id)) return false;
+    
+    return id;
 
 }
 
@@ -78,16 +74,18 @@ export function isValidUrl(url: string): boolean {
 
     try {
 
-        const { protocol, hostname } = new URL(url);
+        const u: URL = new URL(url);
 
-        return ((protocol === "http:" || protocol === "https:") && !hostname.endsWith(".") && hostname.includes(".") && !hostname.split(".").some((label) => label.length === 0) && !["localhost", "127.0.0.1", "::1"].includes(hostname));
-    
+        const host: string = u.hostname;
+
+        return ((u.protocol === "http:" || u.protocol === "https:") && host.includes(".") && !host.endsWith(".") && !["localhost", "127.0.0.1", "::1"].includes(host));
+
     } catch {
 
         return false;
 
     }
-    
+
 }
 
 export function normalizeURL(input: string): string | null {
@@ -110,19 +108,17 @@ export function normalizeURL(input: string): string | null {
 
 export function simpleURLHash(str: string, len = config.SHORT_URL_ID_LENGTH): string {
 
-    let hash = 0;
+    let hash = 5381;
 
-    for (let i = 0; i < str.length; i++) {
+    let i = str.length;
 
-        hash = (hash << 5) - hash + str.charCodeAt(i);
+    while (i) {
 
-        hash |= 0;
+        hash = (hash * 33) ^ str.charCodeAt(--i);
 
     }
 
-    const key: string = Math.abs(hash).toString(36);
-
-    return key.padEnd(len, "0").slice(0, len);
+    return (hash >>> 0).toString(36).padEnd(len, "0").slice(0, len);
 
 }
 

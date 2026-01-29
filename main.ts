@@ -50,9 +50,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	const pathname: string = url.pathname;
 
-	const ip: string = req.headers.get("cf-connecting-ip") ?? "unknown";
-
-	const hashedIP: string = await hashIp(ip);
+	if (pathname === "/favicon.ico") return new Response(null, { status: 204 });
 
 	const configMinValues: Partial<Record<keyof Config, number>> = {
 
@@ -76,7 +74,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	
 	if (!isConfigValidWithMinValues(config, configMinValues)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
 
-	if (!hashedIP || hashedIP.length !== 64) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_HASH'), 403);
+	//if (!hashedIP || hashedIP.length !== 64) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_HASH'), 403);
 
 	if (req.method === "OPTIONS") {
 
@@ -101,6 +99,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	}
 
 	if (req.method === "GET" && pathname === "/urls") {
+
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
 		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
 
@@ -146,6 +146,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
 
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
+
 		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
 
 		const ID: string | boolean = extractValidID(pathname);
@@ -173,6 +175,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	}
 
 	if (req.method === "DELETE" && pathname.startsWith("/delete/")) {
+
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
 		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
 
@@ -239,6 +243,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	}
 
   	if (req.method === "POST" && pathname === "/post-url") {
+
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
 		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
 
