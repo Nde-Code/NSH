@@ -177,19 +177,23 @@ export const config: Config = {
 
   LANG_CODE: 'en',
     
-  RATE_LIMIT_INTERVAL_S: 1,
+  RATE_LIMIT_INTERVAL_S: 1, // min = 1
 
-  MAX_DAILY_WRITES: 10,
+  MAX_DAILY_WRITES: 10, // min = 1
 
-  IPS_PURGE_TIME_DAYS: 1,
+  IPS_PURGE_TIME_DAYS: 1, // min = 1
 
-  FIREBASE_TIMEOUT_MS: 6000,
+  FIREBASE_TIMEOUT_MS: 6000, // min = 1000
 
-  FIREBASE_ENTRIES_LIMIT: 1000,
+  FIREBASE_ENTRIES_LIMIT: 1000, // min = 50
 
-  SHORT_URL_ID_LENGTH: 14,
+  DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
 
-  MAX_URL_LENGTH: 2000
+  MAX_NUMBER_OF_LINKS_COUNT: 1000, // min = 10
+
+  SHORT_URL_ID_LENGTH: 14, // min = 10
+
+  MAX_URL_LENGTH: 2000 // min = 100
 
 };
 ```
@@ -221,6 +225,14 @@ export const config: Config = {
 - **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database.
   - **Currently**:
     - **Max**: 1000 entries.
+
+- **DEFAULT_NUMBER_OF_LINKS_FROM_COUNT**: The default number of links returned if no `count` parameter is provided. **Must not exceed `FIREBASE_ENTRIES_LIMIT` or `MAX_NUMBER_OF_LINKS_COUNT`.**
+  - **Currently**:
+    - **Default**: 15 links.
+
+- **MAX_NUMBER_OF_LINKS_COUNT**: The maximum number of links that can be retrieved via the `count` parameter. **Must not exceed `FIREBASE_ENTRIES_LIMIT`.**
+  - **Currently**:
+    - **Default**: 1000 links.
 
 - **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `SHA-256`.
   - **Currently**: 

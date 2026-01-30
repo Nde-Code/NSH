@@ -34,6 +34,8 @@ export const translations = {
 
             WRONG_API_KEY_FOR_URLS_DB: "The API key provided for the db of URLs is incorrect or missing.",
 
+            NOT_VALID_COUNT_PARAMETER: `The count parameter must be > 0 and <= ${config.MAX_NUMBER_OF_LINKS_COUNT}.`,
+
             NO_URLS_IN_DB: "Sorry no URL(s) to retreive from the database.",
 
             NO_ID: "No (valid) ID was provided.",
@@ -99,6 +101,8 @@ export const translations = {
             RATE_LIMIT_EXCEEDED: `Limite de requêtes dépassée: une seule requête toutes les ${config.RATE_LIMIT_INTERVAL_S}s.`,
             
             WRONG_API_KEY_FOR_URLS_DB: "La clé API fournie pour obtenir la liste des URLs est incorrecte ou manquante.",
+
+            NOT_VALID_COUNT_PARAMETER: `Le paramètre "count" doit être compris entre 1 et ${config.MAX_NUMBER_OF_LINKS_COUNT}.`,
 
             NO_URLS_IN_DB: "Désolé, aucune URL à récupérer depuis la base de données.",
 

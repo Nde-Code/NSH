@@ -36,6 +36,10 @@ export interface Config {
 
     FIREBASE_ENTRIES_LIMIT: number;
 
+    DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: number;
+
+    MAX_NUMBER_OF_LINKS_COUNT: number;
+
     SHORT_URL_ID_LENGTH: number;
 
     MAX_URL_LENGTH: number;

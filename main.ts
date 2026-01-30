@@ -64,6 +64,10 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		FIREBASE_ENTRIES_LIMIT: 50,
 
+		DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 5,
+
+    	MAX_NUMBER_OF_LINKS_COUNT: 10,
+
 		SHORT_URL_ID_LENGTH: 10,
 
 		MAX_URL_LENGTH: 100
@@ -72,7 +76,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (!config.FIREBASE_URL || !config.FIREBASE_HIDDEN_PATH || !config.HASH_KEY || !config.ADMIN_KEY) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_CREDENTIALS'), 500);
 	
-	if (!isConfigValidWithMinValues(config, configMinValues)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
+	if (!isConfigValidWithMinValues(config, configMinValues) || config.FIREBASE_ENTRIES_LIMIT < config.MAX_NUMBER_OF_LINKS_COUNT || config.FIREBASE_ENTRIES_LIMIT < config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT || config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
 
 	if (req.method === "OPTIONS") {
 
@@ -112,31 +116,34 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		}
 
+		const countParam: string | null = url.searchParams.get("count");
+
+		let requestedCount: number = countParam ? parseInt(countParam) : config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT;
+
+		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_COUNT_PARAMETER'), 400);
+
 		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(config.FIREBASE_URL);
 
 		const filteredData: Record<string, LinkDetails> = {};
+
+		let linkCounter: number = 0;
 
 		if (data) {
 
 			for (const key in data) {
 
-				if (key !== "_url_counter") filteredData[key] = data[key];
+				if (key === "_url_counter") continue;
 
+				if (linkCounter >= requestedCount) break;
+
+				filteredData[key] = data[key];
+
+				linkCounter++;
 			}
 
 		}
 
-		let hasLinks = false;
-
-		for (const _ in filteredData) {
-
-			hasLinks = true;
-
-			break;
-
-		}
-
-		if (!data || !hasLinks) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+		if (!data || linkCounter === 0) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
 
 		return createJsonResponse(filteredData, 200);
 		
