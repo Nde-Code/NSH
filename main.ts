@@ -74,8 +74,6 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	
 	if (!isConfigValidWithMinValues(config, configMinValues)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
 
-	//if (!hashedIP || hashedIP.length !== 64) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_HASH'), 403);
-
 	if (req.method === "OPTIONS") {
 
 		return new Response(null, {
