@@ -36,43 +36,55 @@ import { config } from "./config.ts";
 
 import { buildLocalizedMessage, translateKey } from "./utilities/translations.ts";
 
-async function handler(req: Request, env: Env): Promise<Response> {
+let lastEnv: Env | null = null;
+
+const configMinValues: Partial<Record<keyof Config, number>> = {
+
+	RATE_LIMIT_INTERVAL_S: 1,
+
+	MAX_DAILY_WRITES: 1,
+
+	IPS_PURGE_TIME_DAYS: 1,
+
+	FIREBASE_TIMEOUT_MS: 1000,
+
+	FIREBASE_ENTRIES_LIMIT: 50,
+
+	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 5,
+
+    MAX_NUMBER_OF_LINKS_COUNT: 10,
+
+	SHORT_URL_ID_LENGTH: 10,
+
+	MAX_URL_LENGTH: 100
+
+}
+
+function initConfig(env: Env) {
+
+	if (lastEnv === env) return;
 
 	config.FIREBASE_URL = env.FIREBASE_HOST_LINK ?? "";
 
-    config.FIREBASE_HIDDEN_PATH = env.FIREBASE_HIDDEN_PATH ?? "";
+	config.FIREBASE_HIDDEN_PATH = env.FIREBASE_HIDDEN_PATH ?? "";
 
-    config.ADMIN_KEY = env.ADMIN_KEY ?? "";
+	config.ADMIN_KEY = env.ADMIN_KEY ?? "";
 
-    config.HASH_KEY = env.HASH_KEY ?? "";
+	config.HASH_KEY = env.HASH_KEY ?? "";
+
+	lastEnv = env;
+
+}
+
+async function handler(req: Request, env: Env): Promise<Response> {
+
+	initConfig(env);
 
 	const url: URL = new URL(req.url);
 
 	const pathname: string = url.pathname;
 
 	if (pathname === "/favicon.ico") return new Response(null, { status: 204 });
-
-	const configMinValues: Partial<Record<keyof Config, number>> = {
-
-		RATE_LIMIT_INTERVAL_S: 1,
-
-		MAX_DAILY_WRITES: 1,
-
-		IPS_PURGE_TIME_DAYS: 1,
-
-		FIREBASE_TIMEOUT_MS: 1000,
-
-		FIREBASE_ENTRIES_LIMIT: 50,
-
-		DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 5,
-
-    	MAX_NUMBER_OF_LINKS_COUNT: 10,
-
-		SHORT_URL_ID_LENGTH: 10,
-
-		MAX_URL_LENGTH: 100
-
-	}
 
 	if (!config.FIREBASE_URL || !config.FIREBASE_HIDDEN_PATH || !config.HASH_KEY || !config.ADMIN_KEY) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_CREDENTIALS'), 500);
 	
