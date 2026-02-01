@@ -57,5 +57,3 @@ export interface LinkDetails {
 }
 
 export type UrlPostBody = { long_url: string };
-
-export type UrlDatabaseMap = Record<string, { long_url: string; post_date: string, is_verified: boolean }>;

@@ -265,48 +265,56 @@ export const config: Config = {
         
       ".read": true,
 
-      "_url_counter": {
+      "meta": {
+
+        "_url_counter": {
+                
+          ".read": true,
+                  
+          ".write": "newData.exists() && newData.child('url_count').isNumber()",
+                  
+          ".validate": "newData.child('url_count').isNumber()"
+                
+        }, 
         
-        ".read": true,
+      },
           
-        ".write": "newData.exists() && newData.child('url_count').isNumber()",
-          
-        ".validate": "newData.child('url_count').isNumber()"
-        
-  		}, 
-          
-      "$shortcode": {
-          
-        ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val() && newData.child('is_verified').isBoolean() && newData.hasChild('post_date') && newData.child('long_url').isString() && newData.child('post_date').isString())",
-          
-        ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
-          
-        "long_url": {
-              
-          ".validate": "newData.isString() && newData.val().length <= 2000 && newData.val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/)"
+      "urls": {
+
+        "$shortcode": {
             
-        },
-
-        "post_date": {
-              
-          ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/)"
+          ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val() && newData.child('is_verified').isBoolean() && newData.hasChild('post_date') && newData.child('long_url').isString() && newData.child('post_date').isString())",
             
-        },
+          ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
+            
+          "long_url": {
+                
+            ".validate": "newData.isString() && newData.val().length <= 2000 && newData.val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/)"
+              
+          },
 
-        "is_verified": {
+          "post_date": {
+                
+            ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/)"
               
-          ".validate": "newData.isBoolean()"
-              
-        },
+          },
 
-        "$other": {
-              
-          ".validate": false
-              
+          "is_verified": {
+                
+            ".validate": "newData.isBoolean()"
+                
+          },
+
+          "$other": {
+                
+            ".validate": false
+                
+          }
+          
         }
-        
+          
       }
-        
+
     }
       
   }
@@ -316,13 +324,13 @@ export const config: Config = {
 
 Here is a brief summary of these rules:
 
-| Action        | Allowed if...                                                                         |
-|---------------|----------------------------------------------------------------------------------------|
-| **Read**      | Always allowed                                                                         |
-| **Write**    | Valid `long_url`, `post_date`, and `is_verified` *(required)* fields                                |
-| **Delete**    | Always allowed                                                                         |
-| **Update**    | Only `is_verified` can change; `long_url` and `post_date` must stay the same           |
-| **Extra fields** | Not allowed                                                                         |
+| Action        | Allowed if...                                                                                               |
+|---------------|------------------------------------------------------------------------------------------------------------|
+| **Read**      | Always allowed for `meta/_url_counter` and all `urls/$shortcode`                                          |
+| **Write**     | - For `urls/$shortcode`: either creating a new URL or updating only `is_verified` while `long_url` and `post_date` stay the same. <br> - For `meta/_url_counter`: `url_count` must exist and be a number |
+| **Delete**    | - Allowed for `urls/$shortcode` (deleting a URL). <br> - `meta/_url_counter` should be updated accordingly. |
+| **Update**    | - For `urls/$shortcode`: only `is_verified` can change; `long_url` and `post_date` must remain unchanged. <br> - For `meta/_url_counter`: `url_count` must stay a number |
+| **Extra fields** | Not allowed in `urls/$shortcode`. Any field other than `long_url`, `post_date`, `is_verified` is rejected. |
 
 ### 2. Initialize TypeScript types:
 

@@ -6,7 +6,7 @@ import { deleteInFirebaseRTDB } from "./utilities/delete.ts";
 
 import { setIsVerifiedTrue, VerificationStatus } from "./utilities/verify.ts";
 
-import { Env, Config, LinkDetails, UrlPostBody, UrlDatabaseMap } from "./types/types.ts";
+import { Env, Config, LinkDetails, UrlPostBody } from "./types/types.ts";
 
 import {
 
@@ -122,7 +122,17 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_COUNT_PARAMETER'), 400);
 
-		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(config.FIREBASE_URL);
+		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB(config.FIREBASE_URL,
+
+    		"urls", {
+
+        		orderBy: "$key",
+
+        		limitToFirst: requestedCount,
+
+    		}
+
+		);
 
 		const filteredData: Record<string, LinkDetails> = {};
 
@@ -132,18 +142,19 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			for (const key in data) {
 
-				if (key === "_url_counter") continue;
-
 				if (linkCounter >= requestedCount) break;
 
 				filteredData[key] = data[key];
 
 				linkCounter++;
+
 			}
 
 		}
 
 		if (!data || linkCounter === 0) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+
+		printLogLine("INFO", `Returned ${linkCounter} link${linkCounter !== 1 ? "s" : ""} from /urls.`)
 
 		return createJsonResponse(filteredData, 200);
 		
@@ -169,7 +180,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		}
 
-		const result: VerificationStatus = await setIsVerifiedTrue(config.FIREBASE_URL, ID);
+		const result: VerificationStatus = await setIsVerifiedTrue(config.FIREBASE_URL, "urls/" + ID);
 
 		if (result === "verified_now") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_VERIFIED'), 200);	
 
@@ -199,17 +210,17 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		}
 
-		const data: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, ID);
+		const data: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
 
 		if (data === true) {
 
-			let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "_url_counter");
+			let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "meta/_url_counter");
 			
 			let currentCount = countData?.url_count ?? 0;
 
 			currentCount = Math.max(0, currentCount - 1); 
 			
-			await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: currentCount });
+			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount });
 
 			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_DELETED'), 200);
 
@@ -225,7 +236,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (ID === false) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_ID'), 400);
 
-		const data: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, ID);
+		const data: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, "urls/" + ID);
 
 		if (data && data !== null) {
 
@@ -269,7 +280,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
 
-		const existing: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, urlKey);
+		const existing: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey);
 
 		if (existing) {
 
@@ -279,11 +290,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		}
 
-		let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "_url_counter");
+		let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "meta/_url_counter");
 
 		if (!countData) {
 
-			await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: 0 });
+			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: 0 });
 
 			countData = { url_count: 0 };
 
@@ -309,11 +320,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		};
 
-		const result: LinkDetails | null = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, urlKey, firebaseData);
+		const result: LinkDetails | null = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey, firebaseData);
 
 		if (!result) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'LINK_NOT_GENERATED'), 500);
 
-		await putInFirebaseRTDB(config.FIREBASE_URL, "_url_counter", { url_count: currentCount + 1 });
+		await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount + 1 });
 
 		return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: `${url.origin}/url/${urlKey}` }, 201);
 	
