@@ -2,7 +2,15 @@ import { Config } from "../types/types.ts";
 
 import { config } from "../config.ts";
 
-const ID_REGEX: RegExp = new RegExp(`^[a-zA-Z0-9_-]{${config.SHORT_URL_ID_LENGTH}}$`);
+let idRegex: RegExp | null = null;
+
+function getIdRegex(): RegExp {
+
+    if (!idRegex) idRegex = new RegExp(`^[a-zA-Z0-9_-]{${config.SHORT_URL_ID_LENGTH}}$`);
+
+    return idRegex;
+
+}
 
 export function createJsonResponse(body: object, status: number = 200, headers: HeadersInit = {}): Response {
 
@@ -43,15 +51,15 @@ export function isConfigValidWithMinValues(config: Config, rules: Partial<Record
 export function printLogLine(level: "INFO" | "WARN" | "ERROR", text: string): void { console.log(`[${level}] ${text}`); }
 
 export function extractValidID(path: string): string | false {
-
-    const parts = path.split("/").filter(Boolean); 
-
-    if (parts.length !== 2) return false;
-
-    const id = parts[1]; 
-
-    if (id.length !== config.SHORT_URL_ID_LENGTH || !ID_REGEX.test(id)) return false;
     
+    let slash: number = path.lastIndexOf("/");
+
+    if (slash === -1) return false;
+
+    const id: string = path.slice(slash + 1);
+
+    if (id.length !== config.SHORT_URL_ID_LENGTH ||!getIdRegex().test(id)) return false;
+
     return id;
 
 }
@@ -104,6 +112,28 @@ export function normalizeURL(input: string): string | null {
 
     }
 
+}
+
+export function normalizeAndValidateURL(input: string): string | null {
+
+    try {
+
+        const url: URL = new URL(input.trim());
+
+        const host: string = url.hostname;
+
+        if ((url.protocol !== "http:" && url.protocol !== "https:") || !host.includes(".") || host.endsWith(".") || host === "localhost" || host === "127.0.0.1" || host === "::1") return null;
+
+        url.hostname = host.toLowerCase();
+
+        return url.href;
+
+    } catch {
+
+        return null;
+
+    }
+    
 }
 
 export function simpleURLHash(str: string, len = config.SHORT_URL_ID_LENGTH): string {

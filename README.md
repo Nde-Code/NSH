@@ -2,7 +2,7 @@
 
 A simple and lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
-> I host the project on the free Cloudflare Workers plan. Normally, there are no resource-related issues because the software consumes very few resources. However, please be careful with your admin credentials, use the `count` parameter with the `/urls` endpoint whenever possible, and remain vigilant regarding the URLs posted to the database.
+> I host the project on the free [Workers](https://workers.cloudflare.com/) plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/).
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 

@@ -17,10 +17,8 @@ import {
 	extractValidID,
 	
 	getApiKeyFromRequest,
-	
-	isValidUrl,
-	
-	normalizeURL,
+
+	normalizeAndValidateURL,
 	
 	simpleURLHash,
 	
@@ -280,14 +278,12 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'INVALID_POST_BODY'), 400);
 
-		const keys = Object.keys(data as object);
-
-		if (keys.length !== 1 || keys[0] !== "long_url") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'UNEXPECTED_FIELD_IN_BODY'), 400);
-
-		const normalizedURL: string | null = normalizeURL(data.long_url);
-
-		if (!normalizedURL || !isValidUrl(normalizedURL)) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
+		if (!("long_url" in data) || Object.getOwnPropertyNames(data).length !== 1) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'UNEXPECTED_FIELD_IN_BODY'), 400);
 		
+		const normalizedURL: string | null = normalizeAndValidateURL(data.long_url);
+
+		if (!normalizedURL) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
+
 		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'TOO_LONG_URL'), 400);
 
 		const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
