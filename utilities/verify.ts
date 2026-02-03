@@ -6,9 +6,9 @@ export type VerificationStatus = "already_verified" | "verified_now" | "not_foun
 
 type FirebaseData = { is_verified?: boolean };
 
-export async function setIsVerifiedTrue(FIREBASE_URL: string, ID: string): Promise<VerificationStatus> {
+export async function setIsVerifiedTrue(FIREBASE_URL: string, pathToID: string): Promise<VerificationStatus> {
 
-    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${ID}.json`;
+    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${pathToID}.json`;
 
     const controller: AbortController = new AbortController();
     
@@ -62,7 +62,7 @@ export async function setIsVerifiedTrue(FIREBASE_URL: string, ID: string): Promi
 
         clearTimeout(timeoutId);
 
-        printLogLine("INFO", `The link(${ID}) has been verified successfully.`);
+        printLogLine("INFO", `The link stored on ${pathToID} has been verified successfully.`);
 
         return patchRes.ok ? "verified_now" : "error";
 
@@ -70,7 +70,7 @@ export async function setIsVerifiedTrue(FIREBASE_URL: string, ID: string): Promi
 
         clearTimeout(timeoutId);
 
-        printLogLine("ERROR", `An error heppened when verifying the link(${ID}).`);
+        printLogLine("ERROR", `An error happened when verifying on ${pathToID}.`);
 
         return "error";
 

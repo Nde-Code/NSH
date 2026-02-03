@@ -2,9 +2,9 @@ import { config } from "../config.ts";
 
 import { printLogLine } from "./utils.ts";
 
-export async function putInFirebaseRTDB<T = unknown, U = unknown>(FIREBASE_URL: string, ID: string, data: U): Promise<T | null> {
+export async function putInFirebaseRTDB<T = unknown, U = unknown>(FIREBASE_URL: string, pathToID: string, data: U): Promise<T | null> {
 
-    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${ID}.json`;
+    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${pathToID}.json`;
 
     const controller: AbortController = new AbortController();
 
@@ -32,7 +32,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(FIREBASE_URL: 
 
         if (!res.ok) return null;
 
-        if (ID !== "_url_counter") printLogLine("INFO", `The link(${ID}) has been posted successfully.`);
+        if (pathToID !== "meta/_url_counter") printLogLine("INFO", `Successfully posted new link on ${pathToID}.`);
 
         return (await res.json()) as T;
 
@@ -40,7 +40,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(FIREBASE_URL: 
 
         clearTimeout(timeoutId);
 
-        printLogLine("ERROR", `An error heppened when writing the link(${ID}).`);
+        printLogLine("ERROR", `An error happened when writing on ${pathToID}.`);
 
         return null;
 
