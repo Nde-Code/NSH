@@ -78,42 +78,6 @@ export function getApiKeyFromRequest(req: Request): string | null {
 
 }
 
-export function isValidUrl(url: string): boolean {
-
-    try {
-
-        const u: URL = new URL(url);
-
-        const host: string = u.hostname;
-
-        return ((u.protocol === "http:" || u.protocol === "https:") && host.includes(".") && !host.endsWith(".") && !["localhost", "127.0.0.1", "::1"].includes(host));
-
-    } catch {
-
-        return false;
-
-    }
-
-}
-
-export function normalizeURL(input: string): string | null {
-
-    try {
-
-        const url = new URL(input.trim());
-
-        url.hostname = url.hostname.toLowerCase(); 
-        
-        return url.toString(); 
-        
-    } catch {
-
-        return null;
-
-    }
-
-}
-
 export function normalizeAndValidateURL(input: string): string | null {
 
     try {

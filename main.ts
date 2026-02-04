@@ -74,6 +74,18 @@ function initConfig(env: Env) {
 
 }
 
+let configChecked: boolean = false;
+
+function checkConfigOnce(): boolean {
+
+    if (configChecked) return true;
+
+    configChecked = isConfigValidWithMinValues(config, configMinValues) && config.FIREBASE_ENTRIES_LIMIT >= config.MAX_NUMBER_OF_LINKS_COUNT && config.FIREBASE_ENTRIES_LIMIT >= config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT && config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT <= config.MAX_NUMBER_OF_LINKS_COUNT;
+    
+	return configChecked;
+
+}
+
 async function handler(req: Request, env: Env): Promise<Response> {
 
 	initConfig(env);
@@ -86,8 +98,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (!config.FIREBASE_URL || !config.FIREBASE_HIDDEN_PATH || !config.HASH_KEY || !config.ADMIN_KEY) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_CREDENTIALS'), 500);
 	
-	if (!isConfigValidWithMinValues(config, configMinValues) || config.FIREBASE_ENTRIES_LIMIT < config.MAX_NUMBER_OF_LINKS_COUNT || config.FIREBASE_ENTRIES_LIMIT < config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT || config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
-
+	if (!checkConfigOnce()) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
+	
 	if (req.method === "OPTIONS") {
 
 		return new Response(null, {
