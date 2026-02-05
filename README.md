@@ -28,11 +28,11 @@ A simple, lightweight URL shortener API built with [Wrangler](https://developers
 
 This project is designed with **GDPR compliance** in mind:
 
-- ❌ No direct IP addresses or personal data are stored.
+- No direct IP addresses or personal data are stored.
 
-- ❌ No user privacy information is logged.
+- No user privacy information is logged.
 
-- ⚠️ **Basic rate limiting** is implemented by hashing **IP addresses**:
+- Basic rate limiting is implemented by hashing **IP addresses**:
 
   - Hashing is done using `SHA-256`, combined with a **strong, secret salt**.
 
@@ -40,7 +40,7 @@ This project is designed with **GDPR compliance** in mind:
 
   - IP hashes are automatically deleted after a configurable retention period.
 
-- ✅ No tracking, cookies, or analytics.
+- No tracking, cookies, or analytics.
 
 This ensures that no identifiable user data is collected, stored, or shared in any form.
 
