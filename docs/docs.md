@@ -421,6 +421,25 @@ To run locally, run:
 wrangler dev
 ```
 
+Use the python CLI script to run test to validate and ensure you changements.
+
+| Argument     | Description |
+|--------------|-------------|
+| `--env`      | Path to the `.env` file used to load environment variables (e.g. `ADMIN_KEY`) **(required)** |
+| `--remote`   | Base URL of the deployed Worker to test. If not provided, defaults to `http://localhost:8787` (Wrangler dev) **(required)** |
+| `--link`     | Base URL used to generate test requests. The script will automatically modify it to test both valid and invalid cases |
+| `--delay`    | Delay (in seconds) between each API call. Minimum: `1`, Maximum: `10`, Default: `2` |
+
+Navigate to the directory containing `tests.py` and run the following command:
+```bash
+python tests.py --env .dev.vars --link https://example.com
+```
+
+You can also get help directly in your terminal via:
+```bash
+python tests.py --help
+```
+
 > If everything works correctly, that indicates your code is now compatible with Cloudflare Workers.
 
 To bundle the project **(optional)**, run:
