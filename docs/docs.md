@@ -430,7 +430,7 @@ Use the python CLI (requires **Python 3.8+**, **no external dependencies**) scri
 | `--link`     | Base URL used to generate test requests. The script will automatically modify it to test both valid and invalid cases |
 | `--delay`    | Delay (in seconds) between each API call. Minimum: `1`, Maximum: `10`, Default: `2` |
 
-Navigate to the directory containing `tests.py` and run the following command:
+Navigate to the directory containing `tests.py` and run the following command (ensure that Wrangler is running via: `wrangler dev`):
 ```bash
 python tests.py --env .dev.vars --link https://example.com
 ```
