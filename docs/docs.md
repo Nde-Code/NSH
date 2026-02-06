@@ -263,7 +263,7 @@ export const config: Config = {
 
     "YOUR_SECRET_PATH": {
         
-      ".read": true,
+      ".read": false,
 
       "meta": {
 
@@ -280,6 +280,8 @@ export const config: Config = {
       },
           
       "urls": {
+
+        ".read": true,
 
         "$shortcode": {
             
@@ -326,7 +328,7 @@ Here is a brief summary of these rules:
 
 | Action        | Allowed if...                                                                                               |
 |---------------|------------------------------------------------------------------------------------------------------------|
-| **Read**      | Always allowed for `meta/_url_counter` and all `urls/$shortcode`                                          |
+| **Read**      | Always allowed for `meta/_url_counter` and all `urls/`                                          |
 | **Write**     | - For `urls/$shortcode`: either creating a new URL or updating only `is_verified` while `long_url` and `post_date` stay the same. <br> - For `meta/_url_counter`: `url_count` must exist and be a number |
 | **Delete**    | - Allowed for `urls/$shortcode` (deleting a URL). <br> - `meta/_url_counter` should be updated accordingly. |
 | **Update**    | - For `urls/$shortcode`: only `is_verified` can change; `long_url` and `post_date` must remain unchanged. <br> - For `meta/_url_counter`: `url_count` must stay a number |
@@ -426,8 +428,8 @@ Use the python CLI (requires **Python 3.8+**, **no external dependencies**) scri
 | Argument     | Description |
 |--------------|-------------|
 | `--env`      | Path to the `.env` file used to load environment variables (e.g. `ADMIN_KEY`) **(required)** |
-| `--remote`   | Base URL of the deployed Worker to test. If not provided, defaults to `http://localhost:8787` (Wrangler dev) **(required)** |
-| `--link`     | Base URL used to generate test requests. The script will automatically modify it to test both valid and invalid cases |
+| `--remote`   | Base URL of the deployed Worker to test. If not provided, defaults to `http://localhost:8787` (Wrangler dev) |
+| `--link`     | Base URL used to generate test requests. The script will automatically modify it to test both valid and invalid cases **(required)** |
 | `--delay`    | Delay (in seconds) between each API call. Minimum: `1`, Maximum: `10`, Default: `2` |
 
 Navigate to the directory containing `tests.py` and run the following command (ensure that Wrangler is running via: `wrangler dev`):

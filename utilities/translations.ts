@@ -18,7 +18,11 @@ export const translations = {
 
             warning: "warning",
 
-            success: "success"
+            success: "success",
+
+            next_cursor: "next_cursor",
+
+            has_more: "has_more"
 
         },
 
@@ -35,6 +39,8 @@ export const translations = {
             WRONG_API_KEY_FOR_URLS_DB: "The API key provided for the db of URLs is incorrect or missing.",
 
             NOT_VALID_COUNT_PARAMETER: `The count parameter must be > 0 and <= ${config.MAX_NUMBER_OF_LINKS_COUNT}.`,
+
+            NOT_VALID_CURSOR_PARAMETER: `The cursor parameter isn't in the database.`,
 
             NO_URLS_IN_DB: "Sorry no URL(s) to retreive from the database.",
 
@@ -86,7 +92,11 @@ export const translations = {
 
             warning: "avertissement",
 
-            success: "succès"
+            success: "succès",
+
+            next_cursor: "curseur_suivant",
+
+            has_more: "a_plus"
 
         },
 
@@ -103,6 +113,8 @@ export const translations = {
             WRONG_API_KEY_FOR_URLS_DB: "La clé API fournie pour obtenir la liste des URLs est incorrecte ou manquante.",
 
             NOT_VALID_COUNT_PARAMETER: `Le paramètre "count" doit être compris entre 1 et ${config.MAX_NUMBER_OF_LINKS_COUNT}.`,
+
+            NOT_VALID_CURSOR_PARAMETER: `Le paramètre "cursor" n'est pas dans la base de données.`,
 
             NO_URLS_IN_DB: "Désolé, aucune URL à récupérer depuis la base de données.",
 

@@ -28,13 +28,21 @@ import {
 
 } from "./utilities/utils.ts";
 
-import { RateLimitResult, checkTimeRateLimit, checkDailyRateLimit, hashIp } from "./utilities/rate.ts";
+import {
+	
+	RateLimitResult,
+	
+	checkTimeRateLimit,
+	
+	checkDailyRateLimit,
+	
+	hashIp
+
+} from "./utilities/rate.ts";
 
 import { config } from "./config.ts";
 
 import { buildLocalizedMessage, translateKey } from "./utilities/translations.ts";
-
-let lastEnv: Env | null = null;
 
 const configMinValues: Partial<Record<keyof Config, number>> = {
 
@@ -58,6 +66,10 @@ const configMinValues: Partial<Record<keyof Config, number>> = {
 
 }
 
+let lastEnv: Env | null = null;
+
+let configChecked: boolean = false;
+
 function initConfig(env: Env) {
 
 	if (lastEnv === env) return;
@@ -73,8 +85,6 @@ function initConfig(env: Env) {
 	lastEnv = env;
 
 }
-
-let configChecked: boolean = false;
 
 function checkConfigOnce(): boolean {
 
@@ -140,46 +150,64 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const countParam: string | null = url.searchParams.get("count");
 
-		let requestedCount: number = countParam ? parseInt(countParam) : config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT;
+		const cursor: string | null = url.searchParams.get("cursor");
 
-		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_COUNT_PARAMETER'), 400);
+		if (cursor) {
 
-		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB(config.FIREBASE_URL,
+			const cursorExists = await readInFirebaseRTDB(config.FIREBASE_URL, `urls/${cursor}`);
 
-    		"urls", {
-
-        		orderBy: "$key",
-
-        		limitToFirst: requestedCount,
-
-    		}
-
-		);
-
-		const filteredData: Record<string, LinkDetails> = {};
-
-		let linkCounter: number = 0;
-
-		if (data) {
-
-			for (const key in data) {
-
-				if (linkCounter >= requestedCount) break;
-
-				filteredData[key] = data[key];
-
-				linkCounter++;
-
-			}
+			if (!cursorExists) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_CURSOR_PARAMETER'), 400);
 
 		}
 
-		if (!data || linkCounter === 0) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+		const requestedCount: number = countParam ? parseInt(countParam) : config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT;
 
-		printLogLine("INFO", `Returned ${linkCounter} link${linkCounter !== 1 ? "s" : ""} from /urls.`)
+		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_COUNT_PARAMETER'), 400);
 
-		return createJsonResponse(filteredData, 200);
-		
+		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(
+
+			config.FIREBASE_URL,
+
+			"urls", {
+
+				orderBy: "$key",
+
+				limitToFirst: (requestedCount + 1),
+
+				...(cursor ? { startAfter: cursor } : {})
+
+			}
+
+		);
+
+		if (!data || Object.keys(data).length === 0) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+
+		const keys: string[] = Object.keys(data);
+
+		const hasMore: boolean = keys.length > requestedCount;
+
+		if (hasMore) {
+
+			delete data[keys[keys.length - 1]];
+
+			keys.pop();
+			
+		}
+
+		const nextCursor = hasMore ? keys[keys.length - 1] : null;
+
+		printLogLine("INFO", `Returned ${keys.length} link(s) from /urls.`);
+
+		return createJsonResponse({
+
+			urls: data,
+
+			[translateKey(config.LANG_CODE, 'next_cursor')]: nextCursor,
+
+			[translateKey(config.LANG_CODE, 'has_more')]: hasMore
+
+		}, 200);
+
 	}
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
