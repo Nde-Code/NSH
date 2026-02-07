@@ -174,8 +174,6 @@ export const config: Config = {
   HASH_KEY: "",
 
   ADMIN_KEY: "",
-
-  LANG_CODE: 'en',
     
   RATE_LIMIT_INTERVAL_S: 1, // min = 1
 
@@ -199,12 +197,6 @@ export const config: Config = {
 ```
 
 - **FIREBASE_URL**, **FIREBASE_HIDDEN_PATH**, **HASH_KEY**, **ADMIN_KEY**: These are values read from the `.env` file, so please **do not modify them**.
-
-- **LANG_CODE**: Supported language translations are available for responses. Currently, the following languages are supported:
-
-  - `en` = `English` **(Default)**
-  
-  - `fr` = `Français` 
 
 - **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
   - **Currently**:

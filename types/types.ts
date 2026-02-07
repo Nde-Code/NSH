@@ -1,5 +1,3 @@
-import { supportedLang } from "../utilities/translations.ts";
-
 export interface Env {
 
     FIREBASE_HOST_LINK: string;
@@ -23,8 +21,6 @@ export interface Config {
     HASH_KEY: string;
 
     ADMIN_KEY: string;
-
-    LANG_CODE: supportedLang;
     
     RATE_LIMIT_INTERVAL_S: number;
 

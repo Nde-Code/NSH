@@ -6,7 +6,17 @@ import { deleteInFirebaseRTDB } from "./utilities/delete.ts";
 
 import { setIsVerifiedTrue, VerificationStatus } from "./utilities/verify.ts";
 
-import { Env, Config, LinkDetails, UrlPostBody } from "./types/types.ts";
+import {
+	
+	Env,
+	
+	Config,
+	
+	LinkDetails,
+	
+	UrlPostBody
+
+} from "./types/types.ts";
 
 import {
 
@@ -42,7 +52,7 @@ import {
 
 import { config } from "./config.ts";
 
-import { buildLocalizedMessage, translateKey } from "./utilities/translations.ts";
+import { MSG } from "./utilities/messages.ts";
 
 const configMinValues: Partial<Record<keyof Config, number>> = {
 
@@ -106,9 +116,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (pathname === "/favicon.ico") return new Response(null, { status: 204 });
 
-	if (!config.FIREBASE_URL || !config.FIREBASE_HIDDEN_PATH || !config.HASH_KEY || !config.ADMIN_KEY) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'MISSING_CREDENTIALS'), 500);
+	if (!config.FIREBASE_URL || !config.FIREBASE_HIDDEN_PATH || !config.HASH_KEY || !config.ADMIN_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
 	
-	if (!checkConfigOnce()) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_CONFIG'), 500);
+	if (!checkConfigOnce()) return createJsonResponse(MSG.WRONG_CONFIG, 500);
 	
 	if (req.method === "OPTIONS") {
 
@@ -136,7 +146,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
-		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
+		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 
@@ -144,7 +154,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			printLogLine("WARN", "Invalid API or Admin key provided for listing URL(s) !");
 
-			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_API_KEY_FOR_URLS_DB'), 401);
+			return createJsonResponse(MSG.WRONG_API_KEY_FOR_URLS_DB, 401);
 
 		}
 
@@ -156,13 +166,13 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			const cursorExists = await readInFirebaseRTDB(config.FIREBASE_URL, `urls/${cursor}`);
 
-			if (!cursorExists) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_CURSOR_PARAMETER'), 400);
+			if (!cursorExists) return createJsonResponse(MSG.NOT_VALID_CURSOR_PARAMETER, 400);
 
 		}
 
 		const requestedCount: number = countParam ? parseInt(countParam) : config.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT;
 
-		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_VALID_COUNT_PARAMETER'), 400);
+		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > config.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(MSG.NOT_VALID_COUNT_PARAMETER(config.MAX_NUMBER_OF_LINKS_COUNT), 400);
 
 		const data: Record<string, LinkDetails> | null = await readInFirebaseRTDB<Record<string, LinkDetails>>(
 
@@ -180,7 +190,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		);
 
-		if (!data || Object.keys(data).length === 0) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'NO_URLS_IN_DB'), 200);
+		if (!data || Object.keys(data).length === 0) return createJsonResponse(MSG.NO_URLS_IN_DB, 200);
 
 		const keys: string[] = Object.keys(data);
 
@@ -202,9 +212,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			urls: data,
 
-			[translateKey(config.LANG_CODE, 'next_cursor')]: nextCursor,
+			next_cursor: nextCursor,
 
-			[translateKey(config.LANG_CODE, 'has_more')]: hasMore
+			has_more: hasMore
 
 		}, 200);
 
@@ -214,11 +224,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
-		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
+		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
 
 		const ID: string | boolean = extractValidID(pathname);
 
-		if (ID === false) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_ID'), 400);
+		if (ID === false) return createJsonResponse(MSG.NO_ID, 400);
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 
@@ -226,17 +236,17 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			printLogLine("WARN", "Invalid API or Admin key provided for link verification !");
 			
-			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_API_KEY_FOR_VERIFICATION'), 401);
+			return createJsonResponse(MSG.WRONG_API_KEY_FOR_VERIFICATION, 401);
 		
 		}
 
 		const result: VerificationStatus = await setIsVerifiedTrue(config.FIREBASE_URL, "urls/" + ID);
 
-		if (result === "verified_now") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_VERIFIED'), 200);	
+		if (result === "verified_now") return createJsonResponse(MSG.LINK_VERIFIED, 200);	
 
-		else if (result === "already_verified") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'LINK_ALREADY_VERIFIED'), 200);
+		else if (result === "already_verified") return createJsonResponse(MSG.LINK_ALREADY_VERIFIED, 200);
 
-		else if (result === "not_found") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_LINK_FOUND_WITH_ID_IN_DB'), 404);
+		else if (result === "not_found") return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 
 	}
 
@@ -244,11 +254,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
-		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
+		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
 
 		const ID: string | boolean = extractValidID(pathname);
 
-		if (ID === false) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_ID'), 400);
+		if (ID === false) return createJsonResponse(MSG.NO_ID, 400);
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 
@@ -256,7 +266,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			printLogLine("WARN", "Invalid API or Admin key provided for deletion !");
 
-			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'WRONG_API_KEY_FOR_DELETION'), 401);
+			return createJsonResponse(MSG.WRONG_API_KEY_FOR_DELETION, 401);
 
 		}
 
@@ -272,11 +282,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 			
 			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount });
 
-			return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'LINK_DELETED'), 200);
+			return createJsonResponse(MSG.LINK_DELETED, 200);
 
 		}
 		
-		else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_LINK_FOUND_WITH_ID_IN_DB'), 404);
+		else return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 	
 	}
 
@@ -284,7 +294,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const ID: string | boolean = extractValidID(pathname);
 
-		if (ID === false) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_ID'), 400);
+		if (ID === false) return createJsonResponse(MSG.NO_ID, 400);
 
 		const data: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, "urls/" + ID);
 
@@ -304,7 +314,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		}
 		
-		else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NO_LINK_FOUND_WITH_ID_IN_DB'), 404);
+		else return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 	
 	}
 
@@ -312,19 +322,19 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
-		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'RATE_LIMIT_EXCEEDED'), 429);
+		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
 
 		const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req);
 
-		if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'INVALID_POST_BODY'), 400);
+		if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(MSG.INVALID_POST_BODY, 400);
 
-		if (!("long_url" in data) || Object.getOwnPropertyNames(data).length !== 1) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'UNEXPECTED_FIELD_IN_BODY'), 400);
+		if (!("long_url" in data) || Object.getOwnPropertyNames(data).length !== 1) return createJsonResponse(MSG.UNEXPECTED_FIELD_IN_BODY, 400);
 		
 		const normalizedURL: string | null = normalizeAndValidateURL(data.long_url);
 
-		if (!normalizedURL) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'NOT_A_VALID_URL'), 400);
+		if (!normalizedURL) return createJsonResponse(MSG.NOT_A_VALID_URL, 400);
 
-		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'TOO_LONG_URL'), 400);
+		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(MSG.TOO_LONG_URL, 400);
 
 		const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
 
@@ -332,9 +342,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (existing) {
 
-			if (existing.long_url === normalizedURL) return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: `${url.origin}/url/${urlKey}` }, 200);
+			if (existing.long_url === normalizedURL) return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 200);
 			
-			else return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'HASH_COLLISION'), 500);
+			else return createJsonResponse(MSG.HASH_COLLISION, 500);
 		
 		}
 
@@ -350,13 +360,13 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const currentCount: number = countData.url_count;
 
-		if (currentCount >= config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'DB_LIMIT_REACHED'), 507);
+		if (currentCount >= config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(MSG.DB_LIMIT_REACHED, 507);
 
 		const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP);
 
-		if (rateResult === "USER_LIMIT") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'WRITE_LIMIT_EXCEEDED'), 429);
+		if (rateResult === "USER_LIMIT") return createJsonResponse(MSG.WRITE_LIMIT_EXCEEDED, 429);
 		
-		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'SERVICE_TEMP_UNAVAILABLE'), 503);
+		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
 		const firebaseData: LinkDetails = {
 
@@ -370,17 +380,17 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const result: LinkDetails | null = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey, firebaseData);
 
-		if (!result) return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'error', 'LINK_NOT_GENERATED'), 500);
+		if (!result) return createJsonResponse(MSG.LINK_NOT_GENERATED, 500);
 
 		await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount + 1 });
 
-		return createJsonResponse({ [translateKey(config.LANG_CODE, 'success')]: `${url.origin}/url/${urlKey}` }, 201);
+		return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
 	
 	}
 
-	if (req.method === "GET" && pathname === "/") return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'success', 'ROOT_URL_MESSAGE'), 200)
+	if (req.method === "GET" && pathname === "/") return createJsonResponse(MSG.ROOT_URL_MESSAGE, 200)
 
-	return createJsonResponse(buildLocalizedMessage(config.LANG_CODE, 'warning', 'INVALID_API_ENDPOINT'), 404);
+	return createJsonResponse(MSG.INVALID_API_ENDPOINT, 404);
 
 }
 

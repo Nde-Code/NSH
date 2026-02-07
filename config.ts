@@ -9,8 +9,6 @@ export const config: Config = {
     HASH_KEY: "",
 
     ADMIN_KEY: "",
-
-    LANG_CODE: 'en',
     
     RATE_LIMIT_INTERVAL_S: 1,
 

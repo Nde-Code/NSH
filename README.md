@@ -22,8 +22,6 @@ A simple, lightweight URL shortener API built with [Wrangler](https://developers
 
 - Minimal and fast REST API.
 
-- Multi-language support for response messages.
-
 ## 🛡 GDPR Compliance:
 
 This project is designed with **GDPR compliance** in mind:
