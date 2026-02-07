@@ -11,34 +11,38 @@ RED = "\033[31m"
 BLUE = "\033[36m"
 PURPLE = "\033[35m"
 GRAY = "\033[90m"
+YELLOW = "\033[33m"
 
 OK = f"{GREEN}✓{RESET}"
 KO = f"{RED}✗{RESET}"
-STEP = f"{BLUE}>{RESET}"
+STEP = f"{BLUE}>>>{RESET}"
 INFO = f"{PURPLE}i{RESET}"
+WARN = f"{YELLOW}!{RESET}"
 
-def print_step(text: str):
-    print(f"{STEP} {text}")
+def print_step(text: str): print(f"\n{STEP} {text}")
 
+def print_result(label: str, resp: requests.Response, expected_codes=(200, 201, 204, 301, 302)) -> bool:
 
-def print_result(label: str, resp: requests.Response,success_codes=(200, 201, 204, 301, 302)) -> bool:
-
-    ok = resp.status_code in success_codes
+    status = resp.status_code
+    ok = status in expected_codes
     icon = OK if ok else KO
     color = GREEN if ok else RED
 
     print(f"{icon} {label}")
-    print(f"    status: {color}{resp.status_code}{RESET}")
+    print(f"    status: {color}{status}{RESET}")
 
     try:
+
         body = resp.json()
         print(f"    body: {GRAY}{body}{RESET}")
+
     except Exception:
+
         if resp.text:
-            print(f"    body: {GRAY}{resp.text}{RESET}")
+            text = resp.text.strip().replace("\n", " ")
+            print(f"    body: {GRAY}{text[:100]}{'...' if len(text)>100 else ''}{RESET}")
 
     return ok
-
 
 def load_env_file(path: Path) -> dict:
 
@@ -47,137 +51,115 @@ def load_env_file(path: Path) -> dict:
     with open(path, "r") as f:
         for line in f:
             line = line.strip()
-            if not line or line.startswith("#"):
+            if not line or line.startswith("#") or "=" not in line:
                 continue
-            if "=" not in line:
-                continue
-
             key, value = line.split("=", 1)
-            value = value.strip()
-
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            elif value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
-
-            env[key.strip()] = value
+            env[key.strip()] = value.strip().strip("'").strip('"')
 
     return env
 
-def sleep_delay(delay: int):
-    print(f"\n{INFO} Sleeping {delay}s...\n")
+def sleep_delay(delay: int, reason: str = "Rate limit spacing"):
+    print(f"    {GRAY}({reason}: sleeping {delay}s...){RESET}")
     time.sleep(delay)
-
-def print_response(resp: requests.Response, max_body_len: int = 500):
-    
-    status = resp.status_code
-    ok = 200 <= status < 300 or status in (301, 302)
-
-    print(f"    status      : {status} ({'OK' if ok else 'ERROR'})")
-    print(f"    content-type: {resp.headers.get('Content-Type', 'unknown')}")
-
-    try:
-        body = resp.json()
-        body_str = str(body)
-        if len(body_str) > max_body_len:
-            body_str = body_str[:max_body_len] + "…"
-        print(f"    body (json) : {body_str}")
-    except Exception:
-        text = resp.text.strip()
-        if len(text) > max_body_len:
-            text = text[:max_body_len] + "…"
-        if text:
-            print(f"    body (text) : {text}")
-        else:
-            print(f"    body        : <empty>")
-
-def make_invalid_link(link: str) -> str:
-    return "ht!tp://" + link.replace("://", "").replace("/", "_")
 
 def main():
 
-    parser = argparse.ArgumentParser(description="End-to-end API test CLI")
-
-    parser.add_argument("--env", required=True, help="Env file path (ADMIN_KEY)")
-    parser.add_argument("--link", required=True, help="Base long URL used for all tests")
-    parser.add_argument("--delay", type=int, default=2, help="Delay between calls (1–10s)")
-    parser.add_argument("--remote", help="Remote worker URL")
+    parser = argparse.ArgumentParser(description="Full API Suite Test")
+    parser.add_argument("--env", required=True, help="Path to .env (must contain ADMIN_KEY)")
+    parser.add_argument("--link", required=True, help="Long URL to use for tests")
+    parser.add_argument("--delay", type=int, default=2, help="Delay between calls")
+    parser.add_argument("--remote", help="Remote worker URL (default: http://localhost:8787)")
 
     args = parser.parse_args()
-    delay = max(1, min(10, args.delay))
 
-    env_path = Path(args.env)
-
-    if not env_path.exists():
-        print(f"{KO} Env file not found.")
-        sys.exit(1)
-
-    env = load_env_file(env_path)
+    env = load_env_file(Path(args.env))
     ADMIN_KEY = env.get("ADMIN_KEY")
-
+    
     if not ADMIN_KEY:
-        print(f"{KO} ADMIN_KEY missing in env file.")
+        print(f"{KO} Error: ADMIN_KEY not found in env file.")
         sys.exit(1)
 
     BASE_URL = args.remote.rstrip("/") if args.remote else "http://localhost:8787"
-
-    if args.remote and not args.remote.startswith(("http://", "https://")):
-        print(f"{KO} --remote must start with http:// or https://")
-        sys.exit(1)
-
-    print(f"{INFO} Target API: {BASE_URL} \n")
-
-    admin_headers = {"Authorization": f"Bearer {ADMIN_KEY}", "Content-Type": "application/json"}
-
+    HEADERS = {"Authorization": f"Bearer {ADMIN_KEY}", "Content-Type": "application/json"}
+    BAD_HEADERS = {"Authorization": "Bearer WRONG_KEY", "Content-Type": "application/json"}
+    
     created_id = None
-    valid_link = args.link
-    invalid_link = make_invalid_link(args.link)
 
-    print_step("Fetching initial list of URLs:")
-    r = requests.get(f"{BASE_URL}/urls?count=5", headers=admin_headers)
-    print_result("GET /urls via request:", r)
-    sleep_delay(delay)
+    print(f"\n{INFO} Starting API test suite against {BASE_URL} at {time.strftime('%H:%M:%S')}")
 
-    print_step("Creating short URL from valid link:")
-    r = requests.post(f"{BASE_URL}/post-url", json={"long_url": valid_link})
-    if print_result("POST /post-url (valid) via request:", r):
-        try:
-            body = r.json()
-            created_id = next(iter(body.values())).split("/")[-1]
-            print(f"    {INFO} Created ID: {created_id}")
-        except Exception:
-            print(f"    {INFO} Could not extract created ID")
+    print_step("TEST: Security / Unauthorized Access")
+    r = requests.get(f"{BASE_URL}/urls", headers=BAD_HEADERS)
+    print_result("GET /urls with wrong key (Expect 401)", r, expected_codes=(401,))
 
-    sleep_delay(delay)
+    sleep_delay(args.delay)
 
-    print_step("Testing URL validation with invalid link")
-    r = requests.post(f"{BASE_URL}/post-url", json={"long_url": invalid_link})
-    print_result("POST /post-url (invalid) via request:", r)
-    sleep_delay(delay)
+    print_step("TEST: Rate Limiting (Spamming)")
+    requests.get(f"{BASE_URL}/urls", headers=HEADERS) 
+    r = requests.get(f"{BASE_URL}/urls", headers=HEADERS) 
+    print_result("GET /urls immediate repeat (Expect 429)", r, expected_codes=(429,))
+
+    sleep_delay(args.delay + 1, "Waiting for rate limit to reset")
+
+    print_step("TEST: POST Strict Body Validation")
+    bad_payload = {"long_url": args.link, "extra_field": "not_allowed"}
+    r = requests.post(f"{BASE_URL}/post-url", json=bad_payload)
+    print_result("POST /post-url with extra fields (Expect 400)", r, expected_codes=(400,))
+
+    sleep_delay(args.delay)
+
+    print_step("TEST: POST Valid URL Creation")
+    r = requests.post(f"{BASE_URL}/post-url", json={"long_url": args.link})
+    if print_result("POST /post-url (Expect 201 or 200)", r, expected_codes=(200, 201)):
+        body = r.json()
+        url_val = body.get("success", "")
+        created_id = url_val.split("/")[-1]
+        print(f"    {INFO} Created ID: {YELLOW}{created_id}{RESET}")
+
+    sleep_delay(args.delay)
 
     if created_id:
-        print_step("Resolving short URL:")
+        print_step("TEST: GET URL Resolution")
         r = requests.get(f"{BASE_URL}/url/{created_id}", allow_redirects=False)
-        print_result("GET /url/{id} via request:", r)
-        sleep_delay(delay)
+        print_result(f"GET /url/{created_id} (Expect 301/302)", r, expected_codes=(301, 302))
+        
+    if created_id:
+        print_step("TEST: PATCH Verification Logic")
+        r1 = requests.patch(f"{BASE_URL}/verify/{created_id}", headers=HEADERS)
+        print_result("First Verification (Expect 200 'verified_now')", r1)
+        
+        sleep_delay(args.delay)
+        
+        r2 = requests.patch(f"{BASE_URL}/verify/{created_id}", headers=HEADERS)
+        print_result("Second Verification (Expect 200 'already_verified')", r2)
+
+    sleep_delay(args.delay)
+
+    print_step("TEST: GET /urls Pagination")
+    r = requests.get(f"{BASE_URL}/urls?count=1", headers=HEADERS)
+    if print_result("GET /urls?count=1", r):
+        data = r.json()
+        if data.get("has_more") and data.get("next_cursor"):
+            cursor = data["next_cursor"]
+            print(f"    {INFO} Fetching next page with cursor: {cursor}")
+            r_page2 = requests.get(f"{BASE_URL}/urls?count=1&cursor={cursor}", headers=HEADERS)
+            print_result("GET /urls with cursor (Expect 200)", r_page2)
+
+    sleep_delay(args.delay)
 
     if created_id:
-        print_step("Verifying short URL:")
-        r = requests.patch(f"{BASE_URL}/verify/{created_id}", headers=admin_headers)
-        print_result("PATCH /verify/{id} via request:", r)
-        sleep_delay(delay)
+        print_step("TEST: DELETE Endpoints")
+        r = requests.delete(f"{BASE_URL}/delete/{created_id}", headers=HEADERS)
+        print_result(f"DELETE /delete/{created_id} (Expect 200)", r)
+        
+        sleep_delay(args.delay)
+        
+        r_repeat = requests.delete(f"{BASE_URL}/delete/{created_id}", headers=HEADERS)
+        print_result("DELETE non-existent ID (Expect 404)", r_repeat, expected_codes=(404,))
 
-    if created_id:
-        print_step("Deleting short URL")
-        r = requests.delete(f"{BASE_URL}/delete/{created_id}", headers=admin_headers)
-        print_result("DELETE /delete/{id} via request:", r)
-        sleep_delay(delay)
+    print_step("TEST: Invalid Endpoint")
+    r = requests.get(f"{BASE_URL}/this-endpoint-does-not-exist", headers=HEADERS)
+    print_result("GET /random (Expect 404)", r, expected_codes=(404,))
 
-    print_step("Fetching final list of URLs after cleanup:")
-    r = requests.get(f"{BASE_URL}/urls?count=5", headers=admin_headers)
-    print_result("GET /urls (final) via request:", r)
+    print(f"\n{INFO} Full test suite completed at {time.strftime('%H:%M:%S')}")
 
-    print(f"\n{OK} API test sequence completed successfully !")
-
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()

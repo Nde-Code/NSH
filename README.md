@@ -54,9 +54,9 @@ To use this API you can use:
 
 - **JavaScript** in the browser: CORS is enabled for all domains (but only for the posting URL, of course).
 
-- **cURL** from a terminal: [https://curl.se/](https://curl.se/)
+- **cURL** from a terminal, for all endpoints: [https://curl.se/](https://curl.se/)
 
-- **Postman** *(Recommended)*: [https://www.postman.com/](https://www.postman.com/)
+- **Postman** *(Recommended)*, for all endpoints: [https://www.postman.com/](https://www.postman.com/)
 
 ### Here’s a complete list of the available methods:
 | Method | Endpoint           | Description                                                                 | Request Body                                 | Response                                                                                                                                       |

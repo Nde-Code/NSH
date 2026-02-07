@@ -415,7 +415,7 @@ To run locally, run:
 wrangler dev
 ```
 
-Use the python CLI (requires **Python 3.8+**, **no external dependencies**) script to run test to validate and ensure you changements.
+Use the python CLI (requires **Python 3.8+**, **Require requests**: via `pip install requests`) script to run test to validate and ensure you changements.
 
 | Argument     | Description |
 |--------------|-------------|

@@ -270,6 +270,10 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		}
 
+		const existing = await readInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
+		
+		if (!existing) return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
+
 		const data: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
 
 		if (data === true) {
@@ -283,11 +287,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount });
 
 			return createJsonResponse(MSG.LINK_DELETED, 200);
-
+			
 		}
 		
-		else return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
-	
+		else return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 500);
+
 	}
 
 	if (req.method === "GET" && pathname.startsWith("/url/")) {
