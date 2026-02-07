@@ -141,6 +141,7 @@ def main():
         if data.get("has_more") and data.get("next_cursor"):
             cursor = data["next_cursor"]
             print(f"    {INFO} Fetching next page with cursor: {cursor}")
+            sleep_delay(args.delay + 1, "Extra safety for pagination")
             r_page2 = requests.get(f"{BASE_URL}/urls?count=1&cursor={cursor}", headers=HEADERS)
             print_result("GET /urls with cursor (Expect 200)", r_page2)
 

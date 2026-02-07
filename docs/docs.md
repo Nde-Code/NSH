@@ -19,7 +19,7 @@ npm install -g wrangler
 ### 4. Clone the project branch:
 
 ```bash
-git clone https://github.com/Nde-Code/MeteoritesAPI.git
+git clone https://github.com/Nde-Code/NSH.git
 ```
 
 ### 5. Log your Wrangler CLI to your Cloudflare account using:
@@ -30,7 +30,7 @@ wrangler login
 
 ## ⚙️ Setting up the configuration:
 
-First, create the [wrangler.jsonc](../wrangler.jsonc) file, which contains the full configuration for your project. It should look like this:
+First, take a look at the [wrangler.jsonc](../wrangler.jsonc) file, which contains the full configuration for your project:
 ```jsonc
 {
 	"name": "project_name",
@@ -136,7 +136,7 @@ To start working **locally** with environment variables, create a file called `.
 FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
 FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
 HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
-ADMIN_KEY="THE_ADMIN_KEY_TO_DELETE_AND_VERIFY"
+ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
 ```
 
 **List of variables in this project:**
@@ -146,7 +146,7 @@ ADMIN_KEY="THE_ADMIN_KEY_TO_DELETE_AND_VERIFY"
 | `FIREBASE_HOST_LINK`   | The public or private Firebase endpoint used by your Worker.          |
 | `FIREBASE_HIDDEN_PATH` | A hidden or secure subpath for sensitive Firebase operations.         |
 | `HASH_KEY`             | The cryptographic key used to hash user IPs or sensitive identifiers. |
-| `ADMIN_KEY`            | A private admin key used to verify or delete data.          |
+| `ADMIN_KEY`            | A private admin key used to verify, list or delete data.              |
 
 When you have finished, **make sure there are no traces of secrets** in your code, and run the following command.  
 *(Normally, you'll only need to do this once, when you first create the project.)*
@@ -167,13 +167,13 @@ to send your secret to the Cloudflare Workers platform.
 ```ts
 export const config: Config = {
 
-  FIREBASE_URL: "",
+  FIREBASE_URL: "", // Do not modify
 
-  FIREBASE_HIDDEN_PATH: "",
+  FIREBASE_HIDDEN_PATH: "", // Do not modify
 
-  HASH_KEY: "",
+  HASH_KEY: "", // Do not modify
 
-  ADMIN_KEY: "",
+  ADMIN_KEY: "", // Do not modify
     
   RATE_LIMIT_INTERVAL_S: 1, // min = 1
 
@@ -195,8 +195,6 @@ export const config: Config = {
 
 };
 ```
-
-- **FIREBASE_URL**, **FIREBASE_HIDDEN_PATH**, **HASH_KEY**, **ADMIN_KEY**: These are values read from the `.env` file, so please **do not modify them**.
 
 - **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
   - **Currently**:
@@ -226,7 +224,7 @@ export const config: Config = {
   - **Currently**:
     - **Default**: 1000 links.
 
-- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. You should probably not change this value to ensure no collisions occur with `SHA-256`.
+- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. 
   - **Currently**: 
     - **Default**: 14 characters.
 
@@ -407,9 +405,9 @@ Use the python CLI (requires **Python 3.8+**, **Require requests**: via `pip ins
 
 | Argument     | Description |
 |--------------|-------------|
-| `--env`      | Path to the `.env` file used to load environment variables (e.g. `ADMIN_KEY`) **(required)** |
-| `--remote`   | Base URL of the deployed Worker to test. If not provided, defaults to `http://localhost:8787` (Wrangler dev) |
+| `--env`      | Path to the `.dev.vars` file used to load environment variables (e.g. `ADMIN_KEY`) **(required)** |
 | `--link`     | Base URL used to generate test requests. The script will automatically modify it to test both valid and invalid cases **(required)** |
+| `--remote`   | Base URL of the deployed Worker to test. If not provided, defaults to `http://localhost:8787` (Wrangler dev) |
 | `--delay`    | Delay (in seconds) between each API call. Minimum: `1`, Maximum: `10`, Default: `2` |
 
 Navigate to the directory containing `tests.py` and run the following command (ensure that Wrangler is running via: `wrangler dev`):
