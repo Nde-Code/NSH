@@ -250,81 +250,69 @@ export const config: Config = {
 3. Once your database is ready, go to the **`Rules`** tab and paste the following code in the editor:
 ```js
 {
-  
+
   "rules": {
 
     "YOUR_SECRET_PATH": {
-        
+
       ".read": false,
+
+      ".write": false,
 
       "meta": {
 
-        "_url_counter": {
-                
-          ".read": true,
-                  
-          ".write": "newData.exists() && newData.child('url_count').isNumber()",
-                  
-          ".validate": "newData.child('url_count').isNumber()"
-                
-        }, 
+        ".write": "newData.hasChild('_url_counter')",
         
+        "_url_counter": {
+
+          ".read": true,
+
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+
+        }
+
       },
-          
+
       "urls": {
 
         ".read": true,
 
         "$shortcode": {
-            
-          ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val() && newData.child('is_verified').isBoolean() && newData.hasChild('post_date') && newData.child('long_url').isString() && newData.child('post_date').isString())",
-            
+
+          ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val())",
+          
           ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
-            
-          "long_url": {
-                
-            ".validate": "newData.isString() && newData.val().length <= 2000 && newData.val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/)"
-              
-          },
 
-          "post_date": {
-                
-            ".validate": "newData.isString() && newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/)"
-              
-          },
+          "long_url": { ".validate": "newData.isString() && newData.val().length <= 2000" },
 
-          "is_verified": {
-                
-            ".validate": "newData.isBoolean()"
-                
-          },
+          "post_date": { ".validate": "newData.isString()" },
 
-          "$other": {
-                
-            ".validate": false
-                
-          }
-          
+          "is_verified": { ".validate": "newData.isBoolean()" },
+
+          "$other": { ".validate": false }
+
         }
-          
+
       }
 
     }
-      
+
   }
-  
+
 }
 ```
 
 Here is a brief summary of these rules:
 
-| Action        | Allowed if...                                                                                               |
-|---------------|------------------------------------------------------------------------------------------------------------|
-| **Read**      | Always allowed for `meta/_url_counter` and all `urls/`                                          |
-| **Write**     | - For `urls/$shortcode`: either creating a new URL or updating only `is_verified` while `long_url` and `post_date` stay the same. <br> - For `meta/_url_counter`: `url_count` must exist and be a number |
-| **Delete**    | - Allowed for `urls/$shortcode` (deleting a URL). <br> - `meta/_url_counter` should be updated accordingly. |
-| **Update**    | - For `urls/$shortcode`: only `is_verified` can change; `long_url` and `post_date` must remain unchanged. <br> - For `meta/_url_counter`: `url_count` must stay a number |
-| **Extra fields** | Not allowed in `urls/$shortcode`. Any field other than `long_url`, `post_date`, `is_verified` is rejected. |
+| Action | Allowed if... |
+| :--- | :--- |
+| **Read** | Always allowed for `meta/_url_counter` and for the full list in `urls/`. The root of the secret path remains private (`.read: false`). |
+| **Write (Create)** | **For `urls/$shortcode`**: The node must not exist. Incoming data must include `long_url` (URL format), `post_date` (ISO format), and `is_verified` (boolean). |
+| **Write (Counter)** | **For `meta/`**: The operation (PATCH) must contain the `_url_counter` key. The final value must remain a number greater than or equal to 0. |
+| **Delete** | **For `urls/$shortcode`**: Allowed if the node exists. <br> **Note**: The Worker handles the atomic decrement via a PATCH on the counter after a successful deletion. |
+| **Update (Patch)** | **For `urls/$shortcode`**: Only `is_verified` can change. The rule verifies that the incoming `long_url` and `post_date` are identical to the values already stored in the database. |
+| **Validation** | All data in `urls/` must respect: <br> 1. `long_url`: max 2000 chars + HTTP/HTTPS Regex. <br> 2. `post_date`: Strict ISO 8601 format. |
+| **Extra fields** | **Forbidden**. Any key other than `long_url`, `post_date`, or `is_verified` within a URL object is rejected via `$other: { ".validate": false }`. |
 
 ### 2. Initialize TypeScript types:
 

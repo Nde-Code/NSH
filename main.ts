@@ -1,5 +1,7 @@
 import { putInFirebaseRTDB } from "./utilities/write.ts";
 
+import { updateFirebaseCounter } from "./utilities/counter.ts";
+
 import { readInFirebaseRTDB } from "./utilities/read.ts";
 
 import { deleteInFirebaseRTDB } from "./utilities/delete.ts";
@@ -264,30 +266,24 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (apiKey !== config.ADMIN_KEY) {
 
-			printLogLine("WARN", "Invalid API or Admin key provided for deletion !");
+			printLogLine("WARN", "Invalid API or Admin key provided for deletion!");
 
 			return createJsonResponse(MSG.WRONG_API_KEY_FOR_DELETION, 401);
 
 		}
 
 		const existing = await readInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
-		
+
 		if (!existing) return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 
-		const data: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
+		const isDeleted: boolean = await deleteInFirebaseRTDB(config.FIREBASE_URL, "urls/" + ID);
 
-		if (data === true) {
+		if (isDeleted) {
 
-			let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "meta/_url_counter");
-			
-			let currentCount = countData?.url_count ?? 0;
-
-			currentCount = Math.max(0, currentCount - 1); 
-			
-			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount });
+			await updateFirebaseCounter(config.FIREBASE_URL, "meta", -1);
 
 			return createJsonResponse(MSG.LINK_DELETED, 200);
-			
+
 		}
 		
 		else return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 500);
@@ -324,73 +320,73 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
   	if (req.method === "POST" && pathname === "/post-url") {
 
-		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
+        const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
 
-		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
+        if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
 
-		const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req);
+        const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req);
 
-		if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(MSG.INVALID_POST_BODY, 400);
+        if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(MSG.INVALID_POST_BODY, 400);
+        
+        if (!("long_url" in data) || Object.getOwnPropertyNames(data).length !== 1) return createJsonResponse(MSG.UNEXPECTED_FIELD_IN_BODY, 400);
+        
+        const normalizedURL: string | null = normalizeAndValidateURL(data.long_url);
 
-		if (!("long_url" in data) || Object.getOwnPropertyNames(data).length !== 1) return createJsonResponse(MSG.UNEXPECTED_FIELD_IN_BODY, 400);
-		
-		const normalizedURL: string | null = normalizeAndValidateURL(data.long_url);
+        if (!normalizedURL) return createJsonResponse(MSG.NOT_A_VALID_URL, 400);
+        
+        if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(MSG.TOO_LONG_URL(config.MAX_URL_LENGTH), 400);
 
-		if (!normalizedURL) return createJsonResponse(MSG.NOT_A_VALID_URL, 400);
-
-		if (normalizedURL.length > config.MAX_URL_LENGTH) return createJsonResponse(MSG.TOO_LONG_URL, 400);
-
-		const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
-
+        const urlKey: string = simpleURLHash(normalizedURL, config.SHORT_URL_ID_LENGTH);
+        
 		const existing: LinkDetails | null = await readInFirebaseRTDB<LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey);
+        
+        if (existing) {
 
-		if (existing) {
-
-			if (existing.long_url === normalizedURL) return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 200);
+            if (existing.long_url === normalizedURL) return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 200);
 			
 			else return createJsonResponse(MSG.HASH_COLLISION, 500);
-		
-		}
 
-		let countData: { url_count: number } | null = await readInFirebaseRTDB<{ url_count: number }>(config.FIREBASE_URL, "meta/_url_counter");
+        }
 
-		if (!countData) {
-
-			await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: 0 });
-
-			countData = { url_count: 0 };
-
-		}
-
-		const currentCount: number = countData.url_count;
-
-		if (currentCount >= config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(MSG.DB_LIMIT_REACHED, 507);
-
-		const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP);
-
-		if (rateResult === "USER_LIMIT") return createJsonResponse(MSG.WRITE_LIMIT_EXCEEDED, 429);
-		
+        const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP);
+        
+		if (rateResult === "USER_LIMIT") return createJsonResponse(MSG.WRITE_LIMIT_EXCEEDED(config.MAX_DAILY_WRITES), 429);
+        
 		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
-		const firebaseData: LinkDetails = {
+        let countValue: number | null = await readInFirebaseRTDB<number>(config.FIREBASE_URL, "meta/_url_counter");
 
-			long_url: normalizedURL,
+        if (countValue === null) {
 
-			post_date: new Date().toISOString(),
+            printLogLine("INFO", "Counter not found, initializing to 0...");
 
-			is_verified: false
+            await updateFirebaseCounter(config.FIREBASE_URL, "meta", 0);
 
-		};
+            countValue = 0;
 
-		const result: LinkDetails | null = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey, firebaseData);
+        }
 
-		if (!result) return createJsonResponse(MSG.LINK_NOT_GENERATED, 500);
+        if (countValue >= config.FIREBASE_ENTRIES_LIMIT) return createJsonResponse(MSG.DB_LIMIT_REACHED, 507);
 
-		await putInFirebaseRTDB(config.FIREBASE_URL, "meta/_url_counter", { url_count: currentCount + 1 });
+        const firebaseData: LinkDetails = {
 
-		return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
-	
-	}
+            long_url: normalizedURL,
+
+            post_date: new Date().toISOString(),
+
+            is_verified: false
+
+        };
+
+        const result = await putInFirebaseRTDB<LinkDetails, LinkDetails>(config.FIREBASE_URL, "urls/" + urlKey, firebaseData);
+        
+        if (!result) return createJsonResponse(MSG.LINK_NOT_GENERATED, 500);
+
+        await updateFirebaseCounter(config.FIREBASE_URL, "meta", 1);
+
+        return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
+
+    }
 
 	if (req.method === "GET" && pathname === "/") return createJsonResponse(MSG.ROOT_URL_MESSAGE, 200)
 
