@@ -4,7 +4,7 @@ import { printLogLine } from "./utils.ts";
 
 export type RateLimitResult = "OK" | "USER_LIMIT" | "KV_QUOTA_EXCEEDED";
 
-const SECONDS_IN_DAY = 86400;
+const SECONDS_IN_DAY: number = 86400;
 
 async function safeKvPut(kv: KVNamespace, key: string, value: string, expirationTtl: number, errorMessage = "KV put failed..."): Promise<boolean> {
     
