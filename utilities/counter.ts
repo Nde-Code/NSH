@@ -1,8 +1,8 @@
 import { config } from "../config.js";
 
-export async function updateFirebaseCounter(FIREBASE_URL: string, path: string, step: number): Promise<boolean> {
+export async function updateFirebaseCounter(FIREBASE_URL: string, pathTo: string, step: number): Promise<boolean> {
 
-    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${path}.json`;
+    const url: string = `${FIREBASE_URL}${config.FIREBASE_HIDDEN_PATH}/${pathTo}.json`;
 
     const controller = new AbortController();
 
