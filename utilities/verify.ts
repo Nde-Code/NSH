@@ -62,9 +62,17 @@ export async function setIsVerifiedTrue(FIREBASE_URL: string, pathTo: string): P
 
         clearTimeout(timeoutId);
 
-        printLogLine("INFO", `The link stored on ${pathTo} has been verified successfully.`);
+        if (patchRes.ok) {
 
-        return patchRes.ok ? "verified_now" : "error";
+            printLogLine("INFO", `The link stored on ${pathTo} has been verified successfully.`);
+            
+            return "verified_now";
+
+        }
+
+        printLogLine("ERROR", `Verification PATCH failed with status ${patchRes.status} on ${pathTo}.`);
+        
+        return "error";
 
     } catch (_err) {
 

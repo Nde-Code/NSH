@@ -1,4 +1,4 @@
-import { config } from "../config.js";
+import { config } from "../config.ts";
 
 export async function updateFirebaseCounter(FIREBASE_URL: string, pathTo: string, step: number): Promise<boolean> {
 

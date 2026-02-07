@@ -2,7 +2,7 @@
 
 A simple, lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database). It operates at the edge across 300+ cities to ensure the lowest possible latency. If you need more resources for your instance, you can self-host the project on your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below. If you only need the project for occasional work, feel free to use my public online instance; however, please keep my usage limits in mind in this case.
 
-> I host the project on the free [Workers](https://workers.cloudflare.com/) plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays largely within the limits of the free plan.
+> I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays largely within the limits of the free plan.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 

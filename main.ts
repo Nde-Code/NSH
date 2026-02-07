@@ -250,6 +250,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		else if (result === "not_found") return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 
+		else return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
+
 	}
 
 	if (req.method === "DELETE" && pathname.startsWith("/delete/")) {
