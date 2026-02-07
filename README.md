@@ -44,7 +44,7 @@ This ensures that no identifiable user data is collected, stored, or shared in a
 
 ## 🌐 API Endpoints:
 
-The API is available in two versions, each with its own usage details:
+The API is available here:
 
 | Public endpoint: | Rate limit: | Owner: | Privacy policy: |
 |-----------------|------------|----------------|----------------|
