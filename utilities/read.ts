@@ -20,7 +20,7 @@ interface FirebaseQueryOptions {
 
 }
 
-export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathToID?: string, options?: FirebaseQueryOptions): Promise<T | null> {
+export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathToLink?: string, options?: FirebaseQueryOptions): Promise<T | null> {
 
     const controller = new AbortController();
 
@@ -28,7 +28,7 @@ export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathToID?: str
 
     try {
 
-        let url: string = `${FIREBASE_URL}${(pathToID === undefined) ? config.FIREBASE_HIDDEN_PATH : (config.FIREBASE_HIDDEN_PATH + '/' + pathToID)}.json`;
+        let url: string = `${FIREBASE_URL}${(pathToLink === undefined) ? config.FIREBASE_HIDDEN_PATH : (config.FIREBASE_HIDDEN_PATH + '/' + pathToLink)}.json`;
 
         if (options) {
 
@@ -78,7 +78,7 @@ export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathToID?: str
 
         clearTimeout(timeoutId);
 
-        printLogLine("ERROR", `An error happened when reading ${(pathToID === undefined) ? ": URLs" : `on: ${pathToID}`}.`);
+        printLogLine("ERROR", `An error happened when reading ${(pathToLink === undefined) ? ": URLs" : `on: ${pathToLink}`}.`);
 
         return null;
 
