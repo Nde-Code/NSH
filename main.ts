@@ -208,7 +208,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const nextCursor = hasMore ? keys[keys.length - 1] : null;
 
-		printLogLine("INFO", `Returned ${keys.length} link(s) from /urls.`);
+		printLogLine("INFO", `Returned ${keys.length} link${(keys.length === 1) ? "" : "s"} from /urls.`);
 
 		return createJsonResponse({
 
