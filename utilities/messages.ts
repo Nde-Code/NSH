@@ -36,7 +36,7 @@ export const MSG = {
 
     TOO_LONG_URL: (max: number) => ({ error: `URL too long (max ${max}).` }),
 
-    HASH_COLLISION: { error: "Hash collision detected, please try again." },
+    HASH_COLLISION: { error: "Hash collision detected..." },
 
     DB_LIMIT_REACHED: { warning: "Database limit reached." },
 
@@ -46,7 +46,7 @@ export const MSG = {
 
     LINK_NOT_GENERATED: { error: "Link could not be generated." },
 
-    ROOT_URL_MESSAGE: { success: "Welcome on the API Root. Docs: https://github.com/Nde-Code/NSH" },
+    ROOT_URL_MESSAGE: { success: "Welcome on the API root. Docs: https://github.com/Nde-Code/NSH" },
 
     INVALID_API_ENDPOINT: { warning: "Invalid endpoint." },
     
