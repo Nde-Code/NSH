@@ -59,7 +59,7 @@ def main():
     BAD_HEADERS = {"Authorization": "Bearer WRONG_KEY", "Content-Type": "application/json", "User-Agent": USER_AGENT}
     
     unique_test_link = f"{args.link}?ci_run={int(time.time())}"
-    created_id = None
+    created_ids = []
 
     TIMEOUT = args.timeout
 
@@ -134,9 +134,13 @@ def main():
         r = safe_request("post", f"{BASE_URL}/post-url", json={"long_url": url})
         print_result(f"POST exotic URL: {url}", r, expected_codes=(200, 201))
         if r.status_code in (200, 201):
-            created_id = r.json()["success"].split("/")[-1]
-            r_get = safe_request("get", f"{BASE_URL}/url/{created_id}", allow_redirects=False)
-            print_result(f"GET exotic URL ID: {created_id}", r_get, expected_codes=(301, 302))
+            try:
+                cid = r.json()["success"].split("/")[-1]
+                created_ids.append(cid)
+                r_get = safe_request("get", f"{BASE_URL}/url/{cid}", allow_redirects=False)
+                print_result(f"GET exotic URL ID: {cid}", r_get, expected_codes=(301, 302))
+            except Exception:
+                log_info("Could not parse created ID from exotic URL response.")
 
     time.sleep(args.delay)
 
@@ -144,29 +148,31 @@ def main():
     r = safe_request("post", f"{BASE_URL}/post-url", json={"long_url": unique_test_link})
     if print_result("POST /post-url (Expect 201/200)", r, expected_codes=(200, 201)):
         try:
-            created_id = r.json().get("success", "").split("/")[-1]
-            log_info(f"Created ID: {created_id}")
+            cid = r.json().get("success", "").split("/")[-1]
+            created_ids.append(cid)
+            log_info(f"Created ID: {cid}")
         except Exception:
             log_info("Could not parse created ID from response.")
 
-    if created_id:
+    if created_ids:
+        primary_id = created_ids[0]
         time.sleep(args.delay)
         log_step("URL Resolution & Robustness")
-        r = safe_request("get", f"{BASE_URL}/url/{created_id}", allow_redirects=False)
-        print_result(f"GET /url/{created_id} (Expect 301/302)", r, expected_codes=(301, 302))
+        r = safe_request("get", f"{BASE_URL}/url/{primary_id}", allow_redirects=False)
+        print_result(f"GET /url/{primary_id} (Expect 301/302)", r, expected_codes=(301, 302))
         
         r_bad = safe_request("get", f"{BASE_URL}/url/bad@char!")
         print_result("GET malformed ID 'bad@char!' (Expect 400/404)", r_bad, expected_codes=(400, 404))
 
         time.sleep(args.delay)
         log_step("PATCH Verification Logic")
-        print_result("First Verification", safe_request("patch", f"{BASE_URL}/verify/{created_id}", headers=HEADERS), expected_codes=(200,))
+        print_result("First Verification", safe_request("patch", f"{BASE_URL}/verify/{primary_id}", headers=HEADERS), expected_codes=(200,))
         
         time.sleep(args.delay)
         print_result("PATCH non-existent ID (Expect 400/404)", safe_request("patch", f"{BASE_URL}/verify/no-id", headers=HEADERS), expected_codes=(400, 404))
         
         time.sleep(args.delay)
-        print_result("Second Verification (Already verified)", safe_request("patch", f"{BASE_URL}/verify/{created_id}", headers=HEADERS), expected_codes=(200,))
+        print_result("Second Verification (Already verified)", safe_request("patch", f"{BASE_URL}/verify/{primary_id}", headers=HEADERS), expected_codes=(200,))
 
     time.sleep(args.delay)
     log_step("GET /urls Pagination & Limits")
@@ -185,10 +191,13 @@ def main():
         except Exception:
             print("    Could not parse /urls response JSON.")
 
-    if created_id:
+    if created_ids:
         time.sleep(args.delay)
         log_step("DELETE Endpoints")
-        print_result(f"DELETE /delete/{created_id}", safe_request("delete", f"{BASE_URL}/delete/{created_id}", headers=HEADERS), expected_codes=(200,))
+        unique_ids = list(dict.fromkeys(created_ids))
+        for cid in unique_ids:
+            time.sleep(args.delay)
+            print_result(f"DELETE /delete/{cid}", safe_request("delete", f"{BASE_URL}/delete/{cid}", headers=HEADERS), expected_codes=(200,))
         
         time.sleep(args.delay)
         print_result("DELETE non-existent (Expect 400/404)", safe_request("delete", f"{BASE_URL}/delete/no-id", headers=HEADERS), expected_codes=(400, 404))
