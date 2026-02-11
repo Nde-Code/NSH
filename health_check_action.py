@@ -124,6 +124,7 @@ def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created
     for url in exotic_urls:
         r = safe_request("post", f"{base_url}/post-url", json={"long_url": url})
         print_result(f"POST exotic URL: {url}", r, expected_codes=(200, 201))
+        time.sleep(1)
         if r.status_code in (200, 201):
             try:
                 cid = r.json().get("success", "").split("/")[-1]
