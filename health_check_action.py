@@ -188,7 +188,7 @@ def main():
     if created_id:
         time.sleep(args.delay)
         log_step("DELETE Endpoints")
-        print_result(f"DELETE /delete/{created_id}", safe_request("delete", f"{BASE_URL}/delete/{created_id}", headers=HEADERS), expected_codes=(200, 204))
+        print_result(f"DELETE /delete/{created_id}", safe_request("delete", f"{BASE_URL}/delete/{created_id}", headers=HEADERS), expected_codes=(200,))
         
         time.sleep(args.delay)
         print_result("DELETE non-existent (Expect 400/404)", safe_request("delete", f"{BASE_URL}/delete/no-id", headers=HEADERS), expected_codes=(400, 404))
