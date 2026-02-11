@@ -304,7 +304,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			return new Response(null, {
 
-				status: (data.is_verified === true) ? 302 : 301,
+				status: (data.is_verified === true) ? 301 : 302,
 
 				headers: {
 
