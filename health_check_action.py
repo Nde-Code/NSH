@@ -63,12 +63,12 @@ def make_safe_request(timeout: int, user_agent: str):
 
     return safe_request
 
-def test_security_and_base(base_url: str, safe_request, bad_headers: dict) -> None:
+def test_security_and_base(base_url: str, safe_request, bad_headers: dict , delay: int) -> None:
     log_step("Security & Base")
     r = safe_request("get", f"{base_url}/urls", headers=bad_headers)
     print_result("GET /urls with wrong key (Expect 401)", r, expected_codes=(401,))
 
-    time.sleep(1)
+    time.sleep(delay)
     r = safe_request("get", f"{base_url}/")
     print_result("GET / (Expect 200)", r, expected_codes=(200,))
     print_result("OPTIONS /post-url (CORS - Expect 204)", safe_request("options", f"{base_url}/post-url"), expected_codes=(204,))
@@ -96,24 +96,24 @@ def test_rate_limiting(base_url: str, safe_request, headers: dict) -> None:
         log_info("Rate limit not triggered (Check your RATE_LIMIT_INTERVAL_S)")
 
 
-def test_post_validation(base_url: str, safe_request, unique_test_link: str, max_len: int) -> None:
+def test_post_validation(base_url: str, safe_request, unique_test_link: str, max_len: int, delay: int) -> None:
     log_step("POST Validation (Body & Length)")
     bad_payload = {"long_url": unique_test_link, "extra_field": "not_allowed"}
     r = safe_request("post", f"{base_url}/post-url", json=bad_payload)
     print_result("POST with extra fields (Expect 400)", r, expected_codes=(400,))
 
-    time.sleep(1)
+    time.sleep(delay)
     long_url = "https://example.com/" + ("a" * (max_len + 1))
     r_long = safe_request("post", f"{base_url}/post-url", json={"long_url": long_url})
     print_result("POST overlong URL > 2000 (Expect 400)", r_long, expected_codes=(400,))
 
-    time.sleep(1)
+    time.sleep(delay)
     self_payload = {"long_url": f"{base_url}/url/some-id"}
     r = safe_request("post", f"{base_url}/post-url", json=self_payload)
     print_result("POST with self-domain (Expect 400)", r, expected_codes=(400,))
 
 
-def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created_ids: list) -> None:
+def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created_ids: list, delay: int) -> None:
     log_step("POST Exotic URLs")
     exotic_urls = [
         f"{unique_test_link}café",
@@ -124,7 +124,7 @@ def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created
     for url in exotic_urls:
         r = safe_request("post", f"{base_url}/post-url", json={"long_url": url})
         print_result(f"POST exotic URL: {url}", r, expected_codes=(200, 201))
-        time.sleep(1)
+        time.sleep(delay)
         if r.status_code in (200, 201):
             try:
                 cid = r.json().get("success", "").split("/")[-1]
@@ -135,7 +135,7 @@ def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created
                 log_info("Could not parse created ID from exotic URL response.")
 
 
-def test_creation_and_verification(base_url: str, safe_request, unique_test_link: str, created_ids: list, headers: dict) -> None:
+def test_creation_and_verification(base_url: str, safe_request, unique_test_link: str, created_ids: list, headers: dict, delay: int) -> None:
     log_step("POST Valid URL Creation")
     r = safe_request("post", f"{base_url}/post-url", json={"long_url": unique_test_link})
     if print_result("POST /post-url (Expect 201/200)", r, expected_codes=(200, 201)):
@@ -148,7 +148,7 @@ def test_creation_and_verification(base_url: str, safe_request, unique_test_link
 
     if created_ids:
         primary_id = created_ids[0]
-        time.sleep(1)
+        time.sleep(delay)
         log_step("URL Resolution & Robustness")
         r = safe_request("get", f"{base_url}/url/{primary_id}", allow_redirects=False)
         print_result(f"GET /url/{primary_id} (Expect 301/302)", r, expected_codes=(301, 302))
@@ -156,47 +156,52 @@ def test_creation_and_verification(base_url: str, safe_request, unique_test_link
         r_bad = safe_request("get", f"{base_url}/url/bad@char!")
         print_result("GET malformed ID 'bad@char!' (Expect 400/404)", r_bad, expected_codes=(400, 404))
 
-        time.sleep(1)
+        time.sleep(delay)
         log_step("PATCH Verification Logic")
         print_result("First Verification", safe_request("patch", f"{base_url}/verify/{primary_id}", headers=headers), expected_codes=(200,))
 
-        time.sleep(1)
+        time.sleep(delay)
         print_result("PATCH non-existent ID (Expect 400/404)", safe_request("patch", f"{base_url}/verify/no-id", headers=headers), expected_codes=(400, 404))
 
-        time.sleep(1)
+        time.sleep(delay)
         print_result("Second Verification (Already verified)", safe_request("patch", f"{base_url}/verify/{primary_id}", headers=headers), expected_codes=(200,))
 
 
-def test_pagination_and_limits(base_url: str, safe_request, headers: dict) -> None:
+def test_pagination_and_limits(base_url: str, safe_request, headers: dict, delay: int) -> None:
     log_step("GET /urls Pagination & Limits")
     r_limit = safe_request("get", f"{base_url}/urls?count=999", headers=headers)
     print_result("GET /urls?count=999 (Abusive limit - Expect 400)", r_limit, expected_codes=(400,))
 
-    time.sleep(1)
+    time.sleep(delay)
     r = safe_request("get", f"{base_url}/urls?count=1", headers=headers)
     if print_result("GET /urls?count=1", r):
         try:
             data = r.json()
             if data.get("has_more") and data.get("next_cursor"):
                 cursor = data["next_cursor"]
-                time.sleep(1)
+                time.sleep(delay)
                 print_result("GET /urls with cursor", safe_request("get", f"{base_url}/urls?count=1&cursor={cursor}", headers=headers))
         except Exception:
             print("    Could not parse /urls response JSON.")
 
+        time.sleep(delay)
+        invalid_cursor = "nonexistent123"
+        r_invalid = safe_request("get", f"{base_url}/urls?count=1&cursor={invalid_cursor}", headers=headers)
+        print_result("GET /urls with invalid cursor (Expect 400)", r_invalid, expected_codes=(400,))
 
-def test_delete_endpoints(base_url: str, safe_request, created_ids: list, headers: dict) -> None:
+
+def test_delete_endpoints(base_url: str, safe_request, created_ids: list, headers: dict, delay: int) -> None:
     if not created_ids:
         return
 
-    time.sleep(1)
+    time.sleep(delay)
     log_step("DELETE Endpoints")
     unique_ids = list(dict.fromkeys(created_ids))
     for cid in unique_ids:
-        time.sleep(1)
+        time.sleep(delay)
         print_result(f"DELETE /delete/{cid}", safe_request("delete", f"{base_url}/delete/{cid}", headers=headers), expected_codes=(200,))
 
-    time.sleep(1)
+    time.sleep(delay)
     print_result("DELETE non-existent (Expect 400/404)", safe_request("delete", f"{base_url}/delete/no-id", headers=headers), expected_codes=(400, 404))
 
 
