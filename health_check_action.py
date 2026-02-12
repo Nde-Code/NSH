@@ -134,6 +134,22 @@ def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created
             except Exception:
                 log_info("Could not parse created ID from exotic URL response.")
 
+def test_idempotency(base_url, safe_request, unique_test_link, headers, delay):
+    log_step("Idempotency Check")
+    r1 = safe_request("post", f"{base_url}/post-url", json={"long_url": unique_test_link}, headers=headers)
+    if r1.status_code in (200, 201):
+        id1 = r1.json().get("success", "").split("/")[-1]
+        time.sleep(delay)
+        
+        r2 = safe_request("post", f"{base_url}/post-url", json={"long_url": unique_test_link}, headers=headers)
+        print_result("POST duplicate URL (Expect 200/201)", r2, expected_codes=(200, 201))
+        
+        if r2.status_code in (200, 201):
+            id2 = r2.json().get("success", "").split("/")[-1]
+            if id1 == id2:
+                log_success(f"Idempotency verified: Both requests returned ID {id1}")
+            else:
+                log_fail(f"Idempotency failed: Got {id1} then {id2}")
 
 def test_creation_and_verification(base_url: str, safe_request, unique_test_link: str, created_ids: list, headers: dict, delay: int) -> None:
     log_step("POST Valid URL Creation")
@@ -250,6 +266,9 @@ def main():
     time.sleep(args.delay)
     test_exotic_urls(BASE_URL, safe_request, unique_test_link, created_ids, args.delay)
 
+    time.sleep(args.delay)
+    test_idempotency(BASE_URL, safe_request, unique_test_link, HEADERS, args.delay)    
+    
     time.sleep(args.delay)
     test_creation_and_verification(BASE_URL, safe_request, unique_test_link, created_ids, HEADERS, args.delay)
 
