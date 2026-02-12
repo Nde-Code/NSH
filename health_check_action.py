@@ -236,7 +236,7 @@ def main():
 
     log_info(f"Starting Robust CI Suite against {BASE_URL}")
 
-    test_security_and_base(BASE_URL, safe_request, BAD_HEADERS)
+    test_security_and_base(BASE_URL, safe_request, BAD_HEADERS, args.delay)
 
     time.sleep(args.delay)
     test_favicon(BASE_URL, safe_request)
@@ -245,19 +245,19 @@ def main():
     test_rate_limiting(BASE_URL, safe_request, HEADERS)
 
     time.sleep(args.delay)
-    test_post_validation(BASE_URL, safe_request, unique_test_link, args.max_url_length)
+    test_post_validation(BASE_URL, safe_request, unique_test_link, args.max_url_length, args.delay)
 
     time.sleep(args.delay)
-    test_exotic_urls(BASE_URL, safe_request, unique_test_link, created_ids)
+    test_exotic_urls(BASE_URL, safe_request, unique_test_link, created_ids, args.delay)
 
     time.sleep(args.delay)
-    test_creation_and_verification(BASE_URL, safe_request, unique_test_link, created_ids, HEADERS)
+    test_creation_and_verification(BASE_URL, safe_request, unique_test_link, created_ids, HEADERS, args.delay)
 
     time.sleep(args.delay)
-    test_pagination_and_limits(BASE_URL, safe_request, HEADERS)
+    test_pagination_and_limits(BASE_URL, safe_request, HEADERS, args.delay)
 
     time.sleep(args.delay)
-    test_delete_endpoints(BASE_URL, safe_request, created_ids, HEADERS)
+    test_delete_endpoints(BASE_URL, safe_request, created_ids, HEADERS, args.delay)
 
     time.sleep(args.delay)
     test_invalid_endpoint(BASE_URL, safe_request, HEADERS)
