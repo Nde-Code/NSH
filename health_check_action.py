@@ -57,7 +57,7 @@ def make_safe_request(timeout: int, user_agent: str):
         except Exception as exc:  
             r = requests.models.Response()
             r.status_code = 0
-            r._content = str(exc).encode()
+            r._content = b'{"error": "request_failed", "detail": "' + str(exc).encode() + b'"}'
             r.encoding = "utf-8"
             return r
 
@@ -65,13 +65,37 @@ def make_safe_request(timeout: int, user_agent: str):
 
 def test_security_and_base(base_url: str, safe_request, bad_headers: dict , delay: int) -> None:
     log_step("Security & Base")
+
     r = safe_request("get", f"{base_url}/urls", headers=bad_headers)
     print_result("GET /urls with wrong key (Expect 401)", r, expected_codes=(401,))
 
     time.sleep(delay)
+
     r = safe_request("get", f"{base_url}/")
     print_result("GET / (Expect 200)", r, expected_codes=(200,))
-    print_result("OPTIONS /post-url (CORS - Expect 204)", safe_request("options", f"{base_url}/post-url"), expected_codes=(204,))
+
+    r_options = safe_request("options", f"{base_url}/post-url")
+    print_result("OPTIONS /post-url (CORS - Expect 204)", r_options, expected_codes=(204,))
+
+    try:
+        if r_options.status_code == 204:
+            acao = r_options.headers.get("Access-Control-Allow-Origin")
+            acam = r_options.headers.get("Access-Control-Allow-Methods")
+            acah = r_options.headers.get("Access-Control-Allow-Headers")
+            if acao and acam and acah and "Content-Type" in acah:
+                log_success("OPTIONS response contains required CORS headers")
+            else:
+                log_fail("OPTIONS missing required CORS headers")
+    except Exception:
+        log_info("Could not verify OPTIONS headers")
+
+    time.sleep(delay)
+    admin_key = os.getenv("ADMIN_KEY")
+    if admin_key:
+        r_x = safe_request("get", f"{base_url}/urls", headers={"x-api-key": admin_key})
+        print_result("GET /urls with x-api-key (Expect 200)", r_x, expected_codes=(200,))
+    else:
+        log_info("ADMIN_KEY not set; skipping x-api-key test")
 
 
 def test_favicon(base_url: str, safe_request, expected_codes=(200, 204, 301, 302)) -> None:
@@ -111,6 +135,30 @@ def test_post_validation(base_url: str, safe_request, unique_test_link: str, max
     self_payload = {"long_url": f"{base_url}/url/some-id"}
     r = safe_request("post", f"{base_url}/post-url", json=self_payload)
     print_result("POST with self-domain (Expect 400)", r, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_missing_ct = safe_request("post", f"{base_url}/post-url", data='{"long_url": "{0}"}'.format(unique_test_link))
+    print_result("POST with missing application/json header (Expect 400)", r_missing_ct, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_malformed = safe_request("post", f"{base_url}/post-url", data="{not: json}", headers={"Content-Type": "application/json"})
+    print_result("POST with malformed JSON (Expect 400)", r_malformed, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_empty = safe_request("post", f"{base_url}/post-url", data="", headers={"Content-Type": "application/json"})
+    print_result("POST with empty JSON body (Expect 400)", r_empty, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_ftp = safe_request("post", f"{base_url}/post-url", json={"long_url": "ftp://example.com/resource"})
+    print_result("POST with ftp:// scheme (Expect 400)", r_ftp, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_local = safe_request("post", f"{base_url}/post-url", json={"long_url": "http://localhost/path"})
+    print_result("POST with localhost host (Expect 400)", r_local, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_ip = safe_request("post", f"{base_url}/post-url", json={"long_url": "http://127.0.0.1/path"})
+    print_result("POST with 127.0.0.1 host (Expect 400)", r_ip, expected_codes=(400,))
 
 
 def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created_ids: list, delay: int) -> None:
@@ -174,13 +222,22 @@ def test_creation_and_verification(base_url: str, safe_request, unique_test_link
 
         time.sleep(delay)
         log_step("PATCH Verification Logic")
-        print_result("First Verification", safe_request("patch", f"{base_url}/verify/{primary_id}", headers=headers), expected_codes=(200,))
+
+        print_result("PATCH verify with wrong key (Expect 401)", safe_request("patch", f"{base_url}/verify/{primary_id}", headers={"Authorization": "Bearer WRONG_KEY"}), expected_codes=(401,))
+
+        time.sleep(delay)
+        print_result("First Verification (Expect 200)", safe_request("patch", f"{base_url}/verify/{primary_id}", headers=headers), expected_codes=(200,))
 
         time.sleep(delay)
         print_result("PATCH non-existent ID (Expect 400/404)", safe_request("patch", f"{base_url}/verify/no-id", headers=headers), expected_codes=(400, 404))
 
         time.sleep(delay)
         print_result("Second Verification (Already verified)", safe_request("patch", f"{base_url}/verify/{primary_id}", headers=headers), expected_codes=(200,))
+
+        time.sleep(delay)
+
+        r_after = safe_request("get", f"{base_url}/url/{primary_id}", allow_redirects=False)
+        print_result(f"GET /url/{primary_id} after verification (Expect 301)", r_after, expected_codes=(301,))
 
 
 def test_pagination_and_limits(base_url: str, safe_request, headers: dict, delay: int) -> None:
@@ -213,6 +270,11 @@ def test_delete_endpoints(base_url: str, safe_request, created_ids: list, header
     time.sleep(delay)
     log_step("DELETE Endpoints")
     unique_ids = list(dict.fromkeys(created_ids))
+
+    cid0 = unique_ids[0]
+    time.sleep(delay)
+    print_result(f"DELETE /delete/{cid0} with wrong key (Expect 401)", safe_request("delete", f"{base_url}/delete/{cid0}", headers={"Authorization": "Bearer WRONG_KEY"}), expected_codes=(401,))
+
     for cid in unique_ids:
         time.sleep(delay)
         print_result(f"DELETE /delete/{cid}", safe_request("delete", f"{base_url}/delete/{cid}", headers=headers), expected_codes=(200,))
@@ -224,6 +286,8 @@ def test_delete_endpoints(base_url: str, safe_request, created_ids: list, header
 def test_invalid_endpoint(base_url: str, safe_request, headers: dict) -> None:
     log_step("Invalid Endpoint")
     print_result("GET /random (Expect 404)", safe_request("get", f"{base_url}/not-here", headers=headers), expected_codes=(404,))
+
+    print_result("GET /url/short (Expect 400)", safe_request("get", f"{base_url}/url/short", headers=headers), expected_codes=(400,))
 
 def main():
     parser = argparse.ArgumentParser(description="Full API CI Suite - Robust Version")
