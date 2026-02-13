@@ -99,13 +99,12 @@ def test_security_and_base(base_url: str, safe_request, bad_headers: dict , dela
 
 
 def test_favicon(base_url: str, safe_request, expected_codes=(200, 204, 301, 302)) -> None:
-    """Simple check for the presence (or redirect) of /favicon.ico."""
     log_step("GET /favicon.ico")
     r = safe_request("get", f"{base_url}/favicon.ico", allow_redirects=False)
     print_result("GET /favicon.ico (Expect 200/204/301/302)", r, expected_codes=expected_codes)
 
 
-def test_rate_limiting(base_url: str, safe_request, headers: dict) -> None:
+def test_rate_limiting(base_url: str, safe_request, headers: dict, delay: int) -> None:
     log_step("Rate Limiting")
     triggered = False
     for _ in range(5):
@@ -119,6 +118,18 @@ def test_rate_limiting(base_url: str, safe_request, headers: dict) -> None:
     else:
         log_info("Rate limit not triggered (Check your RATE_LIMIT_INTERVAL_S)")
 
+    recovery_wait = (delay + 0.5)
+    print(f"    Waiting {recovery_wait}s for rate limit to expire...")
+    time.sleep(recovery_wait)
+    
+    r_recovery = safe_request("get", f"{base_url}/urls", headers=headers)
+    
+    if r_recovery.status_code != 429:
+        log_success(f"Rate limit recovery successful (Got {r_recovery.status_code})")
+    else:
+        global TESTS_PASSED
+        TESTS_PASSED = False
+        log_fail(f"Recovery failed: Still getting 429 after {recovery_wait}s wait.")
 
 def test_post_validation(base_url: str, safe_request, unique_test_link: str, max_len: int, delay: int) -> None:
     log_step("POST Validation (Body & Length)")
@@ -340,7 +351,7 @@ def main():
     test_favicon(BASE_URL, safe_request)
 
     time.sleep(args.delay)
-    test_rate_limiting(BASE_URL, safe_request, HEADERS)
+    test_rate_limiting(BASE_URL, safe_request, HEADERS, args.delay)
 
     time.sleep(args.delay)
     test_post_validation(BASE_URL, safe_request, unique_test_link, args.max_url_length, args.delay)
