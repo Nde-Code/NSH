@@ -122,6 +122,11 @@ def test_rate_limiting(base_url: str, safe_request, headers: dict) -> None:
 
 def test_post_validation(base_url: str, safe_request, unique_test_link: str, max_len: int, delay: int) -> None:
     log_step("POST Validation (Body & Length)")
+
+    r_empty_url = safe_request("post", f"{base_url}/post-url", json={"long_url": ""})
+    print_result("POST with empty long_url (Expect 400)", r_empty_url, expected_codes=(400,))
+    time.sleep(delay)
+
     bad_payload = {"long_url": unique_test_link, "extra_field": "not_allowed"}
     r = safe_request("post", f"{base_url}/post-url", json=bad_payload)
     print_result("POST with extra fields (Expect 400)", r, expected_codes=(400,))
@@ -149,10 +154,15 @@ def test_post_validation(base_url: str, safe_request, unique_test_link: str, max
     r_empty = safe_request("post", f"{base_url}/post-url", data="", headers={"Content-Type": "application/json"})
     print_result("POST with empty JSON body (Expect 400)", r_empty, expected_codes=(400,))
 
+    time.sleep(delay)
+
     forbidden_cases = [
         ("ftp:// scheme", "ftp://example.com/resource"),
         ("localhost host", "http://localhost/path"),
-        ("127.0.0.1 host", "http://127.0.0.1/path")
+        ("127.0.0.1 host", "http://127.0.0.1/path"),
+        ("IPv6 localhost", "http://[::1]/path"),            
+        ("Host without dot", "http://my-internal-server/"), 
+        ("Trailing dot host", "http://example.com./")
     ]
     
     for label, bad_url in forbidden_cases:
@@ -213,6 +223,13 @@ def test_creation_and_verification(base_url: str, safe_request, unique_test_link
         primary_id = created_ids[0]
         time.sleep(delay)
         log_step("URL Resolution & Robustness")
+
+        long_id = "a" * 100
+        r_long_id = safe_request("get", f"{base_url}/url/{long_id}")
+        print_result("GET with overlong ID (Expect 400/404)", r_long_id, expected_codes=(400, 404))
+
+        time.sleep(delay)
+
         r = safe_request("get", f"{base_url}/url/{primary_id}", allow_redirects=False)
         print_result(f"GET /url/{primary_id} (Expect 301/302)", r, expected_codes=(301, 302))
 
@@ -282,9 +299,11 @@ def test_delete_endpoints(base_url: str, safe_request, created_ids: list, header
     print_result("DELETE non-existent (Expect 400/404)", safe_request("delete", f"{base_url}/delete/no-id", headers=headers), expected_codes=(400, 404))
 
 
-def test_invalid_endpoint(base_url: str, safe_request, headers: dict) -> None:
+def test_invalid_endpoint(base_url: str, safe_request, headers: dict, delay: int) -> None:
     log_step("Invalid Endpoint")
     print_result("GET /random (Expect 404)", safe_request("get", f"{base_url}/not-here", headers=headers), expected_codes=(404,))
+
+    time.sleep(delay)
 
     print_result("GET /url/short (Expect 400)", safe_request("get", f"{base_url}/url/short", headers=headers), expected_codes=(400,))
 
@@ -342,7 +361,7 @@ def main():
     test_delete_endpoints(BASE_URL, safe_request, created_ids, HEADERS, args.delay)
 
     time.sleep(args.delay)
-    test_invalid_endpoint(BASE_URL, safe_request, HEADERS)
+    test_invalid_endpoint(BASE_URL, safe_request, HEADERS, args.delay)
 
     if TESTS_PASSED:
         print(f"\n[RESULT] SUCCESS: Full suite passed at {time.strftime('%H:%M:%S')}")
