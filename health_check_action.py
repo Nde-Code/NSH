@@ -137,7 +137,8 @@ def test_post_validation(base_url: str, safe_request, unique_test_link: str, max
     print_result("POST with self-domain (Expect 400)", r, expected_codes=(400,))
 
     time.sleep(delay)
-    r_missing_ct = safe_request("post", f"{base_url}/post-url", data='{"long_url": "{0}"}'.format(unique_test_link))
+    raw_data = f'{{"long_url": "{unique_test_link}"}}'
+    r_missing_ct = safe_request("post", f"{base_url}/post-url", data=raw_data)
     print_result("POST with missing application/json header (Expect 400)", r_missing_ct, expected_codes=(400,))
 
     time.sleep(delay)
@@ -148,18 +149,16 @@ def test_post_validation(base_url: str, safe_request, unique_test_link: str, max
     r_empty = safe_request("post", f"{base_url}/post-url", data="", headers={"Content-Type": "application/json"})
     print_result("POST with empty JSON body (Expect 400)", r_empty, expected_codes=(400,))
 
-    time.sleep(delay)
-    r_ftp = safe_request("post", f"{base_url}/post-url", json={"long_url": "ftp://example.com/resource"})
-    print_result("POST with ftp:// scheme (Expect 400)", r_ftp, expected_codes=(400,))
-
-    time.sleep(delay)
-    r_local = safe_request("post", f"{base_url}/post-url", json={"long_url": "http://localhost/path"})
-    print_result("POST with localhost host (Expect 400)", r_local, expected_codes=(400,))
-
-    time.sleep(delay)
-    r_ip = safe_request("post", f"{base_url}/post-url", json={"long_url": "http://127.0.0.1/path"})
-    print_result("POST with 127.0.0.1 host (Expect 400)", r_ip, expected_codes=(400,))
-
+    forbidden_cases = [
+        ("ftp:// scheme", "ftp://example.com/resource"),
+        ("localhost host", "http://localhost/path"),
+        ("127.0.0.1 host", "http://127.0.0.1/path")
+    ]
+    
+    for label, bad_url in forbidden_cases:
+        time.sleep(delay)
+        r_bad = safe_request("post", f"{base_url}/post-url", json={"long_url": bad_url})
+        print_result(f"POST with {label} (Expect 400)", r_bad, expected_codes=(400,))
 
 def test_exotic_urls(base_url: str, safe_request, unique_test_link: str, created_ids: list, delay: int) -> None:
     log_step("POST Exotic URLs")
