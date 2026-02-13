@@ -158,6 +158,9 @@ def test_post_validation(base_url: str, safe_request, unique_test_link: str, max
     print_result("POST with missing application/json header (Expect 400)", r_missing_ct, expected_codes=(400,))
 
     time.sleep(delay)
+    print_result("POST javascript: scheme (Expect 400)", safe_request("post", f"{base_url}/post-url", json={"long_url": "javascript:alert(1)"}), expected_codes=(400,))
+
+    time.sleep(delay)
     r_malformed = safe_request("post", f"{base_url}/post-url", data="{not: json}", headers={"Content-Type": "application/json"})
     print_result("POST with malformed JSON (Expect 400)", r_malformed, expected_codes=(400,))
 
@@ -273,6 +276,19 @@ def test_pagination_and_limits(base_url: str, safe_request, headers: dict, delay
     print_result("GET /urls?count=999 (Abusive limit - Expect 400)", r_limit, expected_codes=(400,))
 
     time.sleep(delay)
+    r_zero = safe_request("get", f"{base_url}/urls?count=0", headers=headers)
+    print_result("GET /urls?count=0 (Expect 400)", r_zero, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_negative = safe_request("get", f"{base_url}/urls?count=-1", headers=headers)
+    print_result("GET /urls?count=-1 (Expect 400)", r_negative, expected_codes=(400,))
+
+    time.sleep(delay)
+    r_nan = safe_request("get", f"{base_url}/urls?count=abc", headers=headers)
+    print_result("GET /urls?count=abc (Expect 400)", r_nan, expected_codes=(400,))
+
+
+    time.sleep(delay)
     r = safe_request("get", f"{base_url}/urls?count=1", headers=headers)
     if print_result("GET /urls?count=1", r):
         try:
@@ -305,6 +321,9 @@ def test_delete_endpoints(base_url: str, safe_request, created_ids: list, header
     for cid in unique_ids:
         time.sleep(delay)
         print_result(f"DELETE /delete/{cid}", safe_request("delete", f"{base_url}/delete/{cid}", headers=headers), expected_codes=(200,))
+
+    time.sleep(delay)
+    print_result(f"DELETE already deleted {cid0} (Expect 404)", safe_request("delete", f"{base_url}/delete/{cid0}", headers=headers), expected_codes=(400, 404))
 
     time.sleep(delay)
     print_result("DELETE non-existent (Expect 400/404)", safe_request("delete", f"{base_url}/delete/no-id", headers=headers), expected_codes=(400, 404))
