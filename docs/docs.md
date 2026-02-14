@@ -198,39 +198,32 @@ export const config: Config = {
 
 - **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
   - **Currently**:
-    - **Max**: one request per second.
+    - **Max**: one request per second (absolute min).
 
 - **MAX_DAILY_WRITES** in [day]: Daily writing rate limit (only applies if the link is not already in the database).
-  - **Currently**:
-    - **Max**: 10 writes per day.
+  - **Absolute min of max**: 1 writes per day.
 
 - **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the [KV](https://developers.cloudflare.com/kv/) store that contains hashed IPs used for rate limiting.
   - **Currently**:
-    - **Default**: 1 day.
+    - **Default**: 1 day (absolute min).
 
 - **FIREBASE_TIMEOUT_MS** in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
-  - **Currently**:
-    - **Max**: 6 seconds before timeout.
+  - **Absolute min of max**: 1 seconds before timeout.
 
 - **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database.
-  - **Currently**:
-    - **Max**: 1000 entries.
+  - **Absolute min of max**: 50 entries.
 
 - **DEFAULT_NUMBER_OF_LINKS_FROM_COUNT**: The default number of links returned if no `count` parameter is provided. **Must not exceed `FIREBASE_ENTRIES_LIMIT` or `MAX_NUMBER_OF_LINKS_COUNT`.**
-  - **Currently**:
-    - **Default**: 15 links.
+  - **Absolute min**: 5 links.
 
 - **MAX_NUMBER_OF_LINKS_COUNT**: The maximum number of links that can be retrieved via the `count` parameter. **Must not exceed `FIREBASE_ENTRIES_LIMIT`.**
-  - **Currently**:
-    - **Default**: 50 links.
+  - **Absolute min of max**: 10 links.
 
 - **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. 
-  - **Currently**: 
-    - **Default**: 14 characters.
+  - **Absolute min**: 10 characters.
 
 - **MAX_URL_LENGTH**: The maximum allowed URL length in the Firebase Realtime Database.
-  - **Currently**: 
-    - **Max**: 2000 characters.
+  - **Absolute min of max**: 100 characters.
 
 > Ensure these values and rules are respected; otherwise, your configuration will trigger an error message.
 
