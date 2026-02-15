@@ -330,6 +330,24 @@ class APITestSuite:
         time.sleep(self.args.delay)
         self.print_result("DELETE non-existent (Expect 400/404)", self.safe_request("delete", f"{self.base_url}/delete/no-id", headers=self.headers), expected_codes=(400, 404))
 
+    def test_sync_counter(self):
+        self.log_step("Sync DB Counter (Maintenance)")
+
+        r_wrong = self.safe_request("patch", f"{self.base_url}/sync-counter", headers=self.bad_headers)
+        self.print_result("PATCH /sync-counter with wrong key (Expect 401)", r_wrong, expected_codes=(401,))
+
+        time.sleep(self.args.delay)
+
+        r_sync = self.safe_request("patch", f"{self.base_url}/sync-counter", headers=self.headers)
+        
+        if self.print_result("PATCH /sync-counter final execution (Expect 200)", r_sync, expected_codes=(200,)):
+            try:
+                data = r_sync.json()
+                new_count = data.get("new_count")
+                self.log_success(f"Counter synchronized. DB real count: {new_count}")
+            except Exception:
+                self.log_info("Sync success but could not parse response body.")
+
     def test_invalid_endpoint(self):
         self.print_result("GET /random (Expect 404)", self.safe_request("get", f"{self.base_url}/not-here", headers=self.headers), expected_codes=(404,))
 
@@ -348,6 +366,7 @@ class APITestSuite:
         self.run_test("POST Valid URL Creation", self.test_creation_and_verification)
         self.run_test("GET /urls Pagination & Limits", self.test_pagination_and_limits)
         self.run_test("DELETE Endpoints", self.test_delete_endpoints)
+        self.run_test("Sync DB Counter", self.test_sync_counter)
         self.run_test("Invalid Endpoint", self.test_invalid_endpoint)
 
         if self.tests_passed:

@@ -18,6 +18,8 @@ interface FirebaseQueryOptions {
 
     endBefore?: string | number;
 
+    shallow?: boolean;
+
 }
 
 export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathTo?: string, options?: FirebaseQueryOptions): Promise<T | null> {
@@ -47,6 +49,8 @@ export async function readInFirebaseRTDB<T>(FIREBASE_URL: string, pathTo?: strin
             if (options.endAt !== undefined) params.append("endAt", JSON.stringify(options.endAt));
 
             if (options.endBefore !== undefined) params.append("endBefore", JSON.stringify(options.endBefore));
+
+            if (options.shallow !== undefined) params.append("shallow", "true");
 
             url += `?${params.toString()}`;
             

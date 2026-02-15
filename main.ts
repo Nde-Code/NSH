@@ -56,6 +56,8 @@ import { config } from "./config.ts";
 
 import { MSG } from "./utilities/messages.ts";
 
+import { syncCounterWithDb } from "./utilities/sync.ts";
+
 const configMinValues: Partial<Record<keyof Config, number>> = {
 
 	RATE_LIMIT_INTERVAL_S: 1,
@@ -142,6 +144,36 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		});
 		
+	}
+
+	if (req.method === "PATCH" && pathname === "/sync-counter") {
+
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown");
+
+		if (!(await checkTimeRateLimit(hashedIP))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(config.RATE_LIMIT_INTERVAL_S), 429);
+
+		const apiKey: string | null = getApiKeyFromRequest(req);
+		
+		if (apiKey !== config.ADMIN_KEY) {
+
+			printLogLine("WARN", "Unauthorized attempt to sync counter!");
+
+			return createJsonResponse(MSG.WRONG_API_KEY_FOR_URLS_DB, 401); 
+			
+		}
+
+		const { actualCount, success } = await syncCounterWithDb(config.FIREBASE_URL);
+
+		if (success) {
+
+			printLogLine("INFO", `Counter resynced to ${actualCount}`);
+
+			return createJsonResponse({ ...MSG.SYNC_OK, new_count: actualCount }, 200);
+
+		}
+		
+		else return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
+
 	}
 
 	if (req.method === "GET" && pathname === "/urls") {

@@ -6,6 +6,8 @@ export const MSG = {
 
     RATE_LIMIT_EXCEEDED: (s: number) => ({ warning: `Rate limit exceeded: 1 request per ${s}s allowed.` }),
 
+    SYNC_OK: { success: "Counter synchronized successfully." },
+
     WRONG_API_KEY_FOR_URLS_DB: { error: "Incorrect or missing API key for URLs." },
 
     NOT_VALID_COUNT_PARAMETER: (max: number) => ({ error: `Count must be 1-${max}.` }),
