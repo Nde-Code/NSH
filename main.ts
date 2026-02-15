@@ -156,7 +156,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		if (apiKey !== config.ADMIN_KEY) {
 
-			printLogLine("WARN", "Unauthorized attempt to sync counter!");
+			printLogLine("WARN", "Unauthorized attempt to sync counter !");
 
 			return createJsonResponse(MSG.WRONG_API_KEY_FOR_URLS_DB, 401); 
 			
