@@ -24,7 +24,7 @@ export const MSG = {
 
     LINK_ALREADY_VERIFIED: { warning: "Link already verified." },
 
-    NO_LINK_FOUND_WITH_ID_IN_DB: { error: "Link not found." },
+    NO_LINK_FOUND_WITH_ID_IN_DB: { error: "Link unavailable or not found." },
 
     WRONG_API_KEY_FOR_DELETION: { error: "Invalid API key for deletion." },
 
