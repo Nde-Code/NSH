@@ -24,7 +24,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
     try {
 
-        const patchRes = await fetch(url, {
+        const res = await fetch(url, {
 
             method: "PATCH",
 
@@ -36,7 +36,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
         });
 
-        if (patchRes.ok) {
+        if (res.ok) {
 
             printLogLine("INFO", `The link stored on ${pathTo} has been verified successfully.`);
 
