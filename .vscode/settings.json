@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "dist": true,
+    "node_modules": true,
+    "build": true,
+    ".wrangler": true,
+    "worker-configuration.d.ts": true
+  }
+}
