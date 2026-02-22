@@ -163,6 +163,8 @@ to send your secret to the Cloudflare Workers platform.
 > Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
 
 > ⚠️ **A quick security note about the `ADMIN_KEY`:** I have implemented a constant-time comparison between the configured key and the submitted key. This is a manual (non-crypto module) implementation, which should provide solid protection against timing attacks. Combined with rate limiting and inherent network jitter (latency noise), this should make such attacks extremely difficult to carry out successfully. Just make sure your key is strong and secure (include uppercase, lowercase letters, numbers, and be longer than 60 characters).
+ 
+> **Note about `FIREBASE_HIDDEN_PATH`:** Ensure that this key is strong and secure. Please use only uppercase and lowercase letters, and avoid all other special characters or symbols to guarantee the proper functioning of the software.
 
 ### Software configuration file [config.ts](../config.ts):
 
