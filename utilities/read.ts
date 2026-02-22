@@ -10,8 +10,6 @@ interface FirebaseQueryOptions {
 
     startAt?: string | number;
 
-    startAfter?: string | number;
-
     endAt?: string | number;
 
     endBefore?: string | number;
@@ -49,8 +47,6 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
             if (options.limitToLast) params.append("limitToLast", options.limitToLast.toString());
 
             if (options.startAt !== undefined) params.append("startAt", JSON.stringify(options.startAt));
-
-            if (options.startAfter !== undefined) params.append("startAfter", JSON.stringify(options.startAfter));
 
             if (options.endAt !== undefined) params.append("endAt", JSON.stringify(options.endAt));
 

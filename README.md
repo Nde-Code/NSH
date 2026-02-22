@@ -153,7 +153,7 @@ Retrieve a paginated list of shortened links currently stored in the database.
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `count` | number | Number of links to retrieve (defaults to configured value, max is restricted). |
-| `cursor` | string | The key/ID to start fetching from for pagination. |
+| `cursor` | string | The key of the last item from the previous page. |
 
 #### **Response:**
 

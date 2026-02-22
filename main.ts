@@ -144,6 +144,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 	}
 
+	if (req.method === "GET" && pathname === "/") return createJsonResponse(MSG.ROOT_URL_MESSAGE, 200);
+
 	if (req.method === "PATCH" && pathname === "/sync-counter") {
 
 		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
@@ -194,19 +196,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const cursor: string | null = url.searchParams.get("cursor");
 
-		if (cursor) {
-
-			const { data: cursorExists, error: cursorError } = await readInFirebaseRTDB(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, `urls/${cursor}`);
-			
-			if (cursorError) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
-
-			if (!cursorExists) return createJsonResponse(MSG.NOT_VALID_CURSOR_PARAMETER, 400);
-
-		}
-
 		const requestedCount: number = countParam ? parseInt(countParam) : activeConfig.DEFAULT_NUMBER_OF_LINKS_FROM_COUNT;
 
 		if (isNaN(requestedCount) || requestedCount <= 0 || requestedCount > activeConfig.MAX_NUMBER_OF_LINKS_COUNT) return createJsonResponse(MSG.NOT_VALID_COUNT_PARAMETER(activeConfig.MAX_NUMBER_OF_LINKS_COUNT), 400);
+
+		const firebaseLimit: number = cursor ? requestedCount + 2 : requestedCount + 1;
 
 		const { data, error } = await readInFirebaseRTDB<Record<string, LinkDetails>>(
 
@@ -218,9 +212,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 				orderBy: "$key",
 
-				limitToFirst: (requestedCount + 1),
+				limitToFirst: firebaseLimit,
 
-				...(cursor ? { startAfter: cursor } : {})
+				...(cursor ? { startAt: cursor } : {})
 
 			}
 
@@ -228,21 +222,33 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (error) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
+		if (cursor && (!data || Object.keys(data).length === 0 || Object.keys(data)[0] !== cursor)) return createJsonResponse(MSG.NOT_VALID_CURSOR_PARAMETER, 400); 
+
 		if (!data || Object.keys(data).length === 0) return createJsonResponse(MSG.NO_URLS_IN_DB, 200);
 
-		const keys: string[] = Object.keys(data);
+		let keys: string[] = Object.keys(data);
+
+		if (cursor && keys.length > 0 && keys[0] === cursor) {
+
+			delete data[keys[0]];
+
+			keys.shift();
+
+		}
 
 		const hasMore: boolean = keys.length > requestedCount;
 
 		if (hasMore) {
 
-			delete data[keys[keys.length - 1]];
+			const extraKey: string = keys[keys.length - 1];
+
+			delete data[extraKey];
 
 			keys.pop();
-			
+
 		}
 
-		const nextCursor = hasMore ? keys[keys.length - 1] : null;
+		const nextCursor: string | null = (hasMore && keys.length > 0) ? keys[keys.length - 1] : null;
 
 		printLogLine("INFO", `Returned ${keys.length} link${(keys.length === 1) ? "" : "s"} from /urls.`);
 
@@ -439,8 +445,6 @@ async function handler(req: Request, env: Env): Promise<Response> {
         return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
 
     }
-
-	if (req.method === "GET" && pathname === "/") return createJsonResponse(MSG.ROOT_URL_MESSAGE, 200)
 
 	return createJsonResponse(MSG.INVALID_API_ENDPOINT, 404);
 
