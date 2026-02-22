@@ -6,6 +6,8 @@ export const MSG = {
 
     RATE_LIMIT_EXCEEDED: (s: number) => ({ warning: `Rate limit exceeded: 1 request per ${s}s allowed.` }),
 
+    WRONG_API_KEY_FOR_SYNC: { error: "Incorrect or missing API key for counter synchronization." },
+
     SYNC_OK: { success: "Counter synchronized successfully." },
 
     WRONG_API_KEY_FOR_URLS_DB: { error: "Incorrect or missing API key for URLs." },
@@ -18,7 +20,7 @@ export const MSG = {
 
     NO_ID: { error: "No valid ID provided." },
 
-    WRONG_API_KEY_FOR_VERIFICATION: { error: "Invalid API key for verification." },
+    WRONG_API_KEY_FOR_VERIFICATION: { error: "Invalid or missing API key for verification." },
 
     LINK_VERIFIED: { success: "Link verified successfully." },
 
@@ -26,7 +28,7 @@ export const MSG = {
 
     NO_LINK_FOUND_WITH_ID_IN_DB: { error: "Link unavailable or not found." },
 
-    WRONG_API_KEY_FOR_DELETION: { error: "Invalid API key for deletion." },
+    WRONG_API_KEY_FOR_DELETION: { error: "Invalid or missing API key for deletion." },
 
     LINK_DELETED: { success: "Link deleted." },
 
