@@ -14,7 +14,7 @@ export const MSG = {
 
     NOT_VALID_COUNT_PARAMETER: (max: number) => ({ error: `Count must be 1-${max}.` }),
 
-    NOT_VALID_CURSOR_PARAMETER: { error: "Invalid cursor." },
+    NOT_VALID_CURSOR_PARAMETER: { error: "Invalid or non-existent cursor." },
 
     NO_URLS_IN_DB: { warning: "No URLs are available." },
 
