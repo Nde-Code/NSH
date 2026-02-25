@@ -362,7 +362,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 					"Expires": "0"
 
-				},
+				}
 
 			});
 
