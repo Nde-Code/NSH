@@ -395,28 +395,6 @@ To run locally, run:
 wrangler dev
 ```
 
-Use the python CLI (requires **Python 3.8+**, **Require requests**: via `pip install requests`) script to run test to validate and ensure you changements.
-
-| Argument | Default | Description |
-| :--- | :--- | :--- |
-| `--link` | **(Required)** | The long test URL (e.g., `https://google.com`). |
-| `--remote` | **(Required)** | Target URL (e.g., `http://localhost:8787` or `https://your-worker.org.workers.dev`). |
-| `--max-url-length` | `2000` | Character limit tested for rejecting overlong URLs. |
-| `--timeout` | `10` | Maximum time allowed before a network request fails in seconds. |
-| `--delay` | `1` | Delay (seconds) between calls to respect the Rate Limit. |
-
-Navigate to the directory containing `health_check_action.py` and run the following command:
-```bash
-python health_check_action.py --link https://example.com --remote https://your-worker.org.workers.dev
-```
-
-You can also get help directly in your terminal via:
-```bash
-python health_check_action.py --help
-```
-
-> If everything works correctly, that indicates your code is now compatible with Cloudflare Workers. I've configured [GitHub Actions](https://github.com/features/actions) for automation; you're welcome to use my setup, but it’s not required (see: [health_check.yaml](../.github/workflows/health_check.yaml)).
-
 To bundle the project **(optional)**, run:
 
 ```bash
