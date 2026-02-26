@@ -92,7 +92,7 @@ Create a short URL from a provided long URL. Saves the link to the database and 
 
 * `429 Too Many Requests`: Rate limit exceeded (either time-based or daily write limit).
 
-* `500 Internal Server Error`: Generation failure.
+* `500 Internal Server Error`: Wrong environment variable, config, generation failure or server error.
 
 * `503 Service Unavailable`: KV Database quota exceeded (process rate limits), unable to read `_url_counter` or verify link existence.
 
@@ -134,6 +134,8 @@ Redirects the user to the original long URL associated with the provided short c
 
 * `404 Not Found`: No link found with this ID in the database.
 
+* `500 Internal Server Error`: Wrong environment variable, config or server error.
+
 * `503 Service Unavailable`: The request timed out or the connection to the storage provider failed.
 
 #### **Example Request:**
@@ -164,6 +166,8 @@ Retrieve a paginated list of shortened links currently stored in the database.
 * `401 Unauthorized`: Invalid or missing API/Admin key.
 
 * `429 Too Many Requests`: Rate limit exceeded.
+
+* `500 Internal Server Error`: Wrong environment variable, config or server error.
 
 * `503 Service Unavailable`: Unable to retrieve links from the database.
 
@@ -219,6 +223,8 @@ Mark a specific shortened URL as verified in the database.
 
 * `429 Too Many Requests`: Rate limit exceeded.
 
+* `500 Internal Server Error`: Wrong environment variable, config or server error.
+
 * `503 Service Unavailable`: Temporary issue updating the database.
 
 #### **Example Request:**
@@ -252,6 +258,8 @@ Delete a shortened URL from the database and decrement the global metadata count
 
 * `429 Too Many Requests`: Rate limit exceeded.
 
+* `500 Internal Server Error`: Wrong environment variable, config or server error.
+
 * `503 Service Unavailable`: Temporary issue deleting the entry.
 
 #### **Example request:**
@@ -274,6 +282,8 @@ Recalculate and synchronize the metadata counter to reflect the actual number of
 * `401 Unauthorized`: Invalid or missing API/Admin key.
 
 * `429 Too Many Requests`: Rate limit exceeded.
+
+* `500 Internal Server Error`: Wrong environment variable, config or server error.
 
 * `503 Service Unavailable`: Temporary issue communicating with the database.
 
