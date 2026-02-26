@@ -1,14 +1,6 @@
 import { StaticConfig  } from "../types/types.ts";
 
-let idRegex: RegExp | null = null;
-
-function getIdRegex(shortUrlIdLength: number): RegExp {
-
-    if (!idRegex) idRegex = new RegExp(`^[a-zA-Z0-9_-]{${shortUrlIdLength}}$`);
-
-    return idRegex;
-
-}
+function getIdRegex(shortUrlIdLength: number): RegExp { return new RegExp(`^[a-zA-Z0-9_-]{${shortUrlIdLength}}$`); }
 
 export function createJsonResponse(body: object, status: number = 200, headers: HeadersInit = {}): Response {
 
