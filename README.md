@@ -2,13 +2,11 @@
 
 A simple, lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
-It operates at the edge across 300+ cities to ensure the lowest possible latency. If you need more resources for your instance, you can self-host the project on your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below.
-
-At the beginning, I just needed a small piece of software to store links, so I designed this project to be suitable for personal use or small public instances. You can use it for any purpose, but some systems are intentionally designed to be lightweight, such as the URL hashing mechanism, which uses DJB2, and the protection against timing attacks on the admin key (to ensure both security and performance).
-
-Please keep this in mind and use it with caution if you plan to deploy it at scale.
+At the beginning, I just needed a small piece of software to store links, so I designed this project to be suitable for personal use or small public instances. You can use it for any purpose, but some systems are intentionally designed to be lightweight, such as the URL hashing mechanism, which uses DJB2, and the protection against timing attacks on the admin key (to ensure both security and performance). Please keep this in mind and use it with caution if you plan to deploy it at scale.
 
 If you only need the project for occasional work, feel free to use my public online instance; however, please keep my usage limits in mind in this case.
+
+For those who need more resources for their instance, the project can be deployed to your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below.
 
 > I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays within the limits of the free plan.
 
