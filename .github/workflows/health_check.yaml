@@ -43,7 +43,7 @@ jobs:
       # 4. Create .dev.vars with environment variables from GitHub Secrets.
       - name: Create .dev.vars file
         run: |
-          echo "FIREBASE_HOST_LINK=\"${{ secrets.FIREBASE_HOST_LINK }}\"" >> .dev.vars
+          echo "FIREBASE_HOST_LINK=\"${{ secrets.FIREBASE_HOST_LINK }}\"" > .dev.vars
           echo "FIREBASE_HIDDEN_PATH=\"${{ secrets.FIREBASE_HIDDEN_PATH }}\"" >> .dev.vars
           echo "HASH_KEY=\"${{ secrets.HASH_KEY }}\"" >> .dev.vars
           echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
