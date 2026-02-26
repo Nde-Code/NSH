@@ -28,7 +28,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSec
 
         return (await res.json()) as T;
 
-    } catch(_err) {
+    } catch (_err) {
 
         printLogLine("ERROR", `An error happened when writing on ${pathTo}.`);
 

@@ -48,7 +48,7 @@ export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number)
 
         return true;
 
-    } catch (err) {
+    } catch (_err) {
 
         printLogLine("ERROR", "Cache API failure.");
 
@@ -87,6 +87,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
     else {
 
         try {
+
             data = JSON.parse(json);
 
         } catch {
