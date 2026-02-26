@@ -28,71 +28,87 @@ async function safeKvPut(kv: KVNamespace, key: string, value: string, expiration
 
 export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number): Promise<boolean> {
     
-    const cache = (caches as any).default;
+    try {
 
-    const cacheKey: string = `https://ratelimit.local/${hashedIp}`;
+        const cache = (caches as any)?.default;
 
-    const hit = await cache.match(cacheKey);
+        if (!cache) return true; 
 
-    if (hit) return false;
+        const cacheKey: string = `https://ratelimit.local/${hashedIp}`;
 
-    await cache.put(cacheKey, new Response("1", {
+        const hit = await cache.match(cacheKey);
 
-        headers: { "Cache-Control": `max-age=${limitSeconds}` }
+        if (hit) return false;
 
-    }));
+        await cache.put(cacheKey, new Response("1", {
 
-    return true;
+            headers: { "Cache-Control": `max-age=${limitSeconds}` }
+
+        }));
+
+        return true;
+
+    } catch (err) {
+
+        printLogLine("ERROR", "Cache API failure.");
+
+        return true; 
+
+    }
 
 }
 
 export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, maxWrites: number, purgeDays: number): Promise<RateLimitResult> {
-
+    
     const now: number = Date.now();
 
     const key: string = `ip24h:${hashedIp}`;
 
     const windowMs: number = purgeDays * SECONDS_IN_DAY * 1000;
 
-    let json: string | null;
+    let json: string | null = null;
 
     try {
 
         json = await kv.get(key);
 
-    } catch {
+    } catch (_err) {
+
+        printLogLine("ERROR", "KV Get failed.");
 
         return "KV_QUOTA_EXCEEDED";
 
     }
 
-    if (!json) {
-
-        const success: boolean = await safeKvPut(kv, key, JSON.stringify({ s: now, c: 1 }), purgeDays * SECONDS_IN_DAY);
+    let data: RateLimitData;
+    
+    if (!json) data = { s: now, c: 1 };
         
-        return success ? "OK" : "KV_QUOTA_EXCEEDED";
+    else {
+
+        try {
+            data = JSON.parse(json);
+
+        } catch {
+
+            data = { s: now, c: 1 };
+
+        }
 
     }
 
-    const data = JSON.parse(json) as RateLimitData;
-
-    if (now - data.s >= windowMs) {
-
-        const success: boolean = await safeKvPut(kv, key, JSON.stringify({ s: now, c: 1 }), purgeDays * SECONDS_IN_DAY);
+    if (now - data.s >= windowMs) data = { s: now, c: 1 };
         
-        return success ? "OK" : "KV_QUOTA_EXCEEDED";
+    else if (data.c >= maxWrites) return "USER_LIMIT";
+       
+    else data.c++;
 
-    }
-
-    if (data.c >= maxWrites) return "USER_LIMIT";
-
-    data.c++;
-
-    const remainingTtl: number = Math.floor((windowMs - (now - data.s)) / 1000);
+    const remainingTtl: number = Math.max(60, Math.floor((windowMs - (now - data.s)) / 1000));
 
     const success: boolean = await safeKvPut(kv, key, JSON.stringify(data), remainingTtl);
-
+    
     return success ? "OK" : "KV_QUOTA_EXCEEDED";
+
 }
 
 export async function hashIp(ip: string, salt: string): Promise<string> {
