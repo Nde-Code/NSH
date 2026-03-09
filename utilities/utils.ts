@@ -14,9 +14,9 @@ export function createJsonResponse(body: object, status: number = 200, headers: 
 
             "Access-Control-Allow-Origin": "*",
 
-            ...headers,
+            ...headers
 
-        },
+        }
 
     });
 
@@ -98,8 +98,14 @@ export function normalizeAndValidateURL(input: string): string | null {
 
         const host: string = url.hostname;
 
-        if ((url.protocol !== "http:" && url.protocol !== "https:") || !host.includes(".") || host.endsWith(".") || host === "localhost" || host === "127.0.0.1" || host === "::1") return null;
+        const isPrivateIP: (host: string) => boolean = (host: string) => {
+    
+            return host.startsWith("10.") || host.startsWith("192.168.") || host.startsWith("172.16.") || host === "localhost";
+        
+        };
 
+        if ((url.protocol !== "http:" && url.protocol !== "https:") || !host.includes(".") || isPrivateIP(host)) return null;
+        
         url.hostname = host.toLowerCase();
 
         return url.href;
@@ -134,21 +140,23 @@ export async function parseJsonBody<T = unknown>(req: Request): Promise<T | null
 
     try {
 
-        const contentType: string = req.headers.get("content-type") ?? "";
+        const contentType: string | null = req.headers.get("content-type");
 
-        if (!contentType.includes("application/json")) return null;
+        if (contentType !== "application/json") return null;
 
-        const contentLength = req.headers.get("content-length");
+        const contentLength: string | null = req.headers.get("content-length");
+        
+        if (contentLength && parseInt(contentLength, 10) > MAX_PAYLOAD_SIZE) return null;
 
-        if (contentLength && parseInt(contentLength) > MAX_PAYLOAD_SIZE) return null;
-
-        const bodyText = await req.text();
+        const bodyText: string = await req.text();
 
         if (!bodyText || bodyText.length > MAX_PAYLOAD_SIZE) return null;
 
         const parsed: unknown = JSON.parse(bodyText);
 
         if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+
+        if (Object.keys(parsed).length > 5) return null; 
 
         return parsed as T;
 
