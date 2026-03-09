@@ -96,17 +96,17 @@ export function normalizeAndValidateURL(input: string): string | null {
 
         const url: URL = new URL(input.trim());
 
-        const host: string = url.hostname;
+        const host: string = url.hostname.toLowerCase();
 
-        const isPrivateIP: (host: string) => boolean = (host: string) => {
-    
-            return host.startsWith("10.") || host.startsWith("192.168.") || host.startsWith("172.16.") || host === "localhost";
-        
-        };
+        if (url.protocol !== "http:" && url.protocol !== "https:") return null;
 
-        if ((url.protocol !== "http:" && url.protocol !== "https:") || !host.includes(".") || isPrivateIP(host)) return null;
+        if (!host.includes(".") || host.endsWith(".")) return null;
         
-        url.hostname = host.toLowerCase();
+        if (/^(?:\d{1,3}\.){3}\d{1,3}$|^\[?[0-9a-fA-F:]+\]?$/.test(host)) return null;
+
+        if (/^\d+$/.test(host)) return null;
+
+        if (url.username || url.password) return null;
 
         return url.href;
 
@@ -115,7 +115,7 @@ export function normalizeAndValidateURL(input: string): string | null {
         return null;
 
     }
-    
+
 }
 
 export function simpleURLHash(str: string, shortUrlIdLength: number): string {
@@ -142,7 +142,7 @@ export async function parseJsonBody<T = unknown>(req: Request): Promise<T | null
 
         const contentType: string | null = req.headers.get("content-type");
 
-        if (contentType !== "application/json") return null;
+        if (!contentType?.startsWith("application/json")) return null;
 
         const contentLength: string | null = req.headers.get("content-length");
         
