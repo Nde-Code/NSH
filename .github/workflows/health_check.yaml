@@ -16,6 +16,10 @@ jobs:
     # Use ubuntu-latest as required for compatibility
     runs-on: ubuntu-latest
 
+    # Define read-only permission.
+    permissions:
+      contents: read
+
     steps:
 
       # 0. Init project sources.
