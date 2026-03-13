@@ -26,7 +26,7 @@ For those who need more resources for their instance, the project can be deploye
 
 - Store mappings in Firebase Realtime Database.
 
-- Minimal and fast REST API.
+- Minimal, fast and efficient REST API.
 
 - Serverless because it runs on a Cloudflare Worker with strict resource limits (Free plan).
 
