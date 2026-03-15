@@ -13,7 +13,7 @@ jobs:
 
   api-testing:
   
-    # Use ubuntu-latest as required for compatibility
+    # Use ubuntu-latest as required for compatibility.
     runs-on: ubuntu-latest
 
     # Define read-only permission.
