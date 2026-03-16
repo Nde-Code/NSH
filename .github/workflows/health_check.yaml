@@ -44,7 +44,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      # 4. Create .dev.vars with environment variables from GitHub Secrets.
+      # 4. Create .dev.vars with environment variables.
       - name: Create .dev.vars file
         run: |
           echo "FIREBASE_HOST_LINK=\"${{ secrets.FIREBASE_HOST_LINK }}\"" > .dev.vars
