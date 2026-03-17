@@ -34,17 +34,17 @@ export const MSG = {
 
     INVALID_POST_BODY: { error: "Invalid POST body." },
 
-    UNEXPECTED_FIELD_IN_BODY: { error: "The body contains an unexpected field." },
+    UNEXPECTED_FIELD_IN_BODY: { error: "The body contains unexpected fields." },
 
     NOT_A_VALID_URL: { error: "Not a valid URL." },
 
-    TOO_LONG_URL: (max: number) => ({ error: `URL too long (max ${max}).` }),
+    TOO_LONG_URL: (max: number) => ({ error: `URL too long (max ${max} characters).` }),
 
-    HASH_COLLISION: { error: "Hash collision detected..." },
+    HASH_COLLISION: { error: "Hash collision detected." },
 
     DB_LIMIT_REACHED: { warning: "Database limit reached." },
 
-    WRITE_LIMIT_EXCEEDED: (max: number) => ({ warning: `Daily limit reached (${max} writes).` }),
+    WRITE_LIMIT_EXCEEDED: (max: number) => ({ warning: `Daily limit reached (max ${max} writes per day).` }),
 
     SERVICE_TEMP_UNAVAILABLE: { warning: "Service unavailable." },
 
