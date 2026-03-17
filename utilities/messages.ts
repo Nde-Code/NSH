@@ -16,7 +16,7 @@ export const MSG = {
 
     NOT_VALID_CURSOR_PARAMETER: { error: "Invalid or non-existent cursor." },
 
-    NO_URLS_IN_DB: { warning: "No URLs are available." },
+    NO_URLS_IN_DB: { warning: "No URLs in the database." },
 
     NO_ID: { error: "No valid ID provided." },
 
