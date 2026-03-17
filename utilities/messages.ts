@@ -34,7 +34,7 @@ export const MSG = {
 
     INVALID_POST_BODY: { error: "Invalid POST body." },
 
-    UNEXPECTED_FIELD_IN_BODY: { error: "The body contains unexpected fields." },
+    UNEXPECTED_FIELD_IN_BODY: { error: "The request body contains unexpected field(s)." },
 
     NOT_A_VALID_URL: { error: "Not a valid URL." },
 
