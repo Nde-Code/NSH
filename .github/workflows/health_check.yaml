@@ -75,5 +75,5 @@ jobs:
             --max-url-length 2000 \
             --max-daily-write 25 \
             --timeout 25 \
-            --delay 5 ; \
+            --delay 12 ; \
           rm -f health_check_action.py
