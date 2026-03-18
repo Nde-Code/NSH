@@ -73,7 +73,7 @@ jobs:
             --link "https://test.domain.com" \
             --remote "http://localhost:8787" \
             --max-url-length 2000 \
-            --max-daily-write 25 \
+            --max-daily-write 10 \
             --timeout 25 \
             --delay 12 ; \
           rm -f health_check_action.py
