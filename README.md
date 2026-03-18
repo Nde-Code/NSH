@@ -146,7 +146,7 @@ curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 
 Retrieve a paginated list of shortened links currently stored in the database.
 
-> **Security:** Requires a valid Admin/API key.
+> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Query Parameters:**
 
@@ -201,7 +201,7 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 
 Mark a specific shortened URL as verified in the database.
 
-> **Security:** Requires a valid Admin/API key.
+> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Path Parameters:**
 
@@ -236,7 +236,7 @@ curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
 
 Delete a shortened URL from the database and decrement the global metadata counter.
 
-> **Security:** Requires a valid Admin/API key.
+> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Path Parameters:**
 
@@ -271,7 +271,7 @@ curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
 
 Recalculate and synchronize the metadata counter to reflect the actual number of URLs stored in the Firebase database. Useful for fixing race conditions or desyncs.
 
-> **Security:** Requires a valid Admin/API key.
+> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Response:**
 
