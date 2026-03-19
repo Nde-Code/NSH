@@ -1,4 +1,4 @@
-name: Weekly scheduled task to synchronize the link counters
+name: Weekly scheduled task to synchronize the link counter
 
 on:
 
