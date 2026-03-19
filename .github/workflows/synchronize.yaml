@@ -53,5 +53,5 @@ jobs:
       # 5. Execute the synchronization command.
       - name: Run the command
         run: |
-          curl -X PATCH "http://localhost:8787/sync-counter" \
+          curl -f --show-error -X PATCH "http://localhost:8787/sync-counter" \
             -H "x-api-key: ${{ secrets.ADMIN_KEY }}"
