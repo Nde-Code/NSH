@@ -1,0 +1,59 @@
+name: Weekly scheduled task to synchronize the link counters
+
+on:
+
+  # Plan a weekly security resync.
+  schedule:
+    - cron: '11 5 * * 1'
+
+  # Provide the option to run it manually if required.
+  workflow_dispatch:
+
+jobs:
+
+  api-testing:
+  
+    # Use ubuntu-latest as required for compatibility.
+    runs-on: ubuntu-latest
+
+    # Define read-only permission.
+    permissions:
+      contents: read
+
+    steps:
+
+      # 0. Init project sources.
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # 1. Install Node.js and npm for Wrangler.
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      # 2. Create .dev.vars with environment variables.
+      - name: Create .dev.vars file
+        run: |
+          echo "FIREBASE_HOST_LINK=\"${{ secrets.FIREBASE_HOST_LINK }}\"" > .dev.vars
+          echo "FIREBASE_HIDDEN_PATH=\"${{ secrets.FIREBASE_HIDDEN_PATH }}\"" >> .dev.vars
+          echo "HASH_KEY=\"${{ secrets.HASH_KEY }}\"" >> .dev.vars
+          echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
+
+      # 3. Generate Wrangler types for the TypeScript project.
+      - name: Generate Wrangler types
+        run: npx wrangler types
+
+      # 4. Start Wrangler Dev in the background.
+      - name: Start Wrangler Dev (Background)
+        run: |
+          npx wrangler dev --show-interactive-dev-session=false --port 8787 &
+          sleep 15
+
+      # 5. Execute the synchronization command.
+      - name: Run the command
+        env:
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        run: |
+          curl -X PATCH "http://localhost:8787/sync-counter" \
+            -H "x-api-key: $ADMIN_KEY"
