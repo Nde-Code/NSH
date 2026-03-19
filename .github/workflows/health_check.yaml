@@ -66,9 +66,8 @@ jobs:
       - name: Run full API test suite
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-          GIST_URL: ${{ secrets.GIST_SECRET_URL }}
         run: |
-          curl -sL "$GIST_URL" -o health_check_action.py && \
+          curl -sL "${{ secrets.GIST_SECRET_URL }}" -o health_check_action.py && \
           python3 health_check_action.py \
             --link "https://test.domain.com" \
             --remote "http://localhost:8787" \
