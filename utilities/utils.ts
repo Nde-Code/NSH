@@ -110,7 +110,7 @@ export function normalizeAndValidateURL(input: string): string | null {
 
         return url.href;
 
-    } catch {
+    } catch (_err) {
 
         return null;
 

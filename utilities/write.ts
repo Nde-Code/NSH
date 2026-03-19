@@ -14,7 +14,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSec
 
             method: "PUT",
 
-            headers: { "Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
 
             body: JSON.stringify(data),
 
