@@ -46,7 +46,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
         return "error";
 
-    } catch {
+    } catch (_err) {
 
         return "error";
 

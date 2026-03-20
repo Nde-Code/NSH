@@ -90,7 +90,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
 
             data = JSON.parse(json);
 
-        } catch {
+        } catch (_err) {
 
             data = { s: now, c: 1 };
 

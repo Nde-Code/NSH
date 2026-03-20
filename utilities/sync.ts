@@ -32,7 +32,7 @@ export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue:
         
         return { actualCount, success: res.ok };
 
-    } catch {
+    } catch (_err) {
 
         printLogLine("ERROR", "Unable to update the url counter in metadata.");
 

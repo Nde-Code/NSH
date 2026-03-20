@@ -22,7 +22,7 @@ export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutVa
 
         return res.ok;
 
-    } catch {
+    } catch (_err) {
 
         return false;
 
