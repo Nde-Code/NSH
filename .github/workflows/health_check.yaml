@@ -68,7 +68,7 @@ jobs:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
         run: |
           curl -sL "${{ secrets.GIST_SECRET_URL }}" -o health_check_action.py && \
-          python3 health_check_action.py \
+          python health_check_action.py \
             --link "https://test.domain.com" \
             --remote "http://localhost:8787" \
             --max-url-length 2000 \
