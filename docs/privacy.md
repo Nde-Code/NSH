@@ -8,7 +8,7 @@ To be clear and transparent about what data this software uses and how it is han
 
 To implement a `rate limiting` system, this software works with your IP address. 
 
-However, the IP is immediately hashed using `SHA-256`, combined with a `SALT` key (strong, secret, and secure) stored in the `.dev.vars` file (in local) and in [Cloudflare Worker secrets](https://developers.cloudflare.com/workers/configuration/secrets/) in production. Your IP is **never logged** anywhere and is only stored in a memory database called [Workers KV](https://developers.cloudflare.com/kv/). This allows the software to retain information in memory, even if the project is restarted (e.g., due to a `Cold Start`).
+However, the IP is immediately hashed using `SHA-256`, combined with a `SALT` key (strong, secret, and secure) stored in the `.dev.vars` file (in local) and in [Cloudflare secrets](https://developers.cloudflare.com/workers/configuration/secrets/) in production. Your IP is **never logged** anywhere and is only stored in a memory database called [Workers KV](https://developers.cloudflare.com/kv/). This allows the software to retain information in memory, even if the project is restarted (e.g., due to a `Cold Start`).
 
 The IP is **never stored in any external database** or service. The `KV` database is **fully cleared every 24 hours**, which is why rate limiting is based on a **daily reset** (for better GDPR compliance), rather than on a weekly or monthly basis.
 
