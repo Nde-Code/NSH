@@ -378,7 +378,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
 
-        const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req);
+        const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req, 1);
 
         if (!data || typeof data.long_url !== "string" || !data.long_url.trim()) return createJsonResponse(MSG.INVALID_POST_BODY, 400);
         

@@ -134,7 +134,7 @@ export function simpleURLHash(str: string, shortUrlIdLength: number): string {
 
 }
 
-export async function parseJsonBody<T = unknown>(req: Request): Promise<T | null> {
+export async function parseJsonBody<T = unknown>(req: Request, maxKeys: number): Promise<T | null> {
 
     const MAX_PAYLOAD_SIZE: number = 10000;
 
@@ -156,7 +156,7 @@ export async function parseJsonBody<T = unknown>(req: Request): Promise<T | null
 
         if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
 
-        if (Object.keys(parsed).length > 5) return null; 
+        if (Object.keys(parsed).length > maxKeys) return null; 
 
         return parsed as T;
 
