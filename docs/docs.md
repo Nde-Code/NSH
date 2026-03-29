@@ -322,21 +322,35 @@ and put in `tsconfig.json`:
 
 ```json
 {
-  "compilerOptions": {
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["./worker-configuration.d.ts"]
-  },
-  "include": ["utilities", "worker-configuration.d.ts", "main.ts", "config.ts", "types"],
-  "exclude": ["node_modules", "dist"]
+    "compilerOptions": {
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "target": "ES2020",
+        "lib": [
+            "ES2020",
+            "DOM"
+        ],
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "types": [
+            "./worker-configuration.d.ts"
+        ]
+    },
+    "include": [
+        "utilities",
+        "worker-configuration.d.ts",
+        "main.ts",
+        "config.ts",
+        "types"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
 ```
 
