@@ -170,24 +170,24 @@ to send your secret to the Cloudflare Workers platform.
 
 ```ts
 export const config: StaticConfig = {
-    
-  RATE_LIMIT_INTERVAL_S: 1, // min = 1
 
-  MAX_DAILY_WRITES: 10, // min = 1
-
-  IPS_PURGE_TIME_DAYS: 1, // min = 1
-
-  FIREBASE_TIMEOUT_MS: 6000, // min = 1000
-
-  FIREBASE_ENTRIES_LIMIT: 1000, // min = 50
-
-  DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
-
-  MAX_NUMBER_OF_LINKS_COUNT: 50, // min = 10
-
-  SHORT_URL_ID_LENGTH: 14, // min = 10
-
-  MAX_URL_LENGTH: 2000 // min = 100
+	RATE_LIMIT_INTERVAL_S: 1, // min = 1
+	
+	MAX_DAILY_WRITES: 10, // min = 1
+	
+	IPS_PURGE_TIME_DAYS: 1, // min = 1
+	
+	FIREBASE_TIMEOUT_MS: 6000, // min = 1000
+	
+	FIREBASE_ENTRIES_LIMIT: 1000, // min = 50
+	
+	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
+	
+	MAX_NUMBER_OF_LINKS_COUNT: 50, // min = 10
+	
+	SHORT_URL_ID_LENGTH: 14, // min = 10
+	
+	MAX_URL_LENGTH: 2000 // min = 100
 
 };
 ```
