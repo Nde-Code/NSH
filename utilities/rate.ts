@@ -100,7 +100,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
             
         else {
 
-            if (data.c > maxWrites) return "USER_LIMIT";
+            if (data.c >= maxWrites) return "USER_LIMIT";
 
             data.c++;
 
