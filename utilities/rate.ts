@@ -83,7 +83,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
     let data: RateLimitData;
     
     if (!json) data = { s: now, c: 1 };
-        
+    
     else {
 
         try {
@@ -96,18 +96,22 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
 
         }
 
-    }
+        if (now - data.s >= windowMs) data = { s: now, c: 1 };
+            
+        else {
 
-    if (now - data.s >= windowMs) data = { s: now, c: 1 };
-        
-    else if (data.c > maxWrites) return "USER_LIMIT";
-       
-    else data.c++;
+            if (data.c > maxWrites) return "USER_LIMIT";
+
+            data.c++;
+
+        }
+
+    }
 
     const remainingTtl: number = Math.max(60, Math.floor((windowMs - (now - data.s)) / 1000));
 
     const success: boolean = await safeKvPut(kv, key, JSON.stringify(data), remainingTtl);
-    
+
     return success ? "OK" : "KV_QUOTA_EXCEEDED";
 
 }
