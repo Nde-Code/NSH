@@ -108,7 +108,7 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
 
 ```json
 {
-  "success": "https://your-worker.org.workers.dev/url/11i7yev0000000"
+    "success": "https://your-worker.org.workers.dev/url/11i7yev0000000"
 }
 ```
 
@@ -180,20 +180,20 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 
 ```json
 {
-  "urls": {
-    "11i7yev0000000": {
-      "long_url": "https://nde-code.github.io/",
-      "post_date": "2024-05-12T10:00:00.000Z",
-      "is_verified": true
+    "urls": {
+        "11i7yev0000000": {
+            "long_url": "https://nde-code.github.io/",
+            "post_date": "2024-05-12T10:00:00.000Z",
+            "is_verified": true
+        },
+        "vgsyqs00000000": {
+            "long_url": "https://www.google.com/",
+            "post_date": "2024-05-12T11:30:00.000Z",
+            "is_verified": false
+        }
     },
-    "vgsyqs00000000": {
-      "long_url": "https://www.google.com/",
-      "post_date": "2024-05-12T11:30:00.000Z",
-      "is_verified": false
-    }
-  },
-  "next_cursor": "vgsyqs00000000",
-  "has_more": true
+    "next_cursor": "vgsyqs00000000",
+    "has_more": true
 }
 ```
 
@@ -296,8 +296,8 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 
 ```json
 {
-  "success": "Counter synchronized successfully.",
-  "new_count": 42
+    "success": "Counter synchronized successfully.",
+    "new_count": 42
 }
 ```
 
