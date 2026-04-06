@@ -371,12 +371,13 @@ Here's a brief summary of what the `tsconfig.json` file do:
 * **`module: "ESNext"`**
   Uses ES Modules, which is the standard for Workers and modern TypeScript projects.
 
-* **`moduleResolution: "Node"`**
-  Tells TypeScript/IDE how to resolve modules.
+* **`moduleResolution: "Bundler"`**
+  Tells TypeScript/IDE how to resolve modules in a bundler-based (ESM) environment.
 
   * Not strictly needed for relative `.ts` imports (they work anyway).
-  * Useful if you later add npm packages: TypeScript and VS Code will correctly locate modules.
-  * Does **not affect the final bundle**; esbuild handles module resolution.
+  * Required/recommended for Cloudflare Workers and modern tooling (esbuild, Wrangler).
+  * Useful when using npm packages: TypeScript and VS Code correctly resolve ESM exports and types.
+  * Does **not affect the final bundle**; esbuild handles module resolution at build time.
 
 * **`strict: true`**
   Enables all strict type checking options for safer, more predictable code.
