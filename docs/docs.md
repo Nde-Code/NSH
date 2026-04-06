@@ -331,7 +331,7 @@ and put in `tsconfig.json`:
             "DOM"
         ],
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
