@@ -346,9 +346,9 @@ curl -X GET "https://your-worker.org.workers.dev/health" \
 
 To access protected endpoints, you must include an Admin key in **the request headers** using one of the following:
 
-- `Authorization: Bearer <API_or_ADMIN_KEY>`
+- `Authorization: Bearer <MONITORING_or_ADMIN_KEY>`
 
-- `x-api-key: <API_or_ADMIN_KEY>`
+- `x-api-key: <MONITORING_or_ADMIN_KEY>`
 
 > Of course, on my personal instance, trying to access these admin endpoints is forbidden.
 
