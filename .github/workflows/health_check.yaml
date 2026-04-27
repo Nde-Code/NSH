@@ -72,6 +72,7 @@ jobs:
       - name: Run full API test suite
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
         run: |
           curl -sL "${{ secrets.GIST_SECRET_URL }}" -o health_check_action.py && \
           python health_check_action.py \
