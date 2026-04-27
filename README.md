@@ -326,7 +326,7 @@ curl -X GET "https://your-worker.org.workers.dev/health" \
      -H "x-api-key: YOUR_MONITORING_KEY"
 ```
 
-#### **Example response (healthy):**
+#### **Example response (Healthy):**
 
 ```json
 {

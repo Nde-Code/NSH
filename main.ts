@@ -159,7 +159,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 		
-		if (!constantTimeEqual(apiKey ?? "", activeConfig.ADMIN_KEY)) {
+		if (!constantTimeEqual(apiKey ?? "", activeConfig.MONITORING_KEY)) {
 
 			printLogLine("WARN", "Unauthorized attempt for health check !");
 
