@@ -62,6 +62,8 @@ import { MSG } from "./utilities/messages.ts";
 
 import { syncCounterWithDb } from "./utilities/sync.ts";
 
+import { handleHealthCheck } from "./utilities/health.ts";
+
 const configMinValues: Partial<Record<keyof StaticConfig, number>> = {
 
 	RATE_LIMIT_INTERVAL_S: 1,
@@ -94,9 +96,12 @@ function getContextualConfig(env: Env): RuntimeConfig {
 
         FIREBASE_HIDDEN_PATH: env.FIREBASE_HIDDEN_PATH ?? "",
 
-        ADMIN_KEY: env.ADMIN_KEY ?? "",
+        HASH_KEY: env.HASH_KEY ?? "",
+        
+		ADMIN_KEY: env.ADMIN_KEY ?? "",
 
-        HASH_KEY: env.HASH_KEY ?? ""
+		MONITORING_KEY: env.MONITORING_KEY ?? ""
+
 
     };
 
@@ -118,7 +123,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (pathname === "/favicon.ico") return new Response(null, { status: 204 });
 
-	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.HASH_KEY || !activeConfig.ADMIN_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
+	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.HASH_KEY || !activeConfig.ADMIN_KEY || !activeConfig.MONITORING_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
 	
 	if (!isConfigValidWithMinValues(activeConfig, configMinValues)) return createJsonResponse(MSG.WRONG_CONFIG, 500);
 	
@@ -145,6 +150,26 @@ async function handler(req: Request, env: Env): Promise<Response> {
 	}
 
 	if (req.method === "GET" && pathname === "/") return createJsonResponse(MSG.ROOT_URL_MESSAGE, 200);
+
+	if (req.method === "GET" && pathname === "/health") {
+
+		const hashedIP: string = await hashIp(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+
+		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+
+		const apiKey: string | null = getApiKeyFromRequest(req);
+		
+		if (!constantTimeEqual(apiKey ?? "", activeConfig.ADMIN_KEY)) {
+
+			printLogLine("WARN", "Unauthorized attempt for health check !");
+
+			return createJsonResponse(MSG.WRONG_API_KEY_FOR_MONITOR, 401); 
+			
+		}
+
+        return await handleHealthCheck(env, activeConfig);
+
+    }
 
 	if (req.method === "PATCH" && pathname === "/sync-counter") {
 

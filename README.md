@@ -146,7 +146,7 @@ curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 
 Retrieve a paginated list of shortened links currently stored in the database.
 
-> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Query Parameters:**
 
@@ -155,13 +155,15 @@ Retrieve a paginated list of shortened links currently stored in the database.
 | `count` | number | Number of links to retrieve (defaults to configured value, max is restricted). |
 | `cursor` | string | The key of the last item from the previous page. |
 
+> cursor = next_cursor from previous response.
+
 #### **Response:**
 
 * `200 OK`: Successful query returning the URLs.
 
 * `400 Bad Request`: The `count` or `cursor` parameter is invalid.
 
-* `401 Unauthorized`: Invalid or missing API/Admin key.
+* `401 Unauthorized`: Invalid or missing API key.
 
 * `429 Too Many Requests`: Rate limit exceeded.
 
@@ -201,7 +203,7 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 
 Mark a specific shortened URL as verified in the database.
 
-> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Path Parameters:**
 
@@ -215,7 +217,7 @@ Mark a specific shortened URL as verified in the database.
 
 * `400 Bad Request`: No valid ID provided in the path.
 
-* `401 Unauthorized`: Invalid or missing API/Admin key.
+* `401 Unauthorized`: Invalid or missing Admin key.
 
 * `404 Not Found`: No link found with this ID in the database.
 
@@ -236,7 +238,7 @@ curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
 
 Delete a shortened URL from the database and decrement the global metadata counter.
 
-> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Path Parameters:**
 
@@ -250,7 +252,7 @@ Delete a shortened URL from the database and decrement the global metadata count
 
 * `400 Bad Request`: No valid ID provided in the path.
 
-* `401 Unauthorized`: Invalid or missing API/Admin key.
+* `401 Unauthorized`: Invalid or missing Admin key.
 
 * `404 Not Found`: No link found with this ID in the database.
 
@@ -271,13 +273,13 @@ curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
 
 Recalculate and synchronize the metadata counter to reflect the actual number of URLs stored in the Firebase database. Useful for fixing race conditions or desyncs.
 
-> **Security:** Requires a valid Admin/API key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 #### **Response:**
 
 * `200 OK`: Counter successfully resynced (returns the new count).
 
-* `401 Unauthorized`: Invalid or missing API/Admin key.
+* `401 Unauthorized`: Invalid or missing Admin key.
 
 * `429 Too Many Requests`: Rate limit exceeded.
 
@@ -301,9 +303,48 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 }
 ```
 
+### 7. **[GET]** `/health`
+
+Check the overall health status of the service by validating configuration, database connectivity, counter accessibility, available capacity, and KV storage.
+
+> **Security:** Requires a valid Monitoring key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+
+> The monitoring key is completely different from the admin key for obvious security reasons.
+
+#### **Response:**
+
+* `200 OK`: All systems operational.
+
+* `206 Partial Content`: Service is degraded (some components are unavailable or limited).
+
+* `503 Service Unavailable`: Service is unavailable or critical components are failing.
+
+#### **Example request:**
+
+```bash
+curl -X GET "https://your-worker.org.workers.dev/health" \
+     -H "x-api-key: YOUR_MONITORING_KEY"
+```
+
+#### **Example response (healthy):**
+
+```json
+{
+    "status": "healthy",
+    "timestamp": "2026-04-26T20:17:27.121Z",
+    "checks": {
+        "config_valid": true,
+        "firebase_reachable": true,
+        "counter_accessible": true,
+        "kv_store_available": true
+    },
+    "message": "All systems operational."
+}
+```
+
 ### Authentication:
 
-To access protected endpoints, you must include an API or ADMIN key in **the request headers** using one of the following:
+To access protected endpoints, you must include an Admin key in **the request headers** using one of the following:
 
 - `Authorization: Bearer <API_or_ADMIN_KEY>`
 

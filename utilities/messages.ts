@@ -4,7 +4,17 @@ export const MSG = {
 
     WRONG_CONFIG: { error: "Invalid configuration. Check config.ts." },
 
+    ROOT_URL_MESSAGE: { success: "Welcome on the API root. Docs: https://github.com/Nde-Code/NSH" },
+
     RATE_LIMIT_EXCEEDED: (s: number) => ({ warning: `Rate limit exceeded: 1 request per ${s}s allowed.` }),
+
+    WRONG_API_KEY_FOR_MONITOR: { error: "Incorrect or missing API key for health check." },
+
+    SYSTEM_OK: { success: "All systems operational." },
+
+    SYSTEM_DEGRADATION: { warning: "Some systems are experiencing issues." },
+
+    SYSTEM_DOWN: { error: "Service is unavailable." },
 
     WRONG_API_KEY_FOR_SYNC: { error: "Incorrect or missing API key for counter synchronization." },
 
@@ -49,8 +59,6 @@ export const MSG = {
     SERVICE_TEMP_UNAVAILABLE: { warning: "Service unavailable." },
 
     LINK_NOT_GENERATED: { error: "Link could not be generated." },
-
-    ROOT_URL_MESSAGE: { success: "Welcome on the API root. Docs: https://github.com/Nde-Code/NSH" },
 
     INVALID_API_ENDPOINT: { warning: "Invalid endpoint." },
     

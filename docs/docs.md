@@ -137,6 +137,7 @@ FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
 FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
 HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
 ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
+MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 ```
 
 **List of variables in this project:**
@@ -147,6 +148,7 @@ ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
 | `FIREBASE_HIDDEN_PATH` | A hidden or secure subpath for sensitive Firebase operations.         |
 | `HASH_KEY`             | The cryptographic key used to hash user IPs or sensitive identifiers. |
 | `ADMIN_KEY`            | A private admin key used to verify, list or delete data.              |
+| `MONITORING_KEY`       | The key used to monitor service status securely (to prevent abuse).   |
 
 When you have finished, **make sure there are no traces of secrets** in your code, and run the following command.  
 *(Normally, you'll only need to do this once, when you first create the project.)*
@@ -156,13 +158,14 @@ wrangler secret put FIREBASE_HOST_LINK
 wrangler secret put FIREBASE_HIDDEN_PATH
 wrangler secret put HASH_KEY
 wrangler secret put ADMIN_KEY
+wrangler secret put MONITORING_KEY
 ```
 
 to send your secret to the Cloudflare Workers platform.
 
 > Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
 
-> ⚠️ **A quick security note about the `ADMIN_KEY`:** I have implemented a constant-time comparison between the configured key and the submitted key. This is a manual (non-crypto module) implementation, which should provide solid protection against timing attacks. Combined with rate limiting and inherent network jitter (latency noise), this should make such attacks extremely difficult to carry out successfully. Just make sure your key is strong and secure (include uppercase, lowercase letters, numbers, and be longer than 60 characters).
+> ⚠️ **A quick security note about the `ADMIN_KEY` and `MONITORING_KEY`:** I have implemented a constant-time comparison between the configured key and the submitted key. This is a manual (non-crypto module) implementation, which should provide solid protection against timing attacks. Combined with rate limiting and inherent network jitter (latency noise), this should make such attacks extremely difficult to carry out successfully. Just make sure your key is strong and secure (include uppercase, lowercase letters, numbers, and be longer than 60 characters).
  
 > **Note about `FIREBASE_HIDDEN_PATH`:** Ensure that this key is strong and secure. Please use only uppercase and lowercase letters, and avoid all other special characters or symbols to guarantee the proper functioning of the software.
 

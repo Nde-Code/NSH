@@ -8,6 +8,8 @@ export interface Env {
 
     ADMIN_KEY: string;
 
+    MONITORING_KEY: string;
+
     RATE_LIMIT_KV: KVNamespace;
 
 }
@@ -43,6 +45,30 @@ export interface RuntimeConfig extends StaticConfig {
     HASH_KEY: string;
 
     ADMIN_KEY: string;
+
+    MONITORING_KEY: string;
+
+}
+
+export interface HealthCheckResult {
+
+    status: "healthy" | "degraded" | "unhealthy";
+
+    timestamp: string;
+
+    checks: {
+
+        config_valid: boolean;
+
+        firebase_reachable: boolean;
+
+        counter_accessible: boolean;
+
+        kv_store_available: boolean;
+
+    };
+
+    message: string;
 
 }
 

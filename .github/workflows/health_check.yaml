@@ -2,6 +2,11 @@ name: Full NSH API integration & Health check
 
 on:
 
+  # Trigger on push to the main branch
+  push:
+    branches:
+      - main
+
   # Plan a monthly health check to ensure proper integrity.
   schedule:
     - cron: '27 1 17 * *'
@@ -51,6 +56,7 @@ jobs:
           echo "FIREBASE_HIDDEN_PATH=\"${{ secrets.FIREBASE_HIDDEN_PATH }}\"" >> .dev.vars
           echo "HASH_KEY=\"${{ secrets.HASH_KEY }}\"" >> .dev.vars
           echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
+          echo "MONITORING_KEY=\"${{ secrets.MONITORING_KEY }}\"" >> .dev.vars
 
       # 5. Generate Wrangler types for the TypeScript project.
       - name: Generate Wrangler types
