@@ -60,9 +60,11 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
     const hasAvailableLinkCapacity: boolean = typeof counterValue === "number" && counterValue < config.MAX_NUMBER_OF_LINKS_COUNT; 
 
-    const allHealthy: boolean = checks.config_valid && checks.firebase_reachable && checks.counter_accessible && hasAvailableLinkCapacity && checks.kv_store_available;
-
-    const degraded: boolean = checks.config_valid && (!checks.kv_store_available || !checks.counter_accessible || !hasAvailableLinkCapacity);
+    const systemDown: boolean = !checks.config_valid || !checks.firebase_reachable;
+    
+    const degraded: boolean = !systemDown && (!checks.kv_store_available || !checks.counter_accessible || !hasAvailableLinkCapacity);
+    
+    const allHealthy: boolean = !systemDown && !degraded;
 
     const status: "healthy" | "degraded" | "unhealthy" = (allHealthy === true) ? "healthy" : (degraded === true) ? "degraded" : "unhealthy";
 

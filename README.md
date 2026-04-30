@@ -6,11 +6,13 @@ At the beginning, I just needed a small piece of software to store links, so I d
 
 If you only need the project for occasional work, feel free to use my public online instance.
 
-For those who need more resources for their instance, the project can be deployed to your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below.
+For those who need more resources for their instance, the project can be deployed to your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below:
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 
 > I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays within the limits of the free plan.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
+> Feel free to check my status page: [https://nde-status.instatus.com/](https://nde-status.instatus.com/) if you're experiencing latency or problems while using the API.
 
 ## 🚀 Features:
 
@@ -307,17 +309,17 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 
 Check the overall health status of the service by validating configuration, database connectivity, counter accessibility, available capacity, and KV storage.
 
-> **Security:** Requires a valid Monitoring key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** Requires a valid monitoring key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
 
 > The monitoring key is completely different from the admin key for obvious security reasons.
 
 #### **Response:**
 
-* `200 OK`: All systems operational.
+* `200 OK`: All systems operational. Firebase is reachable, configuration is valid, and all critical subsystems (KV store, counter integrity, and capacity limits) are within expected operating conditions.
 
-* `206 Partial Content`: Service is degraded (some components are unavailable or limited).
+* `206 Partial Content`: Service is degraded but still operational. Firebase remains reachable, but one or more non-fatal components are impaired, such as KV store unavailability, counter data inconsistency, or capacity limits being reached.
 
-* `503 Service Unavailable`: Service is unavailable or critical components are failing.
+* `503 Service Unavailable`: Service is unavailable due to critical failures. This includes invalid configuration or Firebase connectivity failure, which prevents the system from operating correctly.
 
 #### **Example request:**
 
