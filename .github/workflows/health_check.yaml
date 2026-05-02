@@ -74,8 +74,8 @@ jobs:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
         run: |
-          curl -sL "${{ secrets.GIST_SECRET_URL }}" -o health_check_action.py && \
-          python health_check_action.py \
+          curl -sL "${{ secrets.GIST_SECRET_URL }}" -o nsh.py && \
+          python nsh.py \
             --link "https://test.domain.com" \
             --remote "http://localhost:8787" \
             --max-url-length 2000 \
