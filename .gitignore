@@ -1,5 +1,12 @@
 .wrangler/
+
 node_modules/
 dist/
 worker-configuration.d.ts
+
 .dev.vars
+
+*.log
+
+.DS_Store
+Thumbs.db
