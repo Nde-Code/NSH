@@ -1,11 +1,22 @@
 {
     "files.exclude": {
-        "dist": true,
-        "node_modules": true,
-        "build": true,
-        ".wrangler": true,
-        "worker-configuration.d.ts": true,
-        ".DS_Store": true,
-		"Thumbs.db": true
-    }
+        "**/dist": true,
+        "**/node_modules": true,
+        "**/build": true,
+        "**/.wrangler": true,
+        "**/worker-configuration.d.ts": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "search.exclude": {
+        "**/dist": true,
+        "**/node_modules": true,
+        "**/build": true,
+        "**/.wrangler": true,
+        "**/worker-configuration.d.ts": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "search.useIgnoreFiles": true,
+    "search.useGlobalIgnoreFiles": true
 }
