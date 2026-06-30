@@ -1,36 +1,41 @@
-# The developer documentation:
+# Developer Documentation:
 
-Here is the complete developer guide for anyone who wants to contribute or create their own version of this project and make it work on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
-## 🚀 To begin:
+## 🚀 Getting Started:
 
-### 1. Create or login to your cloudflare account: [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up)
+### 1. Create or Log In to Cloudflare:
 
-### 2. Install Node.js and npm: [https://nodejs.org/en/download](https://nodejs.org/en/download)
+Visit [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up) to create an account or log in.
 
-### 3. Install the Wrangler CLI using:
+### 2. Install Node.js and npm:
+
+Download from [https://nodejs.org/en/download](https://nodejs.org/en/download).
+
+### 3. Install Wrangler CLI:
 
 ```bash
 npm install -g wrangler
 ```
 
-> If you haven't installed Wrangler globally, prefix commands with `npx`, for example `npx wrangler`. 
+> If Wrangler is not installed globally, prefix commands with `npx` (e.g., `npx wrangler`).
 
-### 4. Clone the project branch:
+### 4. Clone the Repository:
 
 ```bash
 git clone https://github.com/Nde-Code/NSH.git
 ```
 
-### 5. Log your Wrangler CLI to your Cloudflare account using:
+### 5. Authenticate with Cloudflare:
 
 ```bash
 wrangler login
 ```
 
-## ⚙️ Setting up the configuration:
+## ⚙️ Configuration Setup:
 
-First, take a look at the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the full configuration for your project:
+Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the complete project configuration:
+
 ```jsonc
 {
 	"name": "project_name",
@@ -56,81 +61,81 @@ First, take a look at the [`wrangler.jsonc`](../wrangler.jsonc) file, which cont
 }
 ```
 
-### Main elements:
+### Core Configuration Fields:
 
-#### **`name`**
+#### `name`
 
-Defines the **name of your Worker project**.
-This determines the public URL for your Worker on Cloudflare (for example:
-`https://project_name.username.workers.dev`).
+Defines the **Worker project name**.
+This determines your public URL (e.g., `https://project_name.username.workers.dev`).
 
-#### **`main`**
+#### `main`
 
 Specifies the **entry point** of your Worker script.
-This is the file that exports your main fetch handler.
+This file exports your main fetch handler.
 
-#### **`compatibility_date`**
+#### `compatibility_date`
 
-Locks your Worker to a specific version of the Cloudflare Workers runtime.
-This ensures your code continues to work as expected, even if Cloudflare updates the runtime.
+Locks your Worker to a specific Cloudflare Workers runtime version.
+Ensures compatibility even as Cloudflare updates the platform.
 
-#### **`preview_urls`**
+#### `preview_urls`
 
-It’s used to create a previewable URL. That’s a feature in Cloudflare Workers, but it’s not really useful for a small project. Feel free to take a look at: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/)
+Enables preview URLs for testing. Learn more: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/)
 
-### Observability:
+### Observability Configuration:
 
-#### **`observability.enabled`**
+#### `observability.enabled`
 
-When set to `true`, enables **automatic metrics and logs collection** for your Worker.
-This lets you monitor performance and errors in the Cloudflare dashboard.
+When `true`, enables **automatic metrics and logs collection**.
+Allows performance and error monitoring in the Cloudflare dashboard.
 
-#### **`observability.head_sampling_rate`**
+#### `observability.head_sampling_rate`
 
-Defines the **percentage of requests sampled for tracing** (from `0` to `1`).
+Defines the **percentage of requests sampled for tracing** (0 to 1):
 
-* `1` = 100% of requests are sampled (useful for debugging).
-* `0.1` = 10% of requests are traced (better for production environments).
+* `1` = 100% sampling (useful for debugging)
+* `0.1` = 10% sampling (better for production)
 
-#### **`observability.logs.invocation_logs`**
+#### `observability.logs.invocation_logs`
 
-Controls whether **automatic invocation logs** are collected for each Worker execution.
+Controls **automatic invocation log collection**:
 
-* `true` (default) = Cloudflare logs metadata like request method, URL, headers, and execution details.
-* `false` = Disables automatic logs, keeping only your custom `console.log` entries.
+* `true` = Logs request metadata, headers, and execution details
+* `false` = Disables automatic logs, keeping only custom `console.log` entries
 
-> Disabling invocation logs is recommended for **GDPR compliance**, as it prevents Cloudflare from storing potentially sensitive request data.
+> Disabling invocation logs is **recommended for GDPR compliance** to prevent storage of sensitive request data.
 
-#### **`observability.tracing.enabled`**
+#### `observability.traces.enabled`
 
-Controls whether **distributed tracing** is enabled for your Worker.
+Controls **distributed tracing**:
 
-* `true` = Enables tracing spans and trace IDs for each request (requires compatible tracing backend).
-* `false` = Disables tracing entirely.
+* `true` = Enables tracing spans and trace IDs
+* `false` = Disables tracing entirely
 
-> Tracing is disabled by default. If you're not using OpenTelemetry or a tracing system, leave this off to reduce data collection.
+> Leave disabled if not using OpenTelemetry or a tracing system.
 
 ### KV Namespaces:
 
-#### **`kv_namespaces`**
+#### `kv_namespaces`
 
-Binds your Worker to your **Cloudflare KV (Key-Value)** namespace.
+Binds your Worker to **Cloudflare KV (Key-Value)** namespace for rate limiting storage.
 
-Create a Workers KV via the dashboard or using:
+Create a Workers KV using:
+
 ```bash
 wrangler kv namespace create YOUR_KV_NAME
 ```
 
-> If you feel stuck, take a look at: [https://developers.cloudflare.com/kv/get-started/](https://developers.cloudflare.com/kv/get-started/)
+> For more details: [https://developers.cloudflare.com/kv/get-started/](https://developers.cloudflare.com/kv/get-started/)
 
-And complete the `wrangler.jsonc` file with the following configuration:
+Complete `wrangler.jsonc` with:
 
-* `binding`: The variable name you’ll use inside your code (here: `YOUR_KV_NAME`).
-* `id`: The unique namespace ID from your Cloudflare dashboard.
+* **`binding`** : Variable name used in your code (e.g., `YOUR_KV_NAME`)
+* **`id`** : Unique namespace ID from your Cloudflare dashboard
 
 ### Environment Variables:
 
-To start working **locally** with environment variables, create a file called `.dev.vars` and add the following content:
+Create a `.dev.vars` file for local development:
 
 ```env
 FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
@@ -140,18 +145,17 @@ ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
 MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 ```
 
-**List of variables in this project:**
+#### Variables in This Project:
 
-| Variable               | Description                                                           |
-| ---------------------- | --------------------------------------------------------------------- |
-| `FIREBASE_HOST_LINK`   | The public or private Firebase endpoint used by your Worker.          |
-| `FIREBASE_HIDDEN_PATH` | A hidden or secure subpath for sensitive Firebase operations.         |
-| `HASH_KEY`             | The cryptographic key used to hash user IPs or sensitive identifiers. |
-| `ADMIN_KEY`            | A private admin key used to verify, list or delete data.              |
-| `MONITORING_KEY`       | The key used to monitor service status securely (to prevent abuse).   |
+| Variable | Description |
+|----------|-------------|
+| `FIREBASE_HOST_LINK` | Public or private Firebase endpoint for your Worker |
+| `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
+| `HASH_KEY` | Cryptographic key for hashing user IPs or identifiers |
+| `ADMIN_KEY` | Private key for verifying, listing, or deleting data |
+| `MONITORING_KEY` | Key for secure service status monitoring |
 
-When you have finished, **make sure there are no traces of secrets** in your code, and run the following command.  
-*(Normally, you'll only need to do this once, when you first create the project.)*
+Once configured, add secrets to Cloudflare Workers:
 
 ```bash
 wrangler secret put FIREBASE_HOST_LINK
@@ -161,87 +165,74 @@ wrangler secret put ADMIN_KEY
 wrangler secret put MONITORING_KEY
 ```
 
-to send your secret to the Cloudflare Workers platform.
+> For more details: [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/)
 
-> Check out [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/) if you need further information.
+**Security Notes:**
 
-> ⚠️ **A quick security note about the `ADMIN_KEY` and `MONITORING_KEY`:** I have implemented a constant-time comparison between the configured key and the submitted key. This is a manual (non-crypto module) implementation, which should provide solid protection against timing attacks. Combined with rate limiting and inherent network jitter (latency noise), this should make such attacks extremely difficult to carry out successfully. Just make sure your key is strong and secure (include uppercase, lowercase letters, numbers, and be longer than 60 characters).
- 
-> **Note about `FIREBASE_HIDDEN_PATH`:** Ensure that this key is strong and secure. Please use only uppercase and lowercase letters, and avoid all other special characters or symbols to guarantee the proper functioning of the software.
+> ⚠️ **Admin and Monitoring Keys:** constant-time comparison prevents timing attacks. Keep keys strong (60+ characters with uppercase, lowercase, numbers). Network latency combined with rate limiting makes timing attacks extremely difficult.
 
-### Software configuration file [`config.ts`](../config.ts):
+> **Firebase Hidden Path:** use only uppercase and lowercase letters. Avoid special characters to ensure proper functionality.
+
+### Software Configuration: [`config.ts`](../config.ts)
 
 ```ts
 export const config: StaticConfig = {
 
-	RATE_LIMIT_INTERVAL_S: 1, // min = 1
+	RATE_LIMIT_INTERVAL_S: 1,             // min = 1
 	
-	MAX_DAILY_WRITES: 10, // min = 1
+	MAX_DAILY_WRITES: 10,                 // min = 1
 	
-	IPS_PURGE_TIME_DAYS: 1, // min = 1
+	IPS_PURGE_TIME_DAYS: 1,               // min = 1
 	
-	FIREBASE_TIMEOUT_MS: 6000, // min = 1000
+	FIREBASE_TIMEOUT_MS: 6000,            // min = 1000
 	
-	FIREBASE_ENTRIES_LIMIT: 1000, // min = 50
+	FIREBASE_ENTRIES_LIMIT: 1000,         // min = 50
 	
 	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
 	
-	MAX_NUMBER_OF_LINKS_COUNT: 50, // min = 10
+	MAX_NUMBER_OF_LINKS_COUNT: 50,        // min = 10
 	
-	SHORT_URL_ID_LENGTH: 14, // min = 10
+	SHORT_URL_ID_LENGTH: 14,              // min = 10
 	
-	MAX_URL_LENGTH: 2000 // min = 100
+	MAX_URL_LENGTH: 2000                  // min = 100
 
 };
 ```
 
-- `RATE_LIMIT_INTERVAL_S` in [second]: This is the rate limit based on requests.
-  - **Currently**:
-    - **Max**: one request per second (absolute min).
+#### Configuration Parameters
 
-- `MAX_DAILY_WRITES` in [day]: Daily writing rate limit (only applies if the link is not already in the database).
-  - **Absolute min of max**: 1 writes per day.
+| Parameter | Description | Constraints |
+|-----------|-------------|-------------|
+| **`RATE_LIMIT_INTERVAL_S`** | Rate limit interval in seconds | Minimum: 1 |
+| **`MAX_DAILY_WRITES`** | Daily write limit (new links only) | Minimum: 1 |
+| **`IPS_PURGE_TIME_DAYS`** | Days before purging hashed IPs from KV | Minimum: 1 |
+| **`FIREBASE_TIMEOUT_MS`** | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
+| **`FIREBASE_ENTRIES_LIMIT`** | Maximum entries allowed in Firebase | Minimum: 50 |
+| **`DEFAULT_NUMBER_OF_LINKS_FROM_COUNT`** | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
+| **`MAX_NUMBER_OF_LINKS_COUNT`** | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |
+| **`SHORT_URL_ID_LENGTH`** | Length of generated shortcodes | Minimum: 10 |
+| **`MAX_URL_LENGTH`** | Maximum allowed URL length | Minimum: 100 |
 
-- `IPS_PURGE_TIME_DAYS` in [day]: The number of days before purging the [KV](https://developers.cloudflare.com/kv/) store that contains hashed IPs used for rate limiting.
-  - **Currently**:
-    - **Default**: 1 day (absolute min).
+**Important Notes:**
 
-- `FIREBASE_TIMEOUT_MS` in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
-  - **Absolute min of max**: 1 seconds before timeout.
+> **Request Body Limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
 
-- `FIREBASE_ENTRIES_LIMIT`: The maximum number of entries allowed in your Firebase Realtime Database.
-  - **Absolute min of max**: 50 entries.
+> **Entry Limit & Collision Prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping stored URLs ≤ 10,000 ensures extremely low collision risk while controlling free-tier resource usage.
 
-- `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT`: The default number of links returned if no `count` parameter is provided. **Must not exceed `FIREBASE_ENTRIES_LIMIT` or `MAX_NUMBER_OF_LINKS_COUNT`.**
-  - **Absolute min**: 5 links.
+> **Constraint Validation:** violating these constraints will trigger configuration errors.
 
-- `MAX_NUMBER_OF_LINKS_COUNT`: The maximum number of links that can be retrieved via the `count` parameter. **Must not exceed `FIREBASE_ENTRIES_LIMIT`.**
-  - **Absolute min of max**: 10 links.
+## 💻 Project Setup:
 
-- `SHORT_URL_ID_LENGTH`: The length of the shortcode used for shortened URLs. 
-  - **Absolute min**: 10 characters.
+### 1. Create Firebase Realtime Database:
 
-- `MAX_URL_LENGTH`: The maximum allowed URL length in the Firebase Realtime Database.
-  - **Absolute min of max**: 100 characters.
+1. Go to [firebase.google.com](https://firebase.google.com/) and create an account
+   > Google account required (or create one)
 
-> **Note about `SHORT_URL_ID_LENGTH`**: I have set a payload limit of **10KB** for the JSON body when posting a new URL for security reasons. This limit is currently hard-coded and can be modified in the source code. 
+2. Create a **project** and set up a **Realtime Database**
+   > See [Firebase documentation](https://firebase.google.com/docs/build?hl=en) if needed
 
-> **A quick note about `FIREBASE_ENTRIES_LIMIT`:** short IDs are generated using a deterministic 32-bit hash (+/- 4.29 billion possible values). Due to the birthday paradox, collisions become statistically significant around sqrt(2^32) ≈ 65,000 stored entries. To keep the collision probability negligible and avoid insertion failures, the database size is intentionally capped via `FIREBASE_ENTRIES_LIMIT`. In practice, keeping the total number of stored URLs <= 10,000 ensures an extremely low collision risk while also controlling database growth and free-tier resource usage in a Cloudflare Worker + Firebase RTDB environment. This is a deliberate tradeoff prioritizing predictability and cost efficiency over massive scale.
+3. Go to the **Rules** tab and paste this configuration:
 
-> Ensure these values and rules are respected; otherwise, your configuration will trigger an error message.
-
-## 💻 Setting up the project from sources:
-
-### 1. Create a Firebase Realtime Database to store the links:
-
-1. Go to [firebase.google.com](https://firebase.google.com/) and create an account.  
-  > *(If you already have a Google account, you're good to go.)*
-
-2. Create a **project** and set up a *Realtime Database*.
-
-  > If you get stuck, feel free to check out the official [Firebase documentation](https://firebase.google.com/docs/build?hl=en), or search on Google, YouTube, etc.
-
-3. Once your database is ready, go to the *Rules* tab and paste the following code in the editor:
 ```js
 {
 
@@ -296,31 +287,29 @@ export const config: StaticConfig = {
 }
 ```
 
-Here is a brief summary of these rules:
+#### Security Rules Summary:
 
-| Action | Allowed if... |
-| :--- | :--- |
-| **Read** | Always allowed for `meta/_url_counter` and for the full list in `urls/`. The root of the secret path remains private (`.read: false`). |
-| **Write (Create)** | **For `urls/$shortcode`**: The node must not exist. Incoming data must include `long_url` (URL format), `post_date` (ISO format), and `is_verified` (boolean). |
-| **Write (Counter)** | **For `meta/`**: The operation (PATCH) must contain the `_url_counter` key. The final value must remain a number greater than or equal to 0. |
-| **Delete** | **For `urls/$shortcode`**: Allowed if the node exists. <br> **Note**: The Worker handles the atomic decrement via a PATCH on the counter after a successful deletion. |
-| **Update (Patch)** | **For `urls/$shortcode`**: Only `is_verified` can change. The rule verifies that the incoming `long_url` and `post_date` are identical to the values already stored in the database. |
-| **Validation** | All data in `urls/` must respect: <br> 1. `long_url`: max 2000 chars + HTTP/HTTPS Regex. <br> 2. `post_date`: Strict ISO 8601 format. |
-| **Extra fields** | **Forbidden**. Any key other than `long_url`, `post_date`, or `is_verified` within a URL object is rejected via `$other: { ".validate": false }`. |
+| Action | Condition |
+|--------|-----------|
+| **Read** | Allowed for `meta/_url_counter` and `urls/` list. Root path is private |
+| **Write (Create)** | Node must not exist. Data must include `long_url` (URL format), `post_date` (ISO), and `is_verified` (boolean) |
+| **Write (Counter)** | PATCH on `meta/` must contain `_url_counter`. Value must remain ≥ 0 |
+| **Delete** | Allowed if node exists. Worker handles atomic counter decrement via PATCH |
+| **Update (PATCH)** | Only `is_verified` can change. `long_url` and `post_date` must match existing values |
+| **Validation** | URLs max 2000 chars, HTTP/HTTPS regex, ISO 8601 date format |
+| **Extra Fields** | Forbidden—only `long_url`, `post_date`, `is_verified` allowed |
 
-### 2. Initialize TypeScript types:
+### 2. Initialize TypeScript Types:
 
-To benefit from TypeScript definitions in your editor and avoid compilation errors, you can add the Cloudflare Workers type definitions by running:
+Enable TypeScript definitions in your editor:
 
 ```bash
 wrangler types
 ```
 
-> Be sure that your `wrangler.jsonc` is correctly configured before running this command.
+> Ensure `wrangler.jsonc` is properly configured first.
 
-and put in [`tsconfig.json`](../tsconfig.json): 
-
-> already done, if you've cloned the project so you don't need to do that.
+Include in [`tsconfig.json`](../tsconfig.json):
 
 ```json
 {
@@ -356,76 +345,48 @@ and put in [`tsconfig.json`](../tsconfig.json):
 }
 ```
 
-Here's a brief summary of what the `tsconfig.json` file do:
+#### TypeScript Configuration Explanation:
 
-* **`noEmit: true`**
-  Prevents TypeScript from emitting compiled JS files locally. The build and bundling is handled by **Wrangler/esbuild**, so this is only for type checking.
+| Setting | Purpose |
+|---------|---------|
+| **`noEmit: true`** | Prevents TS from emitting JS; Wrangler handles bundling |
+| **`allowImportingTsExtensions: true`** | Allows direct `.ts` file imports for relative paths |
+| **`target: "ES2020"`** | Modern JavaScript syntax for Workers runtime |
+| **`lib: ["ES2020", "DOM"]`** | Includes modern JS features and Web APIs |
+| **`module: "ESNext"`** | ES Modules standard for Workers |
+| **`moduleResolution: "Bundler"`** | ESM-aware module resolution for bundlers |
+| **`strict: true`** | Enables all strict type checking |
+| **`esModuleInterop: true`** | Facilitates CommonJS interoperability |
+| **`skipLibCheck: true`** | Skips type checking `.d.ts` files for speed |
+| **`forceConsistentCasingInFileNames: true`** | Prevents casing errors across OS |
+| **`types: ["./worker-configuration.d.ts"]`** | Includes Wrangler binding definitions |
+| **`include`** | Source code and types to check |
+| **`exclude`** | Build artifacts and dependencies to ignore |
 
-* **`allowImportingTsExtensions: true`**
-  Allows importing `.ts` files directly, which is required for relative imports.
+> This project has **no external dependencies**—no `package.json` or npm packages required.
 
-* **`target: "ES2020"`**
-  Uses modern JavaScript syntax supported by the Worker runtime.
+### 3. Run and Deploy:
 
-* **`lib: ["ES2020", "DOM"]`**
-  Includes modern JS features (`ES2020`) and standard Web APIs (`DOM`) like `fetch`, `Request`, and `Response`.
-
-* **`module: "ESNext"`**
-  Uses ES Modules, which is the standard for Workers and modern TypeScript projects.
-
-* **`moduleResolution: "Bundler"`**
-  Tells TypeScript/IDE how to resolve modules in a bundler-based (ESM) environment.
-
-  * Not strictly needed for relative `.ts` imports (they work anyway).
-  * Required/recommended for Cloudflare Workers and modern tooling (esbuild, Wrangler).
-  * Useful when using npm packages: TypeScript and VS Code correctly resolve ESM exports and types.
-  * Does **not affect the final bundle**; esbuild handles module resolution at build time.
-
-* **`strict: true`**
-  Enables all strict type checking options for safer, more predictable code.
-
-* **`esModuleInterop: true`**
-  Facilitates interoperability with CommonJS modules if needed.
-
-* **`skipLibCheck: true`**
-  Skips type checking for `.d.ts` files in dependencies to speed up compilation.
-
-* **`forceConsistentCasingInFileNames: true`**
-  Prevents file casing errors across different operating systems.
-
-* **`types: ["./worker-configuration.d.ts"]`**
-  Includes type definitions for Wrangler bindings (KV, R2, Durable Objects, ...).
-
-* **`include`**
-  Files/folders that TypeScript will type check: project source code and types.
-
-* **`exclude`**
-  Ignored folders: build artifacts (`dist`), dependencies (`node_modules`).
-
-This project doesn't rely on any external libraries or dependencies, so there's no `package.json` or npm-related files.
-
-### 3. Run the project and deploy it once it's ready:
-
-To run locally, run:
+**Start local development:**
 
 ```bash
 wrangler dev
 ```
 
-To bundle the project **(optional)**, run:
+**Bundle for production (optional):**
 
 ```bash
 wrangler build
 ```
 
-And in the end, to deploy in the Workers network, run:
+**Deploy to Cloudflare Workers:**
 
 ```bash
 wrangler deploy
 ```
 
-and your project is now deployed and accessible to anyone with the link.
+Your project is now live and accessible via the provided URL.
 
-## 📌 At the end:
+## 📌 Support:
 
-If you encounter any issues or problems, feel free top open an issue: [https://github.com/Nde-Code/NSH/issues](https://github.com/Nde-Code/NSH/issues)
+For issues or questions, open an issue on GitHub: [https://github.com/Nde-Code/NSH/issues](https://github.com/Nde-Code/NSH/issues)

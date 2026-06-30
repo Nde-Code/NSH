@@ -1,102 +1,78 @@
 # URL Shortener API with Firebase RTDB:
 
-A simple, lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
+A lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
-At the beginning, I just needed a small piece of software to store links, so I designed this project to be suitable for personal use or small public instances. You can use it for any purpose, but some systems are intentionally designed to be lightweight, such as the URL hashing mechanism, which uses DJB2, and the protection against timing attacks on the admin key (to ensure both security and performance). Please keep this in mind and use it with caution if you plan to deploy it at scale.
+This project was designed for personal use or small public instances. The URL hashing uses DJB2, and admin key protection includes timing attack mitigation for both security and performance. Deploy at scale with caution.
 
-I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays within the limits of the free plan. If you only need the project for occasional work, feel free to use my public online instance.
-
-For those who need more resources for their instance, the project can be deployed to your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below:
+The project runs on the free Cloudflare Workers plan with minimal resource consumption. Cold starts may use extra CPU but stay within free tier limits. Deploy your own instance using the button below:
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 
-> Feel free to check my status page: [https://nde-status.instatus.com/](https://nde-status.instatus.com/) if you're experiencing latency or problems while using the API.
+> **Service Status:** check the [status page](https://nde-status.instatus.com/) if you experience latency or issues.
 
-## 🚀 Features:
+## 🚀 Key Features:
 
-- Provides protection by limiting the daily request quota and preventing burst traffic, such as spam or rapid-fire requests.
+- **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
+- **No duplicates:** prevents storing identical URLs, saving database space.
+- **No sign-up:** no account creation, credit card, or personal data required.
+- **Privacy-first:** no user activity logging.
+- **Highly configurable:** customize behavior to your needs.
+- **Firebase backend:** stores URL mappings in Firebase Realtime Database.
+- **Minimal REST API:** fast, efficient, and lightweight.
+- **Serverless:** runs on Cloudflare Workers free plan with strict resource limits.
 
-- No duplicate URLs (saves space in your database).
+## 🛡️ GDPR Compliance:
 
-- No sign-up, no credit card, or other personal information required.
+This project is built with **GDPR compliance** in mind:
 
-- No logs are maintained to track user activity.
+- **No personal data storage:** IP addresses and private information are never stored directly.
+- **No user logging:** user activity is not tracked or logged.
+- **Secure hashing:** rate limiting uses SHA-256 hashing with a strong, secret salt.
+- **Temporary storage:** IP hashes are stored only in [KV](https://developers.cloudflare.com/kv/) and auto-deleted after a configurable period.
+- **No tracking:** no cookies, analytics, or third-party tracking.
 
-- Highly configurable.
+All measures ensure no identifiable user data is collected, stored, or shared.
 
-- Store mappings in Firebase Realtime Database.
+## 🌐 API Access:
 
-- Minimal, fast and efficient REST API.
+| Endpoint | Rate Limit | Maintainer | Privacy Policy |
+|----------|-----------|-----------|-----------------|
+| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
-- Serverless because it runs on a Cloudflare Worker with strict resource limits (Free plan).
+### Supported Tools:
 
-## 🛡 GDPR Compliance:
+- **JavaScript (Browser)** : CORS enabled for all domains
+- **cURL (Terminal)** : [https://curl.se/](https://curl.se/)
+- **Postman** *(Recommended)* : [https://www.postman.com/](https://www.postman.com/)
 
-This project is designed with **GDPR compliance** in mind:
+## 📚 API Endpoints:
 
-- No direct IP addresses or personal data are stored.
+### 1. **[POST]** `/post-url` — Create Short URL:
 
-- No user privacy information is logged.
+Create a short URL from a long URL. Saves to database and applies rate limiting.
 
-- Basic rate limiting is implemented by hashing **IP addresses**:
+#### Request Body:
 
-  - Hashing is done using *SHA-256*, combined with a **strong, secret salt**.
+| Field | Type | Description |
+|-------|------|-------------|
+| `long_url` | string | **Required.** Original URL to shorten (must be valid) |
 
-  - Hashes are stored only in an NoSQL database called [KV](https://developers.cloudflare.com/kv/).
+> **Note:** request fails if JSON contains unexpected fields or URL exceeds max length.
 
-  - IP hashes are automatically deleted after a configurable retention period.
+#### Response Codes:
 
-- No tracking, cookies, or analytics.
+| Code | Description |
+|------|-------------|
+| `201` | URL successfully shortened and saved |
+| `200` | URL already shortened previously (returns existing short link) |
+| `400` | Invalid body, missing `long_url`, unexpected field, or invalid URL |
+| `409` | Hash collision (different URL, same hash) |
+| `429` | Rate limit exceeded (time-based or daily write limit) |
+| `500` | Server error (config, environment, or generation failure) |
+| `503` | KV quota exceeded or database read failure |
+| `507` | Firebase entry limit reached |
 
-This ensures that no identifiable user data is collected, stored, or shared in any form.
-
-## 🌐 API Endpoints:
-
-The API is available here:
-
-| Public endpoint: | Rate limit: | Owner: | Privacy policy: |
-|-----------------|------------|----------------|----------------|
-| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
-
-To use this API you can use:
-
-- **JavaScript** in the browser: CORS is enabled for all domains (but only for the posting URL, of course).
-
-- **cURL** from a terminal, for all endpoints: [https://curl.se/](https://curl.se/)
-
-- **Postman** *(Recommended)*, for all endpoints: [https://www.postman.com/](https://www.postman.com/)
-
-### 1. **[POST]** `/post-url`
-
-Create a short URL from a provided long URL. Saves the link to the database and applies rate limiting constraints.
-
-#### **Request Body:**
-
-| Field       | Type   | Description                                                                 |
-| ----------- | ------ | --------------------------------------------------------------------------- |
-| `long_url`  | string | **Required.** The original long URL you want to shorten. Must be valid. |
-
-> **Note:** The request will fail if the JSON body contains any unexpected fields other than `long_url`, or if the URL exceeds the maximum configured length.
-
-#### **Response:**
-
-* `201 Created`: URL successfully shortened and saved.
-
-* `200 OK`: The URL was already shortened previously (returns existing short link).
-
-* `400 Bad Request`: Invalid body, missing `long_url`, unexpected field, or invalid URL format.
-
-* `409 Conflict`: Hash Collision (different URL, same hash). 
-
-* `429 Too Many Requests`: Rate limit exceeded (either time-based or daily write limit).
-
-* `500 Internal Server Error`: Wrong environment variable(s), config, generation failure or server error.
-
-* `503 Service Unavailable`: KV Database quota exceeded (process rate limits), unable to read `_url_counter` or verify link existence.
-
-* `507 Insufficient Storage`: Firebase database entry limit reached.
-
-#### **Example request:**
+#### Example Request:
 
 ```bash
 curl -X POST "https://your-worker.org.workers.dev/post-url" \
@@ -104,7 +80,7 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
      -d '{"long_url": "https://nde-code.github.io/"}'
 ```
 
-#### **Example response:**
+#### Example Response:
 
 ```json
 {
@@ -112,73 +88,65 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
 }
 ```
 
-### 2. **[GET]** `/url/:code`
+### 2. **[GET]** `/url/:code` — Redirect to Original URL:
 
-Redirects the user to the original long URL associated with the provided short code.
+Redirect to the original long URL using the short code.
 
-#### **Path Parameters:**
+#### Path Parameters:
 
 | Parameter | Type | Description |
-| --- | --- | --- |
-| `code` | string | **Required.** The unique short ID of the URL. |
+|-----------|------|-------------|
+| `code` | string | **Required.** Unique short ID |
 
-#### **Response:**
+#### Response Codes:
 
-* `301 Moved Permanently`: Successful redirection (if the link `is_verified` is true).
+| Code | Description |
+|------|-------------|
+| `301` | Permanent redirect (verified link) |
+| `302` | Temporary redirect (unverified link) |
+| `400` | No valid ID in path |
+| `404` | Link not found in database |
+| `500` | Server error |
+| `503` | Request timeout or storage connection failure |
 
-* `302 Found`: Successful redirection (if the link `is_verified` is false).
-
-* `400 Bad Request`: No valid ID provided in the path.
-
-* `404 Not Found`: No link found with this ID in the database.
-
-* `500 Internal Server Error`: Wrong environment variable(s), config or server error.
-
-* `503 Service Unavailable`: The request timed out or the connection to the storage provider failed.
-
-#### **Example Request:**
+#### Example Request:
 
 ```bash
 curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 ```
 
-### 3. **[GET]** `/urls`
+### 3. **[GET]** `/urls` — List All URLs:
 
-Retrieve a paginated list of shortened links currently stored in the database.
+Retrieve a paginated list of shortened links.
 
-> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** requires valid Admin key (see [Authentication](#authentication)).
 
-#### **Query Parameters:**
+#### Query Parameters:
 
 | Parameter | Type | Description |
-| --- | --- | --- |
-| `count` | number | Number of links to retrieve (defaults to configured value, max is restricted). |
-| `cursor` | string | The key of the last item from the previous page. |
+|-----------|------|-------------|
+| `count` | number | Number of links to retrieve (default: config value, max: restricted) |
+| `cursor` | string | Last item key from previous page (use `next_cursor` from response) |
 
-> cursor = next_cursor from previous response.
+#### Response Codes:
 
-#### **Response:**
+| Code | Description |
+|------|-------------|
+| `200` | Successfully returned URLs |
+| `400` | Invalid `count` or `cursor` parameter |
+| `401` | Invalid or missing API key |
+| `429` | Rate limit exceeded |
+| `500` | Server error |
+| `503` | Database retrieval failure |
 
-* `200 OK`: Successful query returning the URLs.
-
-* `400 Bad Request`: The `count` or `cursor` parameter is invalid.
-
-* `401 Unauthorized`: Invalid or missing API key.
-
-* `429 Too Many Requests`: Rate limit exceeded.
-
-* `500 Internal Server Error`: Wrong environment variable(s), config or server error.
-
-* `503 Service Unavailable`: Unable to retrieve links from the database.
-
-#### **Example request:**
+#### Example Request:
 
 ```bash
 curl "https://your-worker.org.workers.dev/urls?count=2" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-#### **Example response:**
+#### Example Response:
 
 ```json
 {
@@ -199,102 +167,92 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 }
 ```
 
-### 4. **[PATCH]** `/verify/:code`
+### 4. **[PATCH]** `/verify/:code` — Verify URL:
 
-Mark a specific shortened URL as verified in the database.
+Mark a shortened URL as verified.
 
-> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** requires valid Admin key (see [Authentication](#authentication)).
 
-#### **Path Parameters:**
+#### Path Parameters:
 
 | Parameter | Type | Description |
-| --- | --- | --- |
-| `code` | string | **Required.** The unique short ID of the URL. |
+|-----------|------|-------------|
+| `code` | string | **Required.** Unique short ID |
 
-#### **Response:**
+#### Response Codes:
 
-* `200 OK`: Link verified successfully, or link was already verified.
+| Code | Description |
+|------|-------------|
+| `200` | Link verified successfully (or already verified) |
+| `400` | No valid ID in path |
+| `401` | Invalid or missing Admin key |
+| `404` | Link not found |
+| `429` | Rate limit exceeded |
+| `500` | Server error |
+| `503` | Database update failure |
 
-* `400 Bad Request`: No valid ID provided in the path.
-
-* `401 Unauthorized`: Invalid or missing Admin key.
-
-* `404 Not Found`: No link found with this ID in the database.
-
-* `429 Too Many Requests`: Rate limit exceeded.
-
-* `500 Internal Server Error`: Wrong environment variable(s), config or server error.
-
-* `503 Service Unavailable`: Temporary issue updating the database.
-
-#### **Example Request:**
+#### Example Request:
 
 ```bash
 curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-### 5. **[DELETE]** `/delete/:code`
+### 5. **[DELETE]** `/delete/:code` — Delete URL:
 
-Delete a shortened URL from the database and decrement the global metadata counter.
+Remove a shortened URL and decrement the counter.
 
-> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** requires valid Admin key (see [Authentication](#authentication)).
 
-#### **Path Parameters:**
+#### Path Parameters:
 
 | Parameter | Type | Description |
-| --- | --- | --- |
-| `code` | string | **Required.** The unique short ID of the URL. |
+|-----------|------|-------------|
+| `code` | string | **Required.** Unique short ID |
 
-#### **Response:**
+#### Response Codes:
 
-* `200 OK`: Link successfully deleted.
+| Code | Description |
+|------|-------------|
+| `200` | Link deleted successfully |
+| `400` | No valid ID in path |
+| `401` | Invalid or missing Admin key |
+| `404` | Link not found |
+| `429` | Rate limit exceeded |
+| `500` | Server error |
+| `503` | Database deletion failure |
 
-* `400 Bad Request`: No valid ID provided in the path.
-
-* `401 Unauthorized`: Invalid or missing Admin key.
-
-* `404 Not Found`: No link found with this ID in the database.
-
-* `429 Too Many Requests`: Rate limit exceeded.
-
-* `500 Internal Server Error`: Wrong environment variable(s), config or server error.
-
-* `503 Service Unavailable`: Temporary issue deleting the entry.
-
-#### **Example request:**
+#### Example Request:
 
 ```bash
 curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-### 6. **[PATCH]** `/sync-counter`
+### 6. **[PATCH]** `/sync-counter` — Resynchronize Counter:
 
-Recalculate and synchronize the metadata counter to reflect the actual number of URLs stored in the Firebase database. Useful for fixing race conditions or desyncs.
+Recalculate and sync the metadata counter to match actual URLs in Firebase. Useful for fixing race conditions or desynchronization.
 
-> **Security:** Requires a valid Admin key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** requires valid Admin key (see [Authentication](#authentication)).
 
-#### **Response:**
+#### Response Codes:
 
-* `200 OK`: Counter successfully resynced (returns the new count).
+| Code | Description |
+|------|-------------|
+| `200` | Counter resynced successfully (returns new count) |
+| `401` | Invalid or missing Admin key |
+| `429` | Rate limit exceeded |
+| `500` | Server error |
+| `503` | Database communication failure |
 
-* `401 Unauthorized`: Invalid or missing Admin key.
-
-* `429 Too Many Requests`: Rate limit exceeded.
-
-* `500 Internal Server Error`: Wrong environment variable(s), config or server error.
-
-* `503 Service Unavailable`: Temporary issue communicating with the database.
-
-#### **Example request:**
+#### Example Request:
 
 ```bash
 curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-#### **Example response:**
+#### Example Response:
 
 ```json
 {
@@ -303,30 +261,30 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 }
 ```
 
-### 7. **[GET]** `/health`
+### 7. **[GET]** `/health` — Service Health Check:
 
-Check the overall health status of the service by validating configuration, database connectivity, counter accessibility, available capacity, and KV storage.
+Check service health: configuration, database connectivity, counter integrity, capacity, and KV storage.
 
-> **Security:** Requires a valid monitoring key (see: [Authentication](https://github.com/Nde-Code/NSH?tab=readme-ov-file#authentication)).
+> **Security:** requires valid Monitoring key (see [Authentication](#authentication)).
 
-> The monitoring key is completely different from the admin key for obvious security reasons.
+> Monitoring key differs from admin key for security reasons.
 
-#### **Response:**
+#### Response Codes:
 
-* `200 OK`: All systems operational. Firebase is reachable, configuration is valid, and all critical subsystems (KV store, counter integrity, and capacity limits) are within expected operating conditions.
+| Code | Description |
+|------|-------------|
+| `200` | All systems operational |
+| `206` | Degraded but operational (one or more non-critical issues) |
+| `503` | Service unavailable (critical failure) |
 
-* `206 Partial Content`: Service is degraded but still operational. Firebase remains reachable, but one or more non-fatal components are impaired, such as KV store unavailability, counter data inconsistency, or capacity limits being reached.
-
-* `503 Service Unavailable`: Service is unavailable due to critical failures. This includes invalid configuration or Firebase connectivity failure, which prevents the system from operating correctly.
-
-#### **Example request:**
+#### Example Request:
 
 ```bash
 curl -X GET "https://your-worker.org.workers.dev/health" \
      -H "x-api-key: YOUR_MONITORING_KEY"
 ```
 
-#### **Example response (Healthy):**
+#### Example Response (Healthy):
 
 ```json
 {
@@ -342,27 +300,25 @@ curl -X GET "https://your-worker.org.workers.dev/health" \
 }
 ```
 
-### Authentication:
+## 🔐 Authentication:
 
-To access protected endpoints, you must include an Admin key in **the request headers** using one of the following:
+Protected endpoints require either header format:
 
 - `Authorization: Bearer <MONITORING_or_ADMIN_KEY>`
-
 - `x-api-key: <MONITORING_or_ADMIN_KEY>`
 
-> Of course, on my personal instance, trying to access these admin endpoints is forbidden.
+> Admin endpoints are restricted on the public instance.
 
-## 🖥️ Documentation for developers:
+## 🖥️ Developer Documentation:
 
-Those interested in working on or launching this project from source using the Wrangler CLI can refer to the developer documentation by clicking [here](docs/docs.md).
+For setup, configuration, and deployment using Wrangler CLI, see the [developer guide](docs/docs.md).
 
-## ⚖️ License:
+## ⚖️ License
 
 This project is licensed under the [Apache License v2.0](LICENSE).
 
-## 🎯 Reach me:
+## 👤 Author
 
 Created and maintained by [Nde-Code](https://nde-code.github.io/).
 
-> Feel free to reach out for questions or collaboration, or open an issue or pull request and I'll be happy to help.
- 
+Have questions or want to contribute ? Open an issue or pull request ! 🤝
