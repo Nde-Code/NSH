@@ -30,7 +30,7 @@ wrangler login
 
 ## ⚙️ Setting up the configuration:
 
-First, take a look at the [wrangler.jsonc](../wrangler.jsonc) file, which contains the full configuration for your project:
+First, take a look at the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the full configuration for your project:
 ```jsonc
 {
 	"name": "project_name",
@@ -169,7 +169,7 @@ to send your secret to the Cloudflare Workers platform.
  
 > **Note about `FIREBASE_HIDDEN_PATH`:** Ensure that this key is strong and secure. Please use only uppercase and lowercase letters, and avoid all other special characters or symbols to guarantee the proper functioning of the software.
 
-### Software configuration file [config.ts](../config.ts):
+### Software configuration file [`config.ts`](../config.ts):
 
 ```ts
 export const config: StaticConfig = {
@@ -195,35 +195,34 @@ export const config: StaticConfig = {
 };
 ```
 
-- **RATE_LIMIT_INTERVAL_S** in [second]: This is the rate limit based on requests.
+- `RATE_LIMIT_INTERVAL_S` in [second]: This is the rate limit based on requests.
   - **Currently**:
     - **Max**: one request per second (absolute min).
 
-- **MAX_DAILY_WRITES** in [day]: Daily writing rate limit (only applies if the link is not already in the database).
+- `MAX_DAILY_WRITES` in [day]: Daily writing rate limit (only applies if the link is not already in the database).
   - **Absolute min of max**: 1 writes per day.
 
-- **IPS_PURGE_TIME_DAYS** in [day]: The number of days before purging the [KV](https://developers.cloudflare.com/kv/) store that contains hashed IPs used for rate limiting.
+- `IPS_PURGE_TIME_DAYS` in [day]: The number of days before purging the [KV](https://developers.cloudflare.com/kv/) store that contains hashed IPs used for rate limiting.
   - **Currently**:
     - **Default**: 1 day (absolute min).
 
-- **FIREBASE_TIMEOUT_MS** in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
+- `FIREBASE_TIMEOUT_MS` in [millisecond]: The timeout limit for HTTP requests to the Firebase Realtime Database.
   - **Absolute min of max**: 1 seconds before timeout.
 
-- **FIREBASE_ENTRIES_LIMIT**: The maximum number of entries allowed in your Firebase Realtime Database.
+- `FIREBASE_ENTRIES_LIMIT`: The maximum number of entries allowed in your Firebase Realtime Database.
   - **Absolute min of max**: 50 entries.
 
-- **DEFAULT_NUMBER_OF_LINKS_FROM_COUNT**: The default number of links returned if no `count` parameter is provided. **Must not exceed `FIREBASE_ENTRIES_LIMIT` or `MAX_NUMBER_OF_LINKS_COUNT`.**
+- `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT`: The default number of links returned if no `count` parameter is provided. **Must not exceed `FIREBASE_ENTRIES_LIMIT` or `MAX_NUMBER_OF_LINKS_COUNT`.**
   - **Absolute min**: 5 links.
 
-- **MAX_NUMBER_OF_LINKS_COUNT**: The maximum number of links that can be retrieved via the `count` parameter. **Must not exceed `FIREBASE_ENTRIES_LIMIT`.**
+- `MAX_NUMBER_OF_LINKS_COUNT`: The maximum number of links that can be retrieved via the `count` parameter. **Must not exceed `FIREBASE_ENTRIES_LIMIT`.**
   - **Absolute min of max**: 10 links.
 
-- **SHORT_URL_ID_LENGTH**: The length of the shortcode used for shortened URLs. 
+- `SHORT_URL_ID_LENGTH`: The length of the shortcode used for shortened URLs. 
   - **Absolute min**: 10 characters.
 
-- **MAX_URL_LENGTH**: The maximum allowed URL length in the Firebase Realtime Database.
+- `MAX_URL_LENGTH`: The maximum allowed URL length in the Firebase Realtime Database.
   - **Absolute min of max**: 100 characters.
-  - 
 
 > **Note about `SHORT_URL_ID_LENGTH`**: I have set a payload limit of **10KB** for the JSON body when posting a new URL for security reasons. This limit is currently hard-coded and can be modified in the source code. 
 
@@ -238,11 +237,11 @@ export const config: StaticConfig = {
 1. Go to [firebase.google.com](https://firebase.google.com/) and create an account.  
   > *(If you already have a Google account, you're good to go.)*
 
-2. Create a **project** and set up a `Realtime Database`.
+2. Create a **project** and set up a *Realtime Database*.
 
   > If you get stuck, feel free to check out the official [Firebase documentation](https://firebase.google.com/docs/build?hl=en), or search on Google, YouTube, etc.
 
-3. Once your database is ready, go to the **`Rules`** tab and paste the following code in the editor:
+3. Once your database is ready, go to the *Rules* tab and paste the following code in the editor:
 ```js
 {
 
@@ -319,7 +318,7 @@ wrangler types
 
 > Be sure that your `wrangler.jsonc` is correctly configured before running this command.
 
-and put in `tsconfig.json`: 
+and put in [`tsconfig.json`](../tsconfig.json): 
 
 > already done, if you've cloned the project so you don't need to do that.
 
