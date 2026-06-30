@@ -56,7 +56,7 @@ The API is available here:
 
 | Public endpoint: | Rate limit: | Owner: | Privacy policy: |
 |-----------------|------------|----------------|----------------|
-| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [`Privacy`](docs/privacy.md) |
+| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
 To use this API you can use:
 
