@@ -4,13 +4,11 @@ A simple, lightweight URL shortener API built with [Wrangler](https://developers
 
 At the beginning, I just needed a small piece of software to store links, so I designed this project to be suitable for personal use or small public instances. You can use it for any purpose, but some systems are intentionally designed to be lightweight, such as the URL hashing mechanism, which uses DJB2, and the protection against timing attacks on the admin key (to ensure both security and performance). Please keep this in mind and use it with caution if you plan to deploy it at scale.
 
-If you only need the project for occasional work, feel free to use my public online instance.
+I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays within the limits of the free plan. If you only need the project for occasional work, feel free to use my public online instance.
 
 For those who need more resources for their instance, the project can be deployed to your own [Cloudflare Workers](https://workers.cloudflare.com/) account by clicking the deploy button below:
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
-
-> I host the project on the free plan. Usually, there are no resource issues because the software consumes very little in its steady state. However, the first request may consume more resources (e.g., CPU time) due to a [cold start](https://blog.cloudflare.com/eliminating-cold-starts-2-shard-and-conquer/), but it stays within the limits of the free plan.
 
 > Feel free to check my status page: [https://nde-status.instatus.com/](https://nde-status.instatus.com/) if you're experiencing latency or problems while using the API.
 
@@ -42,7 +40,7 @@ This project is designed with **GDPR compliance** in mind:
 
 - Basic rate limiting is implemented by hashing **IP addresses**:
 
-  - Hashing is done using `SHA-256`, combined with a **strong, secret salt**.
+  - Hashing is done using *SHA-256*, combined with a **strong, secret salt**.
 
   - Hashes are stored only in an NoSQL database called [KV](https://developers.cloudflare.com/kv/).
 
@@ -58,7 +56,7 @@ The API is available here:
 
 | Public endpoint: | Rate limit: | Owner: | Privacy policy: |
 |-----------------|------------|----------------|----------------|
-| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [privacy.md](docs/privacy.md) |
+| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Nde-Code](https://nde-code.github.io/) | [`Privacy`](docs/privacy.md) |
 
 To use this API you can use:
 
