@@ -13,12 +13,19 @@ The project runs on the free Cloudflare Workers plan with minimal resource consu
 ## 🚀 Key Features:
 
 - **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
+
 - **No duplicates:** prevents storing identical URLs, saving database space.
+
 - **No sign-up:** no account creation, credit card, or personal data required.
+
 - **Privacy-first:** no user activity logging.
+
 - **Highly configurable:** customize behavior to your needs.
+
 - **Firebase backend:** stores URL mappings in Firebase Realtime Database.
+
 - **Minimal REST API:** fast, efficient, and lightweight.
+
 - **Serverless:** runs on Cloudflare Workers free plan with strict resource limits.
 
 ## 🛡️ GDPR Compliance:
@@ -26,9 +33,13 @@ The project runs on the free Cloudflare Workers plan with minimal resource consu
 This project is built with **GDPR compliance** in mind:
 
 - **No personal data storage:** IP addresses and private information are never stored directly.
+
 - **No user logging:** user activity is not tracked or logged.
+
 - **Secure hashing:** rate limiting uses SHA-256 hashing with a strong, secret salt.
+
 - **Temporary storage:** IP hashes are stored only in [KV](https://developers.cloudflare.com/kv/) and auto-deleted after a configurable period.
+
 - **No tracking:** no cookies, analytics, or third-party tracking.
 
 All measures ensure no identifiable user data is collected, stored, or shared.
@@ -313,11 +324,11 @@ Protected endpoints require either header format:
 
 For setup, configuration, and deployment using Wrangler CLI, see the [developer guide](docs/docs.md).
 
-## ⚖️ License
+## ⚖️ License:
 
 This project is licensed under the [Apache License v2.0](LICENSE).
 
-## 👤 Author
+## 🎯 Author:
 
 Created and maintained by [Nde-Code](https://nde-code.github.io/).
 
