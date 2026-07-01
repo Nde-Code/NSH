@@ -52,9 +52,9 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 
 ### Supported Tools:
 
-- **JavaScript (Browser)** : CORS enabled for all domains
-- **cURL (Terminal)** : [https://curl.se/](https://curl.se/)
-- **Postman** *(Recommended)* : [https://www.postman.com/](https://www.postman.com/)
+- **JavaScript (Browser):** CORS enabled for all domains
+- **cURL (Terminal):** [https://curl.se/](https://curl.se/)
+- **Postman *(Recommended)*:** [https://www.postman.com/](https://www.postman.com/)
 
 ## 📚 API Endpoints:
 
