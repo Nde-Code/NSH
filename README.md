@@ -326,10 +326,10 @@ For setup, configuration, and deployment using Wrangler CLI, see the [developer 
 
 ## ⚖️ License:
 
-This project is licensed under the [Apache License v2.0](LICENSE).
+This project is licensed under the **[Apache License v2.0](LICENSE)**.
 
 ## 🎯 Author:
 
 Created and maintained by [Nde-Code](https://nde-code.github.io/).
 
-Have questions or want to contribute ? Open an issue or pull request ! 🤝
+> Don't hesitate to open an issue or a pull request if you have any questions or would like to contribute.
