@@ -48,13 +48,11 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 
 | Endpoint | Rate Limit | Maintainer | Privacy Policy |
 |----------|-----------|-----------|-----------------|
-| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/sec, 10 new links/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
+| https://nsh.nde-code.workers.dev/ | 1 req/sec, 10 new links/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
-### Supported Tools:
+CORS is enabled only for the `POST` method. You normally understand quickly that it's for obvious security reasons.
 
-- **JavaScript (Browser):** CORS enabled for all domains
-- **cURL (Terminal):** [https://curl.se/](https://curl.se/)
-- **Postman *(Recommended)*:** [https://www.postman.com/](https://www.postman.com/)
+> Feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits.
 
 ## 📚 API Endpoints:
 
