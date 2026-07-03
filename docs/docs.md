@@ -149,11 +149,11 @@ MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 
 | Variable | Description |
 |----------|-------------|
-| `FIREBASE_HOST_LINK` | Public or private Firebase endpoint for your Worker |
-| `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
-| `HASH_KEY` | Cryptographic key for hashing user IPs or identifiers |
-| `ADMIN_KEY` | Private key for verifying, listing, or deleting data |
-| `MONITORING_KEY` | Key for secure service status monitoring |
+| **`FIREBASE_HOST_LINK`** | Public or private Firebase endpoint for your Worker |
+| **`FIREBASE_HIDDEN_PATH`** | Hidden or secure subpath for sensitive Firebase operations |
+| **`HASH_KEY`** | Cryptographic key for hashing user IPs or identifiers |
+| **`ADMIN_KEY`** | Private key for verifying, listing, or deleting data |
+| **`MONITORING_KEY`** | Key for secure service status monitoring |
 
 Once configured, add secrets to Cloudflare Workers:
 
@@ -235,55 +235,38 @@ export const config: StaticConfig = {
 
 ```js
 {
-
-  "rules": {
-
-    "YOUR_SECRET_PATH": {
-
-      ".read": false,
-
-      ".write": false,
-
-      "meta": {
-
-        ".write": "newData.hasChild('_url_counter')",
-        
-        "_url_counter": {
-
-          ".read": true,
-
-          ".validate": "newData.isNumber() && newData.val() >= 0"
-
+    "rules": {
+        "YOUR_SECRET_PATH": {
+            ".read": false,
+            ".write": false,
+            "meta": {
+                ".write": "newData.hasChild('_url_counter')",
+                "_url_counter": {
+                    ".read": true,
+                    ".validate": "newData.isNumber() && newData.val() >= 0"
+                }
+            },
+            "urls": {
+                ".read": true,
+                "$shortcode": {
+                    ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val())",
+                    ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
+                    "long_url": {
+                        ".validate": "newData.isString() && newData.val().length <= 2000"
+                    },
+                    "post_date": {
+                        ".validate": "newData.isString()"
+                    },
+                    "is_verified": {
+                        ".validate": "newData.isBoolean()"
+                    },
+                    "$other": {
+                        ".validate": false
+                    }
+                }
+            }
         }
-
-      },
-
-      "urls": {
-
-        ".read": true,
-
-        "$shortcode": {
-
-          ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val())",
-          
-          ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
-
-          "long_url": { ".validate": "newData.isString() && newData.val().length <= 2000" },
-
-          "post_date": { ".validate": "newData.isString()" },
-
-          "is_verified": { ".validate": "newData.isBoolean()" },
-
-          "$other": { ".validate": false }
-
-        }
-
-      }
-
     }
-
-  }
-
 }
 ```
 
