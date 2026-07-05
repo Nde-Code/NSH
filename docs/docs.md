@@ -1,14 +1,14 @@
-# Developer Documentation:
+# Developer documentation:
 
 Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
-## 🚀 Getting Started:
+## 🚀 Getting started:
 
-### 1. Create or Log In to Cloudflare:
+### 1. Create or log-in to Cloudflare:
 
 Visit [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up) to create an account or log in.
 
-### 2. Install Node.js and npm:
+### 2. Install Node.js and NPM:
 
 Download from [https://nodejs.org/en/download](https://nodejs.org/en/download).
 
@@ -20,7 +20,7 @@ npm install -g wrangler
 
 > If Wrangler is not installed globally, prefix commands with `npx` (e.g., `npx wrangler`).
 
-### 4. Clone the Repository:
+### 4. Clone the repository:
 
 ```bash
 git clone https://github.com/Nde-Code/NSH.git
@@ -32,7 +32,7 @@ git clone https://github.com/Nde-Code/NSH.git
 wrangler login
 ```
 
-## ⚙️ Configuration Setup:
+## ⚙️ Configuration setup:
 
 Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the complete project configuration:
 
@@ -61,7 +61,7 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 }
 ```
 
-### Core Configuration Fields:
+### Core configuration fields:
 
 #### `name`
 
@@ -82,7 +82,7 @@ Ensures compatibility even as Cloudflare updates the platform.
 
 Enables preview URLs for testing. Learn more: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/)
 
-### Observability Configuration:
+### Observability configuration:
 
 #### `observability.enabled`
 
@@ -114,7 +114,7 @@ Controls **distributed tracing**:
 
 > Leave disabled if not using OpenTelemetry or a tracing system.
 
-### KV Namespaces:
+### KV namespaces:
 
 #### `kv_namespaces`
 
@@ -133,7 +133,7 @@ Complete `wrangler.jsonc` with:
 * **`binding`** : Variable name used in your code (e.g., `YOUR_KV_NAME`)
 * **`id`** : Unique namespace ID from your Cloudflare dashboard
 
-### Environment Variables:
+### Environment variables:
 
 Create a `.dev.vars` file for local development:
 
@@ -145,15 +145,15 @@ ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
 MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 ```
 
-#### Variables in This Project:
+#### Variables in this project:
 
 | Variable | Description |
 |----------|-------------|
-| **`FIREBASE_HOST_LINK`** | Public or private Firebase endpoint for your Worker |
-| **`FIREBASE_HIDDEN_PATH`** | Hidden or secure subpath for sensitive Firebase operations |
-| **`HASH_KEY`** | Cryptographic key for hashing user IPs or identifiers |
-| **`ADMIN_KEY`** | Private key for verifying, listing, or deleting data |
-| **`MONITORING_KEY`** | Key for secure service status monitoring |
+| `FIREBASE_HOST_LINK` | Public or private Firebase endpoint for your Worker |
+| `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
+| `HASH_KEY` | Cryptographic key for hashing user IPs or identifiers |
+| `ADMIN_KEY` | Private key for verifying, listing, or deleting data |
+| `MONITORING_KEY` | Key for secure service status monitoring |
 
 Once configured, add secrets to Cloudflare Workers:
 
@@ -167,13 +167,13 @@ wrangler secret put MONITORING_KEY
 
 > For more details: [https://developers.cloudflare.com/workers/configuration/secrets/](https://developers.cloudflare.com/workers/configuration/secrets/)
 
-**Security Notes:**
+#### Security notes:
 
-> ⚠️ **Admin and Monitoring Keys:** constant-time comparison prevents timing attacks. Keep keys strong (60+ characters with uppercase, lowercase, numbers). Network latency combined with rate limiting makes timing attacks extremely difficult.
+- ⚠️ **Admin and monitoring keys:** constant-time comparison prevents timing attacks. Keep keys strong (60+ characters with uppercase, lowercase, numbers). Network latency combined with rate limiting makes timing attacks extremely difficult.
 
-> **Firebase Hidden Path:** use only uppercase and lowercase letters. Avoid special characters to ensure proper functionality.
+- **Firebase hidden path:** use only uppercase and lowercase letters. Avoid special characters to ensure proper functionality.
 
-### Software Configuration: [`config.ts`](../config.ts)
+### Software configuration: [`config.ts`](../config.ts)
 
 ```ts
 export const config: StaticConfig = {
@@ -199,29 +199,29 @@ export const config: StaticConfig = {
 };
 ```
 
-#### Configuration Parameters
+#### Configuration parameters:
 
 | Parameter | Description | Constraints |
 |-----------|-------------|-------------|
-| **`RATE_LIMIT_INTERVAL_S`** | Rate limit interval in seconds | Minimum: 1 |
-| **`MAX_DAILY_WRITES`** | Daily write limit (new links only) | Minimum: 1 |
-| **`IPS_PURGE_TIME_DAYS`** | Days before purging hashed IPs from KV | Minimum: 1 |
-| **`FIREBASE_TIMEOUT_MS`** | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
-| **`FIREBASE_ENTRIES_LIMIT`** | Maximum entries allowed in Firebase | Minimum: 50 |
-| **`DEFAULT_NUMBER_OF_LINKS_FROM_COUNT`** | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
-| **`MAX_NUMBER_OF_LINKS_COUNT`** | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |
-| **`SHORT_URL_ID_LENGTH`** | Length of generated shortcodes | Minimum: 10 |
-| **`MAX_URL_LENGTH`** | Maximum allowed URL length | Minimum: 100 |
+| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1 |
+| `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
+| `IPS_PURGE_TIME_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
+| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
+| `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
+| `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
+| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |
+| `SHORT_URL_ID_LENGTH` | Length of generated shortcodes | Minimum: 10 |
+| `MAX_URL_LENGTH` | Maximum allowed URL length | Minimum: 100 |
 
-**Important Notes:**
+#### Important notes:
 
-> **Request Body Limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
+- **Request body limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
 
-> **Entry Limit & Collision Prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping stored URLs ≤ 10,000 ensures extremely low collision risk while controlling free-tier resource usage.
+- **Entry limit & collision prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping stored URLs ≤ 10,000 ensures extremely low collision risk while controlling free-tier resource usage.
 
-> **Constraint Validation:** violating these constraints will trigger configuration errors.
+- **Constraint validation:** violating these constraints will trigger configuration errors.
 
-## 💻 Project Setup:
+## 💻 Project setup:
 
 ### 1. Create Firebase Realtime Database:
 
@@ -270,7 +270,7 @@ export const config: StaticConfig = {
 }
 ```
 
-#### Security Rules Summary:
+#### Security rules summary:
 
 | Action | Condition |
 |--------|-----------|
@@ -280,9 +280,9 @@ export const config: StaticConfig = {
 | **Delete** | Allowed if node exists. Worker handles atomic counter decrement via PATCH |
 | **Update (PATCH)** | Only `is_verified` can change. `long_url` and `post_date` must match existing values |
 | **Validation** | URLs max 2000 chars, HTTP/HTTPS regex, ISO 8601 date format |
-| **Extra Fields** | Forbidden—only `long_url`, `post_date`, `is_verified` allowed |
+| **Extra Fields** | Forbidden, only `long_url`, `post_date`, `is_verified` allowed |
 
-### 2. Initialize TypeScript Types:
+### 2. Initialize TypeScript types:
 
 Enable TypeScript definitions in your editor:
 
@@ -328,27 +328,27 @@ Include in [`tsconfig.json`](../tsconfig.json):
 }
 ```
 
-#### TypeScript Configuration Explanation:
+#### TypeScript configuration explanation:
 
 | Setting | Purpose |
 |---------|---------|
-| **`noEmit: true`** | Prevents TS from emitting JS; Wrangler handles bundling |
-| **`allowImportingTsExtensions: true`** | Allows direct `.ts` file imports for relative paths |
-| **`target: "ES2020"`** | Modern JavaScript syntax for Workers runtime |
-| **`lib: ["ES2020", "DOM"]`** | Includes modern JS features and Web APIs |
-| **`module: "ESNext"`** | ES Modules standard for Workers |
-| **`moduleResolution: "Bundler"`** | ESM-aware module resolution for bundlers |
-| **`strict: true`** | Enables all strict type checking |
-| **`esModuleInterop: true`** | Facilitates CommonJS interoperability |
-| **`skipLibCheck: true`** | Skips type checking `.d.ts` files for speed |
-| **`forceConsistentCasingInFileNames: true`** | Prevents casing errors across OS |
-| **`types: ["./worker-configuration.d.ts"]`** | Includes Wrangler binding definitions |
-| **`include`** | Source code and types to check |
-| **`exclude`** | Build artifacts and dependencies to ignore |
+| `noEmit: true` | Prevents TS from emitting JS; Wrangler handles bundling |
+| `allowImportingTsExtensions: true` | Allows direct `.ts` file imports for relative paths |
+| `target: "ES2020"` | Modern JavaScript syntax for Workers runtime |
+| `lib: ["ES2020", "DOM"]` | Includes modern JS features and Web APIs |
+| `module: "ESNext"` | ES Modules standard for Workers |
+| `moduleResolution: "Bundler"` | ESM-aware module resolution for bundlers |
+| `strict: true` | Enables all strict type checking |
+| `esModuleInterop: true` | Facilitates CommonJS interoperability |
+| `skipLibCheck: true` | Skips type checking `.d.ts` files for speed |
+| `forceConsistentCasingInFileNames: true` | Prevents casing errors across OS |
+| `types: ["./worker-configuration.d.ts"]` | Includes Wrangler binding definitions |
+| `include` | Source code and types to check |
+| `exclude` | Build artifacts and dependencies to ignore |
 
-> This project has **no external dependencies**—no `package.json` or npm packages required.
+> This project has **no external dependencies**, no `package.json` or npm packages required.
 
-### 3. Run and Deploy:
+### 3. Run and deploy:
 
 **Start local development:**
 
