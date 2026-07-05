@@ -1,4 +1,4 @@
-# Privacy Policy  
+# Privacy Policy:  
 
 ## Introduction:  
 To be clear and transparent about what data this software uses and how it is handled.
@@ -14,7 +14,13 @@ The IP is **never stored in any external database** or service. The *KV* databas
 
 The **hashed IP** is the **only personal information** used by this project, and it's solely for security and abuse-prevention purposes. While fingerprinting could also be used, this project aims to remain as **privacy-friendly** as possible.
 
+The **hashed IP** is kept **only for the time required** to apply rate limiting and is **automatically removed afterward**.
+
 You can check the [rate.ts](../utilities/rate.ts) file if you want to see how it works.
+
+### Legal Basis:
+
+The processing of the **hashed IP** address **is strictly for protecting** the service against abuse (rate limiting). This data is **pseudonymized and cannot identify any user**.
 
 ## Cookies: 
 **No cookies**, **no analytics**, **no logs**, or **any other** data is collected by the project.
@@ -52,6 +58,12 @@ If you're concerned about this, consider self-hosting the project in an EU-only 
 I may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.
 
 Any updates will be posted on this page and will take effect immediately upon posting.
+
+## Your Rights:
+
+If you wish to request the removal of the **hashed IP** associated with your usage, you may contact me.
+
+Please note that this hash **cannot identify you personally** and is never linked to any other data.
 
 ## Contact me:  
 If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact me.
