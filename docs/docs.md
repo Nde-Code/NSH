@@ -40,7 +40,7 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 {
 	"name": "project_name",
 	"main": "main.ts",
-	"compatibility_date": "2025-10-08",
+	"compatibility_date": "2026-03-08",
 	"preview_urls": false,
 	"observability": {
 		"enabled": true,
