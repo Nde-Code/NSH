@@ -69,7 +69,7 @@ Please note that this hash **cannot identify you personally** and is never linke
 If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact me.
 
 Contact Information:  
-- E-Mail: nathan.debilloez@outlook.com  
+- e-mail: nathan.debilloez@outlook.com  
 - Website: [https://nde-code.github.io/](https://nde-code.github.io/)
 
 Thank you for your understanding.
