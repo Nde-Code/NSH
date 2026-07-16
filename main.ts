@@ -40,7 +40,9 @@ import {
 	
 	parseJsonBody,
 	
-	printLogLine
+	printLogLine,
+
+	applyRateLimit
 
 } from "./utilities/utils.ts";
 
@@ -153,9 +155,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "GET" && pathname === "/health") {
 
-		const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+		const rateLimitResponse = await applyRateLimit(req, activeConfig);
 
-		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+        if (rateLimitResponse) return rateLimitResponse;
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 		
@@ -173,9 +175,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "PATCH" && pathname === "/sync-counter") {
 
-		const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+		const rateLimitResponse = await applyRateLimit(req, activeConfig);
 
-		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+        if (rateLimitResponse) return rateLimitResponse;
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 		
@@ -203,9 +205,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "GET" && pathname === "/urls") {
 
-		const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+		const rateLimitResponse = await applyRateLimit(req, activeConfig);
 
-		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+        if (rateLimitResponse) return rateLimitResponse;
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 
@@ -291,9 +293,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
 
-		const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+		const rateLimitResponse = await applyRateLimit(req, activeConfig);
 
-		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+        if (rateLimitResponse) return rateLimitResponse;
 
 		const ID: string | boolean = extractValidID(pathname, activeConfig.SHORT_URL_ID_LENGTH);
 
@@ -323,10 +325,10 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "DELETE" && pathname.startsWith("/delete/")) {
 
-		const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+		const rateLimitResponse = await applyRateLimit(req, activeConfig);
 
-		if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
-
+        if (rateLimitResponse) return rateLimitResponse;
+		
 		const ID: string | boolean = extractValidID(pathname, activeConfig.SHORT_URL_ID_LENGTH);
 
 		if (ID === false) return createJsonResponse(MSG.NO_ID, 400);
@@ -401,7 +403,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
 
-        if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
+        const rateLimitResponse = await applyRateLimit(req, activeConfig);
+
+        if (rateLimitResponse) return rateLimitResponse;
 
         const data: UrlPostBody | null = await parseJsonBody<UrlPostBody>(req, 1);
 

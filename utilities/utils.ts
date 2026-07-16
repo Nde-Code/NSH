@@ -1,4 +1,12 @@
-import { StaticConfig  } from "../types/types.ts";
+import { StaticConfig, RuntimeConfig  } from "../types/types.ts";
+
+import {
+		
+	checkTimeRateLimit,
+		
+	hashIP
+
+} from "../utilities/rate.ts";
 
 function getIdRegex(shortUrlIdLength: number): RegExp { return new RegExp(`^[a-zA-Z0-9_-]{${shortUrlIdLength}}$`); }
 
@@ -38,6 +46,18 @@ export function isConfigValidWithMinValues(config: StaticConfig, rules: Partial<
 
     return true;
 
+}
+
+export async function applyRateLimit(req: Request, currentConfig: RuntimeConfig): Promise<Response | null> {
+
+    const ip: string = req.headers.get("cf-connecting-ip") ?? "unknown";
+
+    const hashedIP: string = await hashIP(ip, currentConfig.HASH_KEY);
+
+    if (!(await checkTimeRateLimit(hashedIP, currentConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": `Rate limit exceeded: only 1 request per ${currentConfig.RATE_LIMIT_INTERVAL_S}s allowed.` }, 429);
+
+    return null; 
+    
 }
 
 export function printLogLine(level: "INFO" | "WARN" | "ERROR", text: string): void { console.log(`[${level}] ${text}`); }
