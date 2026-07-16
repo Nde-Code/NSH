@@ -116,7 +116,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
 
 }
 
-export async function hashIp(ip: string, salt: string): Promise<string> {
+export async function hashIP(ip: string, salt: string): Promise<string> {
 
     const msgBuffer = new TextEncoder().encode(ip + salt);
 
