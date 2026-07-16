@@ -49,9 +49,7 @@ import {
 import {
 	
 	RateLimitResult,
-	
-	checkTimeRateLimit,
-	
+		
 	checkDailyRateLimit,
 	
 	hashIP

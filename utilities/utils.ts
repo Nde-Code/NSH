@@ -1,5 +1,7 @@
 import { StaticConfig, RuntimeConfig  } from "../types/types.ts";
 
+import { MSG } from "./messages.ts";
+
 import {
 		
 	checkTimeRateLimit,
@@ -54,7 +56,7 @@ export async function applyRateLimit(req: Request, currentConfig: RuntimeConfig)
 
     const hashedIP: string = await hashIP(ip, currentConfig.HASH_KEY);
 
-    if (!(await checkTimeRateLimit(hashedIP, currentConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": `Rate limit exceeded: only 1 request per ${currentConfig.RATE_LIMIT_INTERVAL_S}s allowed.` }, 429);
+    if (!(await checkTimeRateLimit(hashedIP, currentConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": MSG.RATE_LIMIT_EXCEEDED(currentConfig.RATE_LIMIT_INTERVAL_S) }, 429);
 
     return null; 
     
