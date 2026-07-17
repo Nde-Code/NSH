@@ -50,13 +50,13 @@ export function isConfigValidWithMinValues(config: StaticConfig, rules: Partial<
 
 }
 
-export async function applyRateLimit(req: Request, currentConfig: RuntimeConfig): Promise<Response | null> {
+export async function applyRateLimit(req: Request, activeConfig: RuntimeConfig): Promise<Response | null> {
 
     const ip: string = req.headers.get("cf-connecting-ip") ?? "unknown";
 
-    const hashedIP: string = await hashIP(ip, currentConfig.HASH_KEY);
+    const hashedIP: string = await hashIP(ip, activeConfig.HASH_KEY);
 
-    if (!(await checkTimeRateLimit(hashedIP, currentConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": MSG.RATE_LIMIT_EXCEEDED(currentConfig.RATE_LIMIT_INTERVAL_S) }, 429);
+    if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S) }, 429);
 
     return null; 
     

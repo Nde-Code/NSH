@@ -153,7 +153,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "GET" && pathname === "/health") {
 
-		const rateLimitResponse = await applyRateLimit(req, activeConfig);
+		const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 
@@ -173,7 +173,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "PATCH" && pathname === "/sync-counter") {
 
-		const rateLimitResponse = await applyRateLimit(req, activeConfig);
+		const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 
@@ -203,7 +203,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "GET" && pathname === "/urls") {
 
-		const rateLimitResponse = await applyRateLimit(req, activeConfig);
+		const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 
@@ -291,7 +291,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "PATCH" && pathname.startsWith("/verify/")) {
 
-		const rateLimitResponse = await applyRateLimit(req, activeConfig);
+		const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 
@@ -323,7 +323,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (req.method === "DELETE" && pathname.startsWith("/delete/")) {
 
-		const rateLimitResponse = await applyRateLimit(req, activeConfig);
+		const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 		
@@ -401,7 +401,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
 
-        const rateLimitResponse = await applyRateLimit(req, activeConfig);
+        const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 
         if (rateLimitResponse) return rateLimitResponse;
 
