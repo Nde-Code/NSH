@@ -16,7 +16,7 @@ on:
 
 jobs:
 
-  api-testing:
+  test:
   
     # Use ubuntu-latest as required for compatibility.
     runs-on: ubuntu-latest
