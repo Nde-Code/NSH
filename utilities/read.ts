@@ -62,7 +62,7 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
 
             method: "GET",
 
-            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
+            headers: { "User-Agent": userAgent },
 
             signal: controller.signal
 
