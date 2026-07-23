@@ -187,6 +187,8 @@ export const config: StaticConfig = {
 	FIREBASE_TIMEOUT_MS: 6000,            // min = 1000
 	
 	FIREBASE_ENTRIES_LIMIT: 1000,         // min = 50
+
+    USER_AGENT: "NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)", // required
 	
 	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
 	
@@ -207,6 +209,7 @@ export const config: StaticConfig = {
 | `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
 | `IPS_PURGE_TIME_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
 | `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
+| `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. | Required |
 | `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
 | `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
 | `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |

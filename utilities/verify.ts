@@ -6,9 +6,9 @@ export type VerificationStatus = "already_verified" | "verified_now" | "not_foun
 
 type FirebaseData = { is_verified?: boolean };
 
-export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue: number, pathTo: string): Promise<VerificationStatus> {
+export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string): Promise<VerificationStatus> {
 
-    const { data: currentData, error } = await readInFirebaseRTDB<FirebaseData>(baseURLWithSecret, timeoutValue, pathTo);
+    const { data: currentData, error } = await readInFirebaseRTDB<FirebaseData>(baseURLWithSecret, timeoutValue, userAgent, pathTo);
 
     if (error) return "error";
 
@@ -28,7 +28,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
             method: "PATCH",
 
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
 
             body: JSON.stringify({ is_verified: true }),
 

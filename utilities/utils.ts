@@ -1,4 +1,4 @@
-import { StaticConfig, RuntimeConfig  } from "../types/types.ts";
+import { StaticConfig, RuntimeConfig, NumericConfigKeys  } from "../types/types.ts";
 
 import { MSG } from "./messages.ts";
 
@@ -32,11 +32,11 @@ export function createJsonResponse(body: object, status: number = 200, headers: 
 
 }
 
-export function isConfigValidWithMinValues(config: StaticConfig, rules: Partial<Record<keyof StaticConfig, number>>): boolean {
-
+export function isConfigValidWithMinValues(config: StaticConfig, rules: Partial<Record<NumericConfigKeys, number>>): boolean {
+    
     for (const key in rules) {
 
-        const typedKey = key as keyof StaticConfig;
+        const typedKey = key as NumericConfigKeys;
 
         const minValue = rules[typedKey];
 
@@ -47,7 +47,7 @@ export function isConfigValidWithMinValues(config: StaticConfig, rules: Partial<
     }
 
     return true;
-
+    
 }
 
 export async function applyRateLimit(req: Request, activeConfig: RuntimeConfig): Promise<Response | null> {

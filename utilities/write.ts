@@ -1,6 +1,6 @@
 import { printLogLine } from "./utils.ts";
 
-export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSecret: string, timeoutValue: number, pathTo: string, data: U): Promise<T | null> {
+export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string, data: U): Promise<T | null> {
 
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
 
@@ -14,7 +14,7 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSec
 
             method: "PUT",
 
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
 
             body: JSON.stringify(data),
 

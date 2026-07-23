@@ -26,7 +26,7 @@ export type ReadResult<T> = {
 
 };
 
-export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutValue: number, pathTo?: string, options?: FirebaseQueryOptions): Promise<ReadResult<T>> { 
+export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo?: string, options?: FirebaseQueryOptions): Promise<ReadResult<T>> { 
     
     const controller = new AbortController();
 
@@ -62,7 +62,7 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
 
             method: "GET",
 
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
 
             signal: controller.signal
 

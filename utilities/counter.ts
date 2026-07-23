@@ -1,4 +1,4 @@
-export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutValue: number, pathTo: string, step: number): Promise<boolean> {
+export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string, step: number): Promise<boolean> {
 
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
 
@@ -12,7 +12,7 @@ export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutVa
 
             method: "PATCH",
 
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
 
             body: JSON.stringify({ "_url_counter": { ".sv": { "increment": step } } }),
 

@@ -1,6 +1,6 @@
 import { printLogLine } from "./utils.ts";
 
-export async function deleteInFirebaseRTDB(baseURLWithSecret: string, timeoutValue: number, pathTo: string): Promise<boolean> {
+export async function deleteInFirebaseRTDB(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string): Promise<boolean> {
 
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
 
@@ -13,6 +13,8 @@ export async function deleteInFirebaseRTDB(baseURLWithSecret: string, timeoutVal
         const res = await fetch(url, {
 
             method: "DELETE",
+
+            headers: { "User-Agent": userAgent },
 
             signal: controller.signal
 

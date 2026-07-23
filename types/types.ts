@@ -26,6 +26,8 @@ export interface StaticConfig {
 
     FIREBASE_ENTRIES_LIMIT: number;
 
+    USER_AGENT: string;
+
     DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: number;
 
     MAX_NUMBER_OF_LINKS_COUNT: number;
@@ -83,3 +85,5 @@ export interface LinkDetails {
 }
 
 export type UrlPostBody = { long_url: string };
+
+export type NumericConfigKeys = { [K in keyof StaticConfig]: StaticConfig[K] extends number ? K : never }[keyof StaticConfig];

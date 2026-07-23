@@ -30,7 +30,7 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
     const secretDbBase: string = config.FIREBASE_URL + config.FIREBASE_HIDDEN_PATH;
 
-    const { data: counterValue, error: fbError } = await readInFirebaseRTDB<number>(secretDbBase, config.FIREBASE_TIMEOUT_MS, "meta/_url_counter");
+    const { data: counterValue, error: fbError } = await readInFirebaseRTDB<number>(secretDbBase, config.FIREBASE_TIMEOUT_MS, config.USER_AGENT, "meta/_url_counter");
 
     checks.firebase_reachable = !fbError;
 

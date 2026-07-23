@@ -2,9 +2,9 @@ import { readInFirebaseRTDB } from "./read.ts";
 
 import { printLogLine } from "./utils.ts";
 
-export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue: number): Promise<{ actualCount: number; success: boolean }> {
+export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue: number, userAgent: string): Promise<{ actualCount: number; success: boolean }> {
 
-    const { data, error } = await readInFirebaseRTDB<Record<string, unknown>>(baseURLWithSecret, timeoutValue, "urls", { shallow: true });
+    const { data, error } = await readInFirebaseRTDB<Record<string, unknown>>(baseURLWithSecret, timeoutValue, userAgent, "urls", { shallow: true });
     
     if (error) return { actualCount: 0, success: false };
 
@@ -22,7 +22,7 @@ export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue:
 
             method: "PATCH",
 
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
 
             body: JSON.stringify({ "_url_counter": actualCount }),
 

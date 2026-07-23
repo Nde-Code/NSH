@@ -125,7 +125,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.HASH_KEY || !activeConfig.ADMIN_KEY || !activeConfig.MONITORING_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
 	
-	if (!isConfigValidWithMinValues(activeConfig, configMinValues)) return createJsonResponse(MSG.WRONG_CONFIG, 500);
+	if (!isConfigValidWithMinValues(activeConfig, configMinValues) || !activeConfig.USER_AGENT) return createJsonResponse(MSG.WRONG_CONFIG, 500);
 	
 	if (req.method === "OPTIONS") {
 
@@ -187,7 +187,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 			
 		}
 
-		const { actualCount, success } = await syncCounterWithDb(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS);
+		const { actualCount, success } = await syncCounterWithDb(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT);
 
 		if (success) {
 
@@ -232,6 +232,8 @@ async function handler(req: Request, env: Env): Promise<Response> {
 			secretDbBase,
 
 			activeConfig.FIREBASE_TIMEOUT_MS,
+
+			activeConfig.USER_AGENT,
 
 			"urls", {
 
@@ -309,7 +311,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 		
 		}
 
-		const result: VerificationStatus = await setIsVerifiedTrue(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + ID);
+		const result: VerificationStatus = await setIsVerifiedTrue(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + ID);
 
 		if (result === "verified_now") return createJsonResponse(MSG.LINK_VERIFIED, 200);	
 
@@ -341,17 +343,17 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		}
 
-		const { data: existing, error: readError } = await readInFirebaseRTDB(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + ID);
+		const { data: existing, error: readError } = await readInFirebaseRTDB(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + ID);
 
 		if (readError) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
 		if (!existing) return createJsonResponse(MSG.NO_LINK_FOUND_WITH_ID_IN_DB, 404);
 
-		const isDeleted: boolean = await deleteInFirebaseRTDB(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + ID);
+		const isDeleted: boolean = await deleteInFirebaseRTDB(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + ID);
 
 		if (isDeleted) {
 
-			await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "meta", -1);
+			await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "meta", -1);
 
 			return createJsonResponse(MSG.LINK_DELETED, 200);
 
@@ -367,7 +369,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		if (ID === false) return createJsonResponse(MSG.NO_ID, 400);
 
-		const { data, error } = await readInFirebaseRTDB<LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + ID);
+		const { data, error } = await readInFirebaseRTDB<LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + ID);
 
 		if (error) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
@@ -419,7 +421,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         const urlKey: string = simpleURLHash(normalizedURL, activeConfig.SHORT_URL_ID_LENGTH);
         
-		const { data: existing, error: readError } = await readInFirebaseRTDB<LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + urlKey);
+		const { data: existing, error: readError } = await readInFirebaseRTDB<LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + urlKey);
         
 		if (readError) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
@@ -437,7 +439,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
         
 		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
-        let { data: countValue, error: countError } = await readInFirebaseRTDB<number>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "meta/_url_counter");
+        let { data: countValue, error: countError } = await readInFirebaseRTDB<number>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "meta/_url_counter");
 
 		if (countError) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
@@ -445,7 +447,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
             printLogLine("INFO", "Counter not found, initializing to 0...");
 
-            await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "meta", 0);
+            await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "meta", 0);
 
             countValue = 0;
 
@@ -463,11 +465,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         };
 
-        const result = await putInFirebaseRTDB<LinkDetails, LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "urls/" + urlKey, firebaseData);
+        const result = await putInFirebaseRTDB<LinkDetails, LinkDetails>(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "urls/" + urlKey, firebaseData);
         
         if (!result) return createJsonResponse(MSG.LINK_NOT_GENERATED, 500);
 
-        await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, "meta", 1);
+        await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "meta", 1);
 
         return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
 

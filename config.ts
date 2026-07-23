@@ -12,6 +12,8 @@ export const config: StaticConfig = {
 
     FIREBASE_ENTRIES_LIMIT: 1000,
 
+    USER_AGENT: "NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)",
+
     DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15,
 
     MAX_NUMBER_OF_LINKS_COUNT: 50,
