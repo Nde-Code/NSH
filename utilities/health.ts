@@ -26,7 +26,7 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
     
     checks.config_valid = configValid;
 
-    if (!configValid) return createJsonResponse({ status: "unhealthy", timestamp, checks, message: MSG.WRONG_CONFIG.error }, 503);
+    if (!configValid) return createJsonResponse({ "status": "unhealthy", timestamp, checks, "message": MSG.WRONG_CONFIG.error }, 503);
 
     const secretDbBase: string = config.FIREBASE_URL + config.FIREBASE_HIDDEN_PATH;
 
@@ -78,7 +78,7 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
         checks,
 
-        message: (allHealthy === true) ? MSG.SYSTEM_OK.success : (degraded === true) ? MSG.SYSTEM_DEGRADATION.warning : MSG.SYSTEM_DOWN.error
+        "message": (allHealthy === true) ? MSG.SYSTEM_OK.success : (degraded === true) ? MSG.SYSTEM_DEGRADATION.warning : MSG.SYSTEM_DOWN.error
     
     };
 

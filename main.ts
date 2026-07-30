@@ -193,7 +193,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			printLogLine("INFO", `Counter resynced to ${actualCount}.`);
 
-			return createJsonResponse({ ...MSG.SYNC_OK, new_count: actualCount }, 200);
+			return createJsonResponse({ ...MSG.SYNC_OK, "new_count": actualCount }, 200);
 
 		}
 		
@@ -281,11 +281,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		return createJsonResponse({
 
-			urls: data,
+			"urls": data,
 
-			next_cursor: nextCursor,
+			"next_cursor": nextCursor,
 
-			has_more: hasMore
+			"has_more": hasMore
 
 		}, 200);
 
@@ -427,7 +427,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         if (existing) {
 
-            if (existing.long_url === normalizedURL) return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 200);
+            if (existing.long_url === normalizedURL) return createJsonResponse({ "success": `${url.origin}/url/${urlKey}` }, 200);
 			
 			else return createJsonResponse(MSG.HASH_COLLISION, 409);
 
@@ -471,7 +471,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         await updateFirebaseCounter(secretDbBase, activeConfig.FIREBASE_TIMEOUT_MS, activeConfig.USER_AGENT, "meta", 1);
 
-        return createJsonResponse({ success: `${url.origin}/url/${urlKey}` }, 201);
+        return createJsonResponse({ "success": `${url.origin}/url/${urlKey}` }, 201);
 
     }
 
@@ -491,7 +491,7 @@ export default {
 
 			printLogLine("ERROR", "An unexpected error occurred while handling the request.");
 
-			return createJsonResponse({ error: "Internal server error." }, 500);
+			return createJsonResponse(MSG.SERVER_ERROR, 500);
 
 		}
 

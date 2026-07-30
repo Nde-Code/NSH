@@ -56,7 +56,7 @@ export async function applyRateLimit(req: Request, activeConfig: RuntimeConfig):
 
     const hashedIP: string = await hashIP(ip, activeConfig.HASH_KEY);
 
-    if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse({ "warning": MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S) }, 429);
+    if (!(await checkTimeRateLimit(hashedIP, activeConfig.RATE_LIMIT_INTERVAL_S))) return createJsonResponse(MSG.RATE_LIMIT_EXCEEDED(activeConfig.RATE_LIMIT_INTERVAL_S), 429);
 
     return null; 
     
