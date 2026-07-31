@@ -12,13 +12,13 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
     const checks = {
 
-        config_valid: false,
+        "config_valid": false,
 
-        firebase_reachable: false,
+        "firebase_reachable": false,
 
-        counter_accessible: false,
+        "counter_accessible": false,
 
-        kv_store_available: false
+        "kv_store_available": false
 
     };
 

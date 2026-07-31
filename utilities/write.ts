@@ -12,13 +12,19 @@ export async function putInFirebaseRTDB<T = unknown, U = unknown>(baseURLWithSec
 
         const res = await fetch(url, {
 
-            method: "PUT",
+            "method": "PUT",
 
-            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
+            "headers": {
+                
+                "Content-Type": "application/json",
+                
+                "User-Agent": userAgent
+            
+            },
 
-            body: JSON.stringify(data),
+            "body": JSON.stringify(data),
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
 

@@ -10,13 +10,19 @@ export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutVa
 
         const res = await fetch(url, {
 
-            method: "PATCH",
+            "method": "PATCH",
 
-            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
+            "headers": {
+                
+                "Content-Type": "application/json",
+                
+                "User-Agent": userAgent
+            
+            },
 
-            body: JSON.stringify({ "_url_counter": { ".sv": { "increment": step } } }),
+            "body": JSON.stringify({ "_url_counter": { ".sv": { "increment": step } } }),
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
 

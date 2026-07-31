@@ -12,11 +12,11 @@ export async function deleteInFirebaseRTDB(baseURLWithSecret: string, timeoutVal
 
         const res = await fetch(url, {
 
-            method: "DELETE",
+            "method": "DELETE",
 
-            headers: { "User-Agent": userAgent },
+            "headers": { "User-Agent": userAgent },
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
 

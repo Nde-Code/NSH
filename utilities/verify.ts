@@ -26,13 +26,19 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
         const res = await fetch(url, {
 
-            method: "PATCH",
+            "method": "PATCH",
 
-            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
+            "headers": {
+                
+                "Content-Type": "application/json",
+                
+                "User-Agent": userAgent
+            
+            },
 
-            body: JSON.stringify({ is_verified: true }),
+            "body": JSON.stringify({ is_verified: true }),
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
 

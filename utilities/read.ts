@@ -60,11 +60,11 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
 
         const res = await fetch(url, {
 
-            method: "GET",
+            "method": "GET",
 
-            headers: { "User-Agent": userAgent },
+            "headers": { "User-Agent": userAgent },
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
 
@@ -72,19 +72,19 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
 
             printLogLine("ERROR", `Firebase responded with status: ${res.status}`);
 
-            return { data: null, error: true }; 
+            return { "data": null, "error": true }; 
 
         }
 
         const data: T = await res.json();
 
-        return { data, error: false };
+        return { data, "error": false };
 
     } catch (_err) {
 
         printLogLine("ERROR", `Fetch error on ${pathTo || 'root'}.`);
 
-        return { data: null, error: true }; 
+        return { "data": null, "error": true }; 
         
     } finally {
 

@@ -20,23 +20,29 @@ export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue:
 
         const res = await fetch(url, {
 
-            method: "PATCH",
+            "method": "PATCH",
 
-            headers: { "Content-Type": "application/json", "User-Agent": userAgent },
+            "headers": {
+                
+                "Content-Type": "application/json",
+                
+                "User-Agent": userAgent
+            
+            },
 
-            body: JSON.stringify({ "_url_counter": actualCount }),
+            "body": JSON.stringify({ "_url_counter": actualCount }),
 
-            signal: controller.signal
+            "signal": controller.signal
 
         });
         
-        return { actualCount, success: res.ok };
+        return { actualCount, "success": res.ok };
 
     } catch (_err) {
 
         printLogLine("ERROR", "Unable to update the url counter in metadata.");
 
-        return { actualCount, success: false };
+        return { actualCount, "success": false };
 
     } finally {
 
