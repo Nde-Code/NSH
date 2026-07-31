@@ -42,7 +42,7 @@ export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number)
 
         await cache.put(cacheKey, new Response("1", {
 
-            headers: { "Cache-Control": `max-age=${limitSeconds}` }
+            "headers": { "Cache-Control": `max-age=${limitSeconds}` }
 
         }));
 

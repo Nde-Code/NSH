@@ -121,7 +121,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	const pathname: string = url.pathname;
 
-	if (pathname === "/favicon.ico") return new Response(null, { status: 204 });
+	if (pathname === "/favicon.ico") return new Response(null, { "status": 204 });
 
 	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.HASH_KEY || !activeConfig.ADMIN_KEY || !activeConfig.MONITORING_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
 	
@@ -131,9 +131,9 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		return new Response(null, {
 
-			status: 204,
+			"status": 204,
 
-			headers: {
+			"headers": {
 
 				"Access-Control-Allow-Origin": "*",
 
@@ -377,11 +377,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 			return new Response(null, {
 
-				status: (data.is_verified === true) ? 301 : 302,
+				"status": (data.is_verified === true) ? 301 : 302,
 
-				headers: {
+				"headers": {
 
-					Location: data.long_url.toString(),
+					"Location": data.long_url.toString(),
 
 					"Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
 

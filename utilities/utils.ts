@@ -16,9 +16,9 @@ export function createJsonResponse(body: object, status: number = 200, headers: 
 
     return new Response(JSON.stringify(body), {
 
-        status,
+        "status": status,
 
-        headers: {
+        "headers": {
 
             "Content-Type": "application/json",
 
