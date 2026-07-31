@@ -241,7 +241,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 				limitToFirst: firebaseLimit,
 
-				...(cursor ? { startAt: cursor } : {})
+				...(cursor ? { "startAt": cursor } : {})
 
 			}
 
@@ -457,11 +457,11 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         const firebaseData: LinkDetails = {
 
-            long_url: normalizedURL,
+            "long_url": normalizedURL,
 
-            post_date: new Date().toISOString(),
+            "post_date": new Date().toISOString(),
 
-            is_verified: false
+            "is_verified": false
 
         };
 
