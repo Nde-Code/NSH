@@ -70,7 +70,7 @@ export async function readInFirebaseRTDB<T>(baseURLWithSecret: string, timeoutVa
 
         if (!res.ok) {
 
-            printLogLine("ERROR", `Firebase responded with status: ${res.status}`);
+            printLogLine("ERROR", `Firebase responded with status: ${res.status}.`);
 
             return { "data": null, "error": true }; 
 

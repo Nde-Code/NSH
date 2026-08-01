@@ -36,7 +36,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
             
             },
 
-            "body": JSON.stringify({ is_verified: true }),
+            "body": JSON.stringify({ "is_verified": true }),
 
             "signal": controller.signal
 

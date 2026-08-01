@@ -62,7 +62,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
     
     const now: number = Date.now();
 
-    const key: string = `ip24h:${hashedIp}`;
+    const key: string = `haship:${hashedIp}`;
 
     const windowMs: number = purgeDays * SECONDS_IN_DAY * 1000;
 
