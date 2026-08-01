@@ -435,7 +435,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
         const rateResult: RateLimitResult = await checkDailyRateLimit(env.RATE_LIMIT_KV, hashedIP, activeConfig.MAX_DAILY_WRITES, activeConfig.IPS_PURGE_TIME_DAYS);
         
-		if (rateResult === "USER_LIMIT") return createJsonResponse(MSG.WRITE_LIMIT_EXCEEDED(activeConfig.MAX_DAILY_WRITES), 429);
+		if (rateResult === "USER_LIMIT") return createJsonResponse(MSG.WRITE_LIMIT_EXCEEDED(activeConfig.MAX_DAILY_WRITES, activeConfig.IPS_PURGE_TIME_DAYS), 429);
         
 		if (rateResult === "KV_QUOTA_EXCEEDED") return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 

@@ -54,7 +54,7 @@ export const MSG = {
 
     "DB_LIMIT_REACHED": { "warning": "Database limit reached." },
 
-    "WRITE_LIMIT_EXCEEDED": (max: number) => ({ "warning": `Daily limit reached (max ${max} writes per day).` }),
+    "WRITE_LIMIT_EXCEEDED": (max: number, purge: number) => ({ "warning": `Write limit reached (max ${max} writes). Resets in ${purge} day${purge > 1 ? 's' : ''}.` }),
 
     "SERVICE_TEMP_UNAVAILABLE": { "warning": "Service unavailable." },
 
