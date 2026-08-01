@@ -4,9 +4,9 @@ import { printLogLine } from "./utils.ts";
 
 export async function syncCounterWithDb(baseURLWithSecret: string, timeoutValue: number, userAgent: string): Promise<{ actualCount: number; success: boolean }> {
 
-    const { data, error } = await readInFirebaseRTDB<Record<string, unknown>>(baseURLWithSecret, timeoutValue, userAgent, "urls", { shallow: true });
+    const { data, error } = await readInFirebaseRTDB<Record<string, unknown>>(baseURLWithSecret, timeoutValue, userAgent, "urls", { "shallow": true });
     
-    if (error) return { actualCount: 0, success: false };
+    if (error) return { "actualCount": 0, "success": false };
 
     const actualCount = data ? Object.keys(data).length : 0;
 

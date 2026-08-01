@@ -66,23 +66,23 @@ import { handleHealthCheck } from "./utilities/health.ts";
 
 const configMinValues: Partial<Record<keyof StaticConfig, number>> = {
 
-	RATE_LIMIT_INTERVAL_S: 1,
+	"RATE_LIMIT_INTERVAL_S": 1,
 
-	MAX_DAILY_WRITES: 1,
+	"MAX_DAILY_WRITES": 1,
 
-	IPS_PURGE_TIME_DAYS: 1,
+	"IPS_PURGE_TIME_DAYS": 1,
 
-	FIREBASE_TIMEOUT_MS: 1000,
+	"FIREBASE_TIMEOUT_MS": 1000,
 
-	FIREBASE_ENTRIES_LIMIT: 50,
+	"FIREBASE_ENTRIES_LIMIT": 50,
 
-	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 5,
+	"DEFAULT_NUMBER_OF_LINKS_FROM_COUNT": 5,
 
-    MAX_NUMBER_OF_LINKS_COUNT: 10,
+    "MAX_NUMBER_OF_LINKS_COUNT": 10,
 
-	SHORT_URL_ID_LENGTH: 10,
+	"SHORT_URL_ID_LENGTH": 10,
 
-	MAX_URL_LENGTH: 100
+	"MAX_URL_LENGTH": 100
 
 }
 
@@ -92,15 +92,15 @@ function getContextualConfig(env: Env): RuntimeConfig {
 
         ...config, 
 
-        FIREBASE_URL: env.FIREBASE_HOST_LINK ?? "",
+        "FIREBASE_URL": env.FIREBASE_HOST_LINK ?? "",
 
-        FIREBASE_HIDDEN_PATH: env.FIREBASE_HIDDEN_PATH ?? "",
+        "FIREBASE_HIDDEN_PATH": env.FIREBASE_HIDDEN_PATH ?? "",
 
-        HASH_KEY: env.HASH_KEY ?? "",
+        "HASH_KEY": env.HASH_KEY ?? "",
         
-		ADMIN_KEY: env.ADMIN_KEY ?? "",
+		"ADMIN_KEY": env.ADMIN_KEY ?? "",
 
-		MONITORING_KEY: env.MONITORING_KEY ?? ""
+		"MONITORING_KEY": env.MONITORING_KEY ?? ""
 
 
     };

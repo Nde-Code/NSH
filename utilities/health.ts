@@ -44,7 +44,7 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
         const testValue: string = timestamp;
 
-        await env.RATE_LIMIT_KV.put(testKey, testValue, { expirationTtl: 60 });
+        await env.RATE_LIMIT_KV.put(testKey, testValue, { "expirationTtl": 60 });
 
         const retrieved: string | null = await env.RATE_LIMIT_KV.get(testKey);
 

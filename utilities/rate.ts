@@ -2,7 +2,7 @@ import { printLogLine } from "./utils.ts";
 
 export type RateLimitResult = "OK" | "USER_LIMIT" | "KV_QUOTA_EXCEEDED";
 
-interface RateLimitData {s: number; c: number; }
+interface RateLimitData { s: number; c: number; }
 
 const SECONDS_IN_DAY: number = 86400;
 
@@ -12,7 +12,7 @@ async function safeKvPut(kv: KVNamespace, key: string, value: string, expiration
 
         const ttl: number = Math.max(expirationTtl, 60);
 
-        await kv.put(key, value, { expirationTtl: ttl });
+        await kv.put(key, value, { "expirationTtl": ttl });
 
         return true;
 
@@ -82,7 +82,7 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
 
     let data: RateLimitData;
     
-    if (!json) data = { s: now, c: 1 };
+    if (!json) data = { "s": now, "c": 1 };
     
     else {
 
@@ -92,11 +92,11 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
 
         } catch (_err) {
 
-            data = { s: now, c: 1 };
+            data = { "s": now, "c": 1 };
 
         }
 
-        if (now - data.s >= windowMs) data = { s: now, c: 1 };
+        if (now - data.s >= windowMs) data = { "s": now, "c": 1 };
             
         else {
 
