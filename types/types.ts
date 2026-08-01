@@ -20,7 +20,7 @@ export interface StaticConfig {
 
     MAX_DAILY_WRITES: number;
 
-    IPS_PURGE_TIME_DAYS: number;
+    DAILY_RATE_LIMIT_RESET_DAYS: number;
 
     FIREBASE_TIMEOUT_MS: number;
 

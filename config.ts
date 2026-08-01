@@ -6,7 +6,7 @@ export const config: StaticConfig = {
 
     "MAX_DAILY_WRITES": 10,
 
-    "IPS_PURGE_TIME_DAYS": 1,
+    "DAILY_RATE_LIMIT_RESET_DAYS": 1,
 
     "FIREBASE_TIMEOUT_MS": 6000,
 

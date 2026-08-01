@@ -182,7 +182,7 @@ export const config: StaticConfig = {
 	
 	MAX_DAILY_WRITES: 10,                 // min = 1
 	
-	IPS_PURGE_TIME_DAYS: 1,               // min = 1
+	DAILY_RATE_LIMIT_RESET_DAYS: 1,               // min = 1
 	
 	FIREBASE_TIMEOUT_MS: 6000,            // min = 1000
 	
@@ -207,7 +207,7 @@ export const config: StaticConfig = {
 |-----------|-------------|-------------|
 | `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1 |
 | `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
-| `IPS_PURGE_TIME_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
+| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
 | `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
 | `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. | Required |
 | `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
