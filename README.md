@@ -50,7 +50,7 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 
 | Endpoint | Rate limit | Maintainer | Privacy |
 |----------|-----------|-----------|-----------------|
-| https://nsh.nde-code.workers.dev/ | 1 req/sec, 10 new links/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
+| https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
 CORS is enabled only for the URL‑posting endpoint, for clear security reasons.
 
