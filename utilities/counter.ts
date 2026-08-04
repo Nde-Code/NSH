@@ -1,3 +1,5 @@
+import { printLogLine } from "./utils.ts";
+
 export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string, step: number): Promise<boolean> {
 
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
@@ -29,6 +31,8 @@ export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutVa
         return res.ok;
 
     } catch (_err) {
+
+        printLogLine("ERROR", "An error occurred while trying to update the Firebase links counter.");
 
         return false;
 
