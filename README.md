@@ -54,7 +54,7 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 
 CORS is enabled only for the URL‑posting endpoint, for clear security reasons.
 
-> Feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits.
+> **Notes:** feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits. The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency.
 
 ## 📚 Available endpoints:
 
