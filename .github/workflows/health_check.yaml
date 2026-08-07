@@ -1,4 +1,4 @@
-name: NSH Full integration & Health check
+name: NSH Integrity Check
 
 on:
 
@@ -69,7 +69,7 @@ jobs:
           sleep 15
 
       # 7. Execute the health check script against the local worker:
-      - name: Run full API test suite
+      - name: Run API integrity test suite
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
