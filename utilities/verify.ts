@@ -54,7 +54,7 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
 
     } catch (_err) {
 
-        printLogLine("ERROR", `An error occurred while trying to verify the link ${pathTo}.`);
+        printLogLine("ERROR", `An error occurred while trying to verify the link stored on ${pathTo}.`);
 
         return "error";
 
