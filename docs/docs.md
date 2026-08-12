@@ -20,6 +20,8 @@ npm install -g wrangler
 
 > If Wrangler is not installed globally, prefix commands with `npx` (e.g., `npx wrangler`).
 
+> A monthly cron job checks compatibility with the latest Wrangler to ensure the project stays aligned and avoids regressions.
+
 ### 4. Clone the repository:
 
 ```bash
