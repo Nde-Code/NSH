@@ -312,7 +312,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 | **Validation** | URLs max 2000 chars, HTTP/HTTPS regex, ISO 8601 date format |
 | **Extra Fields** | Forbidden, only `long_url`, `post_date`, `is_verified` allowed |
 
-### 2. Initialize TypeScript types:
+### 2. TypeScript types:
 
 The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only bindings are the KV databases for the daily rate-limiting system).
 
