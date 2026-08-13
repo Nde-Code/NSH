@@ -103,7 +103,7 @@ Enables or disables preview URLs for testing.
 * `true` = Enables preview URLs
 * `false` = Disables preview URLs
 
-Learn more: [Cloudflare documentation](https://developers.cloudflare.com/workers/configuration/previews/)
+> For more details: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/)
 
 ### Observability configuration:
 
