@@ -112,8 +112,8 @@ Ensures compatibility even as Cloudflare updates the platform.
 
 Enables or disables preview URLs for testing.
 
-- `true` = Enables preview URLs
-- `false` = Disables preview URLs
+* `true` = Enables preview URLs
+* `false` = Disables preview URLs
 
 Learn more: [Cloudflare documentation](https://developers.cloudflare.com/workers/configuration/previews/)
 
