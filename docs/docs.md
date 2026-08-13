@@ -20,8 +20,6 @@ Open the repository on GitHub and create a new Codespace from the Code → Codes
 
 GitHub will automatically detect the project's `.devcontainer.json` configuration and build the development environment.
 
-You do not need to install Node.js or Wrangler on your local machine.
-
 ### 3. Automatic environment setup:
 
 The `.devcontainer.json` file defines the complete development environment:
@@ -153,8 +151,8 @@ wrangler kv namespace create YOUR_KV_NAME
 
 Complete `wrangler.jsonc` with:
 
-* **`binding`** : Variable name used in your code (e.g., `YOUR_KV_NAME`)
-* **`id`** : Unique namespace ID from your Cloudflare dashboard
+* **`binding`**: variable name used in your code (e.g., `YOUR_KV_NAME`)
+* **`id`**: unique namespace ID from your Cloudflare dashboard
 
 ### Environment variables:
 
