@@ -149,7 +149,7 @@ Controls **distributed tracing**:
 
 > Leave disabled if not using OpenTelemetry or a tracing system.
 
-### KV namespaces:
+### KV storage:
 
 #### `kv_namespaces`
 
@@ -246,10 +246,10 @@ export const config: StaticConfig = {
 
 | Parameter | Description | Constraints |
 |-----------|-------------|-------------|
-| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1 |
+| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1s |
 | `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
-| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
-| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
+| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1d |
+| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000ms |
 | `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required |
 | `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
 | `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
@@ -273,8 +273,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and sign in with a Google account. 
 
-2. Create a **project** and set up a **Realtime Database**
-   > See [Firebase documentation](https://firebase.google.com/docs/build?hl=en) if needed
+2. Create a **project** and set up a **Realtime Database** (see: [Firebase documentation](https://firebase.google.com/docs/build?hl=en) if needed).
 
 3. Go to the **Rules** tab and paste this configuration:
 
@@ -339,7 +338,7 @@ wrangler types
 
 > Ensure `wrangler.jsonc` is properly configured before regenerating the types.
 
-Include in [`tsconfig.json`](../tsconfig.json):
+This generates type definitions that should be included in [`tsconfig.json`](../tsconfig.json):
 
 ```json
 {
