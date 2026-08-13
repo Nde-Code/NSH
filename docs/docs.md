@@ -4,19 +4,25 @@ Complete developer guide for contributing to this project or creating your own v
 
 ## 🚀 Getting started with GitHub Codespaces:
 
-The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces).
+The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces), making it quick and easy to start coding.
 
-Using Codespaces is the recommended way to work on the project, as it automatically sets up the required Node.js and Python versions, installs Wrangler, configures the development environment, and generates the required local variables.
+Using Codespaces is the recommended way to work on the project because it automatically sets up the required Node.js environment, installs Wrangler, configures the development environment, and generates the required local variables.
 
-### 1. Open the repository in GitHub Codespaces:
+### 1. Configure the required secrets:
+
+Before you start a new Codespaces environment and begin coding in it, you need to register the required secrets in the repository's GitHub Codespaces Secrets.
+
+See the [environment variables](#environment-variables) section for the required configuration and the [GitHub Codespaces secrets documentation](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) for more details.
+
+### 2. Open the repository in GitHub Codespaces:
 
 Open the repository on GitHub and create a new Codespace from the Code → Codespaces menu.
 
 GitHub will automatically detect the project's `.devcontainer.json` configuration and build the development environment.
 
-You do not need to install Node.js, Python, or Wrangler on your local machine.
+You do not need to install Node.js or Wrangler on your local machine.
 
-### 2. Automatic environment setup:
+### 3. Automatic environment setup:
 
 The `.devcontainer.json` file defines the complete development environment:
 
@@ -24,29 +30,15 @@ The `.devcontainer.json` file defines the complete development environment:
 
 - Node.js 24
 
-- Python 3.12
-
 - Cloudflare Wrangler
-
-- Required Python dependencies
 
 - Required environment variables
 
 - Generated TypeScript definitions for Cloudflare Worker bindings
 
-The setup is executed automatically when the Codespace is created through the `postCreateCommand`.
+The setup is executed automatically when the Codespace is created via `postCreateCommand`. The Codespace is created with environment variables that are automatically read from the Codespaces environment and written to `.dev.vars` by the dev container setup, Wrangler is installed, and types are initialized.
 
-This keeps the development environment isolated and reproducible, while avoiding the need to install project-specific tooling globally on your host machine.
-
-> Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
-
-### 3. Configure the required secrets:
-
-Before using the Worker locally or deploying it, make sure the required Codespaces secrets are configured.
-
-See the [Environment variables](#environment-variables) section for the required configuration and the [GitHub Codespaces secrets documentation](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) for more details.
-
-When the Codespace is created, these values are automatically read from the Codespaces environment and written to `.dev.vars` by the Dev Container setup.
+Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
 
 > **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It's already been added to the `.gitignore`.
 
@@ -149,7 +141,7 @@ Controls **distributed tracing**:
 
 #### `kv_namespaces`
 
-Binds your Worker to **Cloudflare KV (Key-Value)** namespace for rate limiting storage.
+Binds your Worker to **Cloudflare KV** namespace for rate limiting storage.
 
 Create a Workers KV namespace from the Codespace using:
 
@@ -259,11 +251,11 @@ export const config: StaticConfig = {
 
 - **Entry limit & collision prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping the database below 10,000 entries keeps the probability of a hash collision relatively low, while also limiting free-tier resource usage.
 
-- **Constraint validation:** violating these constraints will trigger configuration errors.
+- **Constraint validation:** violating constraints will trigger configuration errors.
 
 ## 💻 Project setup:
 
-Once your Codespace is ready and your Cloudflare account is authenticated, complete the following steps to configure the services required by the Worker.
+Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 about creating your Firebase Realtime Database. Then this section simply resumes step 2 to initialize the types and run the command to start the project in step 3.
 
 ### 1. Create Firebase Realtime Database:
 
@@ -324,7 +316,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 ### 2. Initialize TypeScript types:
 
-The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts`.
+The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only bindings are the KV databases for the daily rate-limiting system).
 
 If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
 
@@ -388,7 +380,7 @@ This generates type definitions that should be included in [`tsconfig.json`](../
 | `include` | Source code and types to check |
 | `exclude` | Build artifacts and dependencies to ignore |
 
-> This project does not require a `package.json` or project-level npm dependencies. 
+> This project does not include a `package.json`, and it does not require any npm dependencies. 
 
 ### 3. Run and deploy:
 
@@ -400,7 +392,7 @@ wrangler dev
 
 **Deploy to Cloudflare Workers:**
 
-> Make sure your Cloudflare Workers secrets have been configured before deploying. See [Environment variables](#environment-variables).
+> Make sure your Cloudflare Workers secrets have been configured before deploying. See [environment variables](#environment-variables).
 
 ```bash
 wrangler deploy
