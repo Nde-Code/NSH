@@ -2,33 +2,61 @@
 
 Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
-## 🚀 Getting started:
+## 🚀 Getting started with GitHub Codespaces:
 
-### 1. Create or log-in to Cloudflare:
+The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces).
 
-Visit [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up) to create an account or log in.
+Using Codespaces is the recommended way to work on the project, as it automatically sets up the required Node.js and Python versions, installs Wrangler, configures the development environment, and generates the required local variables.
 
-### 2. Install Node.js and NPM:
+### 1. Open the repository in GitHub Codespaces:
 
-Download from [https://nodejs.org/en/download](https://nodejs.org/en/download).
+Open the repository on GitHub and create a new Codespace from the Code → Codespaces menu.
 
-### 3. Install Wrangler CLI:
+GitHub will automatically detect the project's `.devcontainer.json` configuration and build the development environment.
 
-```bash
-npm install -g wrangler
-```
+You do not need to install Node.js, Python, or Wrangler on your local machine.
 
-> If Wrangler is not installed globally, prefix commands with `npx` (e.g., `npx wrangler`).
+### 2. Automatic environment setup:
 
-> A monthly cron job checks compatibility with the latest Wrangler to ensure the project stays aligned and avoids regressions.
+The `.devcontainer.json` file defines the complete development environment:
 
-### 4. Clone the repository:
+- Ubuntu-based development container
 
-```bash
-git clone https://github.com/Nde-Code/NSH.git
-```
+- Node.js 24
 
-### 5. Authenticate with Cloudflare:
+- Python 3.12
+
+- Cloudflare Wrangler
+
+- Required Python dependencies
+
+- Required environment variables
+
+- Cloudflare Worker type generation
+
+The setup is executed automatically when the Codespace is created through the `postCreateCommand`.
+
+This keeps the development environment isolated and reproducible, while avoiding the need to install project-specific tooling globally on your host machine.
+
+> **Why is Wrangler installed globally?**
+>
+> Wrangler is installed globally **inside the Codespace**, not on your local computer. This makes the `wrangler` command directly available throughout the container while keeping your host environment clean.
+>
+> It also works well with custom Dev Container images and makes the project setup consistent for every contributor.
+
+### 3. Configure the required secrets:
+
+Before using the Worker locally or deploying it, make sure the required Codespaces secrets are configured.
+
+See the [Environment variables](#environment-variables) section for the required configuration and the [GitHub Codespaces secrets documentation](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) for more details.
+
+When the Codespace is created, these values are automatically read from the Codespaces environment and written to `.dev.vars` by the Dev Container setup.
+
+> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It's already been added to the `.gitignore`.
+
+### 4. Authenticate with Cloudflare:
+
+Once the Codespace has finished initializing, authenticate Wrangler with your Cloudflare account:
 
 ```bash
 wrangler login
@@ -82,7 +110,12 @@ Ensures compatibility even as Cloudflare updates the platform.
 
 #### `preview_urls`
 
-Enables preview URLs for testing. Learn more: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/)
+Enables or disables preview URLs for testing.
+
+- `true` = Enables preview URLs
+- `false` = Disables preview URLs
+
+Learn more: [Cloudflare documentation](https://developers.cloudflare.com/workers/configuration/previews/)
 
 ### Observability configuration:
 
@@ -122,7 +155,7 @@ Controls **distributed tracing**:
 
 Binds your Worker to **Cloudflare KV (Key-Value)** namespace for rate limiting storage.
 
-Create a Workers KV using:
+Create a Workers KV namespace from the Codespace using:
 
 ```bash
 wrangler kv namespace create YOUR_KV_NAME
@@ -137,15 +170,7 @@ Complete `wrangler.jsonc` with:
 
 ### Environment variables:
 
-Create a `.dev.vars` file for local development:
-
-```env
-FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
-FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
-HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
-ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
-MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
-```
+The Worker uses environment variables for local development and Cloudflare secrets for production.
 
 #### Variables in this project:
 
@@ -157,7 +182,21 @@ MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 | `ADMIN_KEY` | Private key for verifying, listing, or deleting data |
 | `MONITORING_KEY` | Key for secure service status monitoring |
 
-Once configured, add secrets to Cloudflare Workers:
+#### Local development:
+
+Create/configure the following values as GitHub Codespaces secrets. When the Codespace is created, `.devcontainer.json` automatically writes them to `.dev.vars`:
+
+```env
+FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
+FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
+HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
+ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
+MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
+```
+
+#### Production:
+
+For the deployed Worker, configure the same values as Cloudflare Workers secrets:
 
 ```bash
 wrangler secret put FIREBASE_HOST_LINK
@@ -184,7 +223,7 @@ export const config: StaticConfig = {
 	
 	MAX_DAILY_WRITES: 10,                 // min = 1
 	
-	DAILY_RATE_LIMIT_RESET_DAYS: 1,               // min = 1
+	DAILY_RATE_LIMIT_RESET_DAYS: 1,       // min = 1
 	
 	FIREBASE_TIMEOUT_MS: 6000,            // min = 1000
 	
@@ -211,7 +250,7 @@ export const config: StaticConfig = {
 | `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
 | `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 |
 | `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 |
-| `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. | Required |
+| `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required |
 | `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
 | `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
 | `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |
@@ -228,10 +267,11 @@ export const config: StaticConfig = {
 
 ## 💻 Project setup:
 
+Once your Codespace is ready and your Cloudflare account is authenticated, complete the following steps to configure the services required by the Worker.
+
 ### 1. Create Firebase Realtime Database:
 
-1. Go to [firebase.google.com](https://firebase.google.com/) and create an account
-   > Google account required (or create one)
+1. Go to [firebase.google.com](https://firebase.google.com/) and sign in with a Google account. 
 
 2. Create a **project** and set up a **Realtime Database**
    > See [Firebase documentation](https://firebase.google.com/docs/build?hl=en) if needed
@@ -289,13 +329,15 @@ export const config: StaticConfig = {
 
 ### 2. Initialize TypeScript types:
 
-Enable TypeScript definitions in your editor:
+The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts`.
+
+If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
 
 ```bash
 wrangler types
 ```
 
-> Ensure `wrangler.jsonc` is properly configured first.
+> Ensure `wrangler.jsonc` is properly configured before regenerating the types.
 
 Include in [`tsconfig.json`](../tsconfig.json):
 
@@ -351,7 +393,7 @@ Include in [`tsconfig.json`](../tsconfig.json):
 | `include` | Source code and types to check |
 | `exclude` | Build artifacts and dependencies to ignore |
 
-> This project has **no external dependencies**, no `package.json` or npm packages required.
+> This project does not require a `package.json` or project-level npm dependencies. Wrangler is installed globally inside the Codespace by the Dev Container configuration.
 
 ### 3. Run and deploy:
 
@@ -361,13 +403,9 @@ Include in [`tsconfig.json`](../tsconfig.json):
 wrangler dev
 ```
 
-**Bundle for production (optional):**
-
-```bash
-wrangler build
-```
-
 **Deploy to Cloudflare Workers:**
+
+> Make sure your Cloudflare Workers secrets have been configured before deploying. See [Environment variables](#environment-variables).
 
 ```bash
 wrangler deploy
@@ -377,4 +415,4 @@ Your project is now live and accessible via the provided URL.
 
 ## 📌 Support:
 
-For issues or questions, open an issue on GitHub: [https://github.com/Nde-Code/NSH/issues](https://github.com/Nde-Code/NSH/issues)
+For issues or questions, open an [issue on GitHub](https://github.com/Nde-Code/NSH/issues).
