@@ -1,4 +1,4 @@
-# Developer documentation:
+# Developer guide for setting up, configuring, developing, and deploying the project:
 
 Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
@@ -32,17 +32,13 @@ The `.devcontainer.json` file defines the complete development environment:
 
 - Required environment variables
 
-- Cloudflare Worker type generation
+- Generated TypeScript definitions for Cloudflare Worker bindings
 
 The setup is executed automatically when the Codespace is created through the `postCreateCommand`.
 
 This keeps the development environment isolated and reproducible, while avoiding the need to install project-specific tooling globally on your host machine.
 
-> **Why is Wrangler installed globally?**
->
-> Wrangler is installed globally **inside the Codespace**, not on your local computer. This makes the `wrangler` command directly available throughout the container while keeping your host environment clean.
->
-> It also works well with custom Dev Container images and makes the project setup consistent for every contributor.
+> Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
 
 ### 3. Configure the required secrets:
 
@@ -68,7 +64,7 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 
 ```jsonc
 {
-	"name": "project_name",
+	"name": "project-name",
 	"main": "main.ts",
 	"compatibility_date": "2026-03-08",
 	"preview_urls": false,
@@ -96,7 +92,7 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 #### `name`
 
 Defines the **Worker project name**.
-This determines your public URL (e.g., `https://project_name.username.workers.dev`).
+This determines your public URL (e.g., `https://project-name.your-subdomain.workers.dev`).
 
 #### `main`
 
@@ -261,7 +257,7 @@ export const config: StaticConfig = {
 
 - **Request body limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
 
-- **Entry limit & collision prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping stored URLs ≤ 10,000 ensures extremely low collision risk while controlling free-tier resource usage.
+- **Entry limit & collision prevention:** short IDs use a deterministic 32-bit hash (4.29 billion possible values). By the birthday paradox, collisions become significant around √(2^32) ≈ 65,000 entries. To keep collision probability negligible and avoid insertion failures, `FIREBASE_ENTRIES_LIMIT` caps database size. Keeping the database below 10,000 entries keeps the probability of a hash collision relatively low, while also limiting free-tier resource usage.
 
 - **Constraint validation:** violating these constraints will trigger configuration errors.
 
@@ -318,7 +314,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 | Action | Condition |
 |--------|-----------|
-| **Read** | Allowed for `meta/_url_counter` and `urls/` list. Root path is private |
+| **Read** | Allowed for `meta/_url_counter` and `urls/` list. The Firebase root and unspecified paths remain private by default. |
 | **Write (Create)** | Node must not exist. Data must include `long_url` (URL format), `post_date` (ISO), and `is_verified` (boolean) |
 | **Write (Counter)** | PATCH on `meta/` must contain `_url_counter`. Value must remain ≥ 0 |
 | **Delete** | Allowed if node exists. Worker handles atomic counter decrement via PATCH |
@@ -392,7 +388,7 @@ This generates type definitions that should be included in [`tsconfig.json`](../
 | `include` | Source code and types to check |
 | `exclude` | Build artifacts and dependencies to ignore |
 
-> This project does not require a `package.json` or project-level npm dependencies. Wrangler is installed globally inside the Codespace by the Dev Container configuration.
+> This project does not require a `package.json` or project-level npm dependencies. 
 
 ### 3. Run and deploy:
 
@@ -410,7 +406,7 @@ wrangler dev
 wrangler deploy
 ```
 
-Your project is now live and accessible via the provided URL.
+If the Worker is configured with a `workers.dev` deployment, Wrangler will display the deployed URL.
 
 ## 📌 Support:
 
