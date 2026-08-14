@@ -30,7 +30,7 @@ The `.devcontainer.json` file defines the complete development environment:
 
 - Node.js 24
 
-- Cloudflare Wrangler
+- Cloudflare Wrangler (latest version, minimum v4 required)
 
 - Required environment variables
 
