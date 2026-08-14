@@ -234,16 +234,16 @@ export const config: StaticConfig = {
 
 | Parameter | Description | Constraints |
 |-----------|-------------|-------------|
-| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1s |
-| `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 |
-| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1d |
-| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000ms |
+| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1 second |
+| `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 write |
+| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 day |
+| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 ms |
 | `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required |
-| `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 |
-| `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5, max: `MAX_NUMBER_OF_LINKS_COUNT` |
-| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10, max: `FIREBASE_ENTRIES_LIMIT` |
-| `SHORT_URL_ID_LENGTH` | Length of generated shortcodes | Minimum: 10 |
-| `MAX_URL_LENGTH` | Maximum allowed URL length | Minimum: 100 |
+| `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 links |
+| `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5 links, max: `MAX_NUMBER_OF_LINKS_COUNT` links |
+| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10 links, max: `FIREBASE_ENTRIES_LIMIT` links |
+| `SHORT_URL_ID_LENGTH` | Length of generated shortcodes | Minimum: 10 characters |
+| `MAX_URL_LENGTH` | Maximum allowed URL length | Minimum: 100 characters |
 
 #### Important notes:
 
