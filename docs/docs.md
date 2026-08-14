@@ -198,7 +198,7 @@ wrangler secret put MONITORING_KEY
 
 #### Security notes:
 
-- ⚠️ **Admin and monitoring keys:** constant-time comparison prevents timing attacks. Keep keys strong (60+ characters with uppercase, lowercase, numbers). Network latency combined with rate limiting makes timing attacks extremely difficult.
+- **Admin and monitoring keys:** the constant-time comparison prevents timing attacks. Keep keys strong (60+ characters with uppercase, lowercase, numbers). Network latency combined with rate limiting makes timing attacks extremely difficult.
 
 - **Firebase hidden path:** use only uppercase and lowercase letters. Avoid special characters to ensure proper functionality.
 
