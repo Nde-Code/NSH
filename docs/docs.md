@@ -316,7 +316,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 ### 2. TypeScript types:
 
-The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only bindings are the KV databases).
+The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only binding is the KV database).
 
 If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
 
