@@ -1,75 +1,94 @@
-# Privacy Policy:  
+# Privacy Policy:
 
-## Introduction:  
-To be clear and transparent about what data this software uses and how it is handled.
+## Introduction:
 
-## Information Collection and Use: 
-### Rate limiting, Privacy and Security:
+This Privacy Policy explains clearly and transparently what data this application processes and how that data is handled.
 
-To implement a *rate limiting* system, this software works with your IP address. 
+## Information collection and use:
 
-However, the IP is immediately hashed using *SHA-256*, combined with a *SALT* key (strong, secret, and secure) stored in the `.dev.vars` file (in local) and in [Cloudflare secrets](https://developers.cloudflare.com/workers/configuration/secrets/) in production. Your IP is **never logged** anywhere and is only stored in *Key-Value* database called [Workers KV](https://developers.cloudflare.com/kv/). This lets the system persist request counters (or rate limiting state) across restarts, even though the project runs on serverless infrastructure.
+### Rate limiting, privacy, and security:
 
-The IP is **never stored in any external database** or service. The *KV* database is **fully cleared every 24 hours**, which is why rate limiting is based on a **daily reset** (for better GDPR compliance), rather than on a weekly or monthly basis.
+To implement **rate limiting**, the application processes your **IP address**.  
+However, the IP address is **immediately pseudonymized**:
 
-The **hashed IP** is the **only personal information** used by this project, and it's solely for security and abuse-prevention purposes. While fingerprinting could also be used, this project aims to remain as **privacy-friendly** as possible.
+- It is hashed using **SHA-256**.
+- It is combined with a strong, secret **SALT** stored:
+  - locally in `.dev.vars`,
+  - and in **Cloudflare Secrets** in production.
 
-The **hashed IP** is kept **only for the time required** to apply rate limiting and is **automatically removed afterward**.
+Your IP address is **never logged**, stored in plain text, or saved in any external database.  
+Only the **hashed IP** is stored in **Cloudflare Workers KV**, which allows the system to maintain rate-limiting state across serverless restarts.
 
-You can check the [rate.ts](../utilities/rate.ts) file if you want to see how it works.
+Rate-limiting entries **automatically expire** after the required retention period and are not kept longer than necessary.
 
-### Legal Basis:
+The application **does not intentionally collect** names, email addresses, account information, or tracking identifiers.  
 
-The processing of the **hashed IP** address **is strictly for protecting** the service against abuse (rate limiting). This data is **pseudonymized and cannot identify any user**.
+The hashed IP is used **solely** for rate limiting and abuse prevention and is **automatically removed** once no longer needed.
 
-## Cookies: 
-**No cookies**, **no analytics**, **no logs**, or **any other** data is collected by the project.
+You may review the implementation in the file [rate.ts](../utilities/rate.ts).
 
-## Service Providers:  
-The software uses third-party services to store data (used to shorten URLs). This is a *NoSQL* database called [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
+### Legal basis:
 
-You can read their privacy and terms here: [https://policies.google.com/privacy](https://policies.google.com/privacy) and [https://firebase.google.com/terms/](https://firebase.google.com/terms/)
+Processing of the hashed IP address is strictly for **protecting the service against abuse** through rate limiting.  
 
-## Link Submission Policy:
+Because the IP address is pseudonymized using a cryptographic hash and never stored in its original form, it cannot be used to personally identify you.
 
-This URL shortening service **only accepts links from legitimate and publicly accessible websites**.
+## Cookies:
 
-### Disallowed Links:
+The application **does not intentionally** create or store access logs, analytics data, or tracking cookies.
 
-- Links to local addresses (e.g., `localhost`, `127.0.0.1`, `::1`, etc.).
+## Service providers:
 
-- Links to invalid or malformed domains.
+This software uses third-party services to store data required for URL shortening.
 
-- Links to internal, non-public services.
+Submitted destination URLs are stored in **Firebase Realtime Database** to provide this functionality.
 
-- Links associated with malicious, fraudulent, or illegal content.
+No user account information, names, email addresses, or IP addresses are intentionally stored in Firebase.
+
+You may review Firebase's policies here:  
+- [https://policies.google.com/privacy](https://policies.google.com/privacy)  
+- [https://firebase.google.com/terms/](https://firebase.google.com/terms/)
+
+## Link submission policy:
+
+This URL-shortening service accepts only **legitimate, publicly accessible links**.
+
+### Disallowed links:
+
+- Local addresses (e.g., `localhost`, `127.0.0.1`, `::1`)
+- Invalid or malformed domains
+- Internal or non-public services
+- Links associated with malicious, fraudulent, or illegal content
 
 Any link that does not meet these criteria will be **automatically deleted** without notice.
 
-## About my Online instance with [Cloudflare Workers](https://developers.cloudflare.com/workers/):
+## Cloudflare Workers hosting:
 
-This project is hosted on [Cloudflare Workers](https://developers.cloudflare.com/workers/), a serverless platform.
- 
-Even though IP addresses are hashed with a strong secret and automatically after few seconds, this data might be subject to processing in jurisdictions with different privacy laws.
+The online instance of this project runs on **Cloudflare Workers**, a serverless edge platform. 
 
-If you're concerned about this, consider self-hosting the project in an EU-only environment. Remember that [Cloudflare Workers](https://developers.cloudflare.com/workers/) is an edge platform, and its goal is to run code as close to the user as possible.
+Although IP addresses are hashed with a strong secret and retained only briefly, data may be processed in jurisdictions with varying privacy laws.
 
-## Changes to This Privacy Policy:  
-I may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.
+If this is a concern, you may self-host the project in an **EU-only environment**.
 
-Any updates will be posted on this page and will take effect immediately upon posting.
+Cloudflare Workers operates globally to run code as close to users as possible.
 
-## Your Rights:
+## Changes to this privacy policy:
+
+This Privacy Policy may be updated periodically.  
+
+Any changes will be posted on this page and take effect immediately upon publication.
+
+## Your rights:
 
 If you wish to request the removal of the **hashed IP** associated with your usage, you may contact me.
 
 Please note that this hash **cannot identify you personally** and is never linked to any other data.
 
-## Contact me:  
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact me.
+## Contact:
 
-Contact Information:  
-- e-mail: nathan.debilloez@outlook.com  
+If you have questions or suggestions regarding this privacy policy, feel free to contact me:
+
+- Email: nathan.debilloez@outlook.com  
 - Website: [https://nde-code.github.io/](https://nde-code.github.io/)
 
 Thank you for your understanding.
