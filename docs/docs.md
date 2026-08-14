@@ -382,13 +382,13 @@ This generates TypeScript type definitions, which are already included in [`tsco
 
 ### 3. Run and deploy:
 
-**Start local development:**
+#### Start local development:
 
 ```bash
 wrangler dev
 ```
 
-**Deploy to Cloudflare Workers:**
+#### Deploy to Cloudflare Workers:
 
 > Make sure your Cloudflare Workers secrets have been configured before deploying. See [environment variables](#environment-variables).
 
