@@ -2,11 +2,13 @@
 
 Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
+**Note:** this project does not include a `package.json`, and it does not require any npm dependencies.
+
 ## 🚀 Getting started with GitHub Codespaces:
 
 The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces), making it quick and easy to start coding.
 
-Using Codespaces is the recommended way to work on the project because it automatically sets up the required Node.js environment, installs Wrangler, configures the development environment, and generates the required local variables.
+Using Codespaces is the recommended way to work on the project because it automatically sets up the required elements and provides a ready-to-code environment.
 
 ### 1. Configure the required secrets:
 
@@ -135,7 +137,7 @@ Controls **distributed tracing**:
 
 > Leave disabled if not using OpenTelemetry or a tracing system.
 
-### KV storage:
+### KV database (for the daily rate limiting system):
 
 #### `kv_namespaces`
 
@@ -255,7 +257,7 @@ export const config: StaticConfig = {
 
 Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 about creating your Firebase Realtime Database. Then this section simply resumes step 2 to initialize the types and run the command to start the project in step 3.
 
-### 1. Create Firebase Realtime Database:
+### 1. Create Firebase Realtime Database (to store the links):
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and sign in with a Google account. 
 
@@ -314,7 +316,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 ### 2. TypeScript types:
 
-The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only bindings are the KV databases for the daily rate-limiting system).
+The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the Worker bindings in `worker-configuration.d.ts` (in this project, the only bindings are the KV databases).
 
 If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
 
@@ -324,7 +326,7 @@ wrangler types
 
 > Ensure `wrangler.jsonc` is properly configured before regenerating the types.
 
-This generates type definitions that should be included in [`tsconfig.json`](../tsconfig.json):
+This generates TypeScript type definitions, which are already included in [`tsconfig.json`](../tsconfig.json):
 
 ```json
 {
@@ -377,8 +379,6 @@ This generates type definitions that should be included in [`tsconfig.json`](../
 | `types: ["./worker-configuration.d.ts"]` | Includes Wrangler binding definitions |
 | `include` | Source code and types to check |
 | `exclude` | Build artifacts and dependencies to ignore |
-
-> This project does not include a `package.json`, and it does not require any npm dependencies. 
 
 ### 3. Run and deploy:
 
