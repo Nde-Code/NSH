@@ -20,8 +20,6 @@ Deploy your own instance using the button below:
 
 - **No sign-up:** no account creation, credit card, or personal data required.
 
-- **Privacy-first:** no user activity logging.
-
 - **Highly configurable:** customize behavior to your needs.
 
 - **Firebase backend:** stores URL mappings in Firebase Realtime Database.
