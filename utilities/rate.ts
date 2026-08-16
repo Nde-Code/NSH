@@ -52,7 +52,7 @@ export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number)
 
         printLogLine("ERROR", "Cache API failure.");
 
-        return true; 
+        return false; 
 
     }
 
