@@ -2,7 +2,7 @@
 
 A lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
-This project is intended for personal use or small public deployments. It uses the DJB2 algorithm for URL hashing, and the admin key is protected with timing-attack mitigation to improve both security and performance. Scaling beyond small instances should be done cautiously.
+This project is intended for personal use or small public deployments. It uses the DJB2 algorithm for URL hashing, and the Admin key is protected with timing-attack mitigation to improve both security and performance. Scaling beyond small instances should be done cautiously.
 
 The system runs comfortably on the free Cloudflare Workers plan with very low resource usage. Cold starts may briefly consume additional CPU, but remain within the limits of the free tier.
 
@@ -246,6 +246,8 @@ Recalculate and sync the metadata counter to match actual URLs in Firebase. Usef
 
 > The Admin key can be used to manually resynchronize the counter when needed. The Monitoring key is also accepted, allowing the endpoint to be called automatically by external monitoring tools (as with `/health`) or scheduled services.
 
+> *Monitoring key access is more limited than the Admin key, so they differ for security reasons.*
+
 #### Response codes:
 
 | Code | Description |
@@ -276,7 +278,9 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 
 Check service health: configuration, database connectivity, counter integrity, capacity, and KV storage.
 
-> **Security:** requires valid Monitoring key (see [Authentication](#-authentication)). Monitoring key differs from admin key for security reasons.
+> **Security:** requires valid Monitoring key (see [Authentication](#-authentication)).
+
+> *Monitoring key access is more limited than the Admin key, so they differ for security reasons.*
 
 #### Response codes:
 
