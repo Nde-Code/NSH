@@ -2,7 +2,7 @@
 
 A lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
-This project is intended for personal use or small public deployments. It uses the DJB2 algorithm for URL hashing, and the admin key is protected with timing‑attack mitigation to improve both security and performance. Scaling beyond small instances should be done cautiously.
+This project is intended for personal use or small public deployments. It uses the DJB2 algorithm for URL hashing, and the admin key is protected with timing-attack mitigation to improve both security and performance. Scaling beyond small instances should be done cautiously.
 
 The system runs comfortably on the free Cloudflare Workers plan with very low resource usage. Cold starts may briefly consume additional CPU, but remain within the limits of the free tier.
 
@@ -50,9 +50,9 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 |----------|-----------|-----------|-----------------|
 | https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
-CORS is enabled only for the URL‑posting endpoint, for clear security reasons.
+CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 
-> **Notes:** feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits. The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency.
+> **Notes:** feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits. The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency. I've enabled [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
 
 ## 📚 Available endpoints:
 

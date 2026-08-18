@@ -70,6 +70,8 @@ Although IP addresses are hashed with a secret salt and retained only briefly, d
 
 If this is a concern, you can use [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/) to influence where your Worker executes and help meet your geographic or privacy requirements.
 
+In my case, I'm using [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
+
 ## Changes to this privacy policy:
 
 This Privacy Policy may be updated periodically.  
