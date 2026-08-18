@@ -76,8 +76,8 @@ jobs:
         run: |
           curl -sL "${{ secrets.GIST_TEST_SCRIPT }}" -o nsh.py && \
           python nsh.py \
-            --link https://test.domain.com \
-            --remote http://localhost:8787 \
+            --link "https://test.domain.com" \
+            --remote "http://localhost:8787" \
             --max-url-length 2000 \
             --max-daily-write 10 \
             --timeout 25 \
