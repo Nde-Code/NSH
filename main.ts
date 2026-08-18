@@ -96,7 +96,7 @@ function getContextualConfig(env: Env): RuntimeConfig {
 
         "FIREBASE_HIDDEN_PATH": env.FIREBASE_HIDDEN_PATH ?? "",
 
-        "HASH_KEY": env.HASH_KEY ?? "",
+        "IP_HASH_SALT": env.IP_HASH_SALT ?? "",
         
 		"ADMIN_KEY": env.ADMIN_KEY ?? "",
 
@@ -123,7 +123,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 	if (pathname === "/favicon.ico") return new Response(null, { "status": 204 });
 
-	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.HASH_KEY || !activeConfig.ADMIN_KEY || !activeConfig.MONITORING_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
+	if (!activeConfig.FIREBASE_URL || !activeConfig.FIREBASE_HIDDEN_PATH || !activeConfig.IP_HASH_SALT || !activeConfig.ADMIN_KEY || !activeConfig.MONITORING_KEY) return createJsonResponse(MSG.MISSING_CREDENTIALS, 500);
 	
 	if (!isConfigValidWithMinValues(activeConfig, configMinValues) || !activeConfig.USER_AGENT) return createJsonResponse(MSG.WRONG_CONFIG, 500);
 	
@@ -179,7 +179,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
 		const apiKey: string | null = getApiKeyFromRequest(req);
 		
-		if (!constantTimeEqual(apiKey ?? "", activeConfig.ADMIN_KEY)) {
+		if (!constantTimeEqual(apiKey ?? "", activeConfig.ADMIN_KEY) && !constantTimeEqual(apiKey ?? "", activeConfig.MONITORING_KEY)) {
 
 			printLogLine("WARN", "Unauthorized attempt to sync counter !");
 
@@ -401,7 +401,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
   	if (req.method === "POST" && pathname === "/post-url") {
 
-        const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.HASH_KEY);
+        const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.IP_HASH_SALT);
 
         const rateLimitResponse: Response | null = await applyRateLimit(req, activeConfig);
 

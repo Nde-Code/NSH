@@ -4,6 +4,6 @@
   	"features": {
     	"ghcr.io/devcontainers/features/node:1": { "version": "24" }
   	},
-  	"postCreateCommand": "npm install -g wrangler && echo \"FIREBASE_HOST_LINK=\\\"$FIREBASE_HOST_LINK\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"HASH_KEY=\\\"$HASH_KEY\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && wrangler types",
+  	"postCreateCommand": "npm install -g wrangler && echo \"FIREBASE_HOST_LINK=\\\"$FIREBASE_HOST_LINK\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"IP_HASH_SALT=\\\"$IP_HASH_SALT\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && wrangler types",
   	"remoteUser": "vscode"
 }

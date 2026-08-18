@@ -13,6 +13,9 @@
 			"enabled": false
 		}
 	},
+	"placement": {
+		"mode": "smart"
+	},
 	"kv_namespaces": [
 		{
 			"binding": "RATE_LIMIT_KV",

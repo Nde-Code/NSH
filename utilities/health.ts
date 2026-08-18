@@ -22,7 +22,7 @@ export async function handleHealthCheck(env: Env, config: RuntimeConfig): Promis
 
     };
 
-    const configValid: boolean = !!config.FIREBASE_URL && !!config.FIREBASE_HIDDEN_PATH && !!config.HASH_KEY && !!config.ADMIN_KEY && !!config.MONITORING_KEY;
+    const configValid: boolean = !!config.FIREBASE_URL && !!config.FIREBASE_HIDDEN_PATH && !!config.IP_HASH_SALT && !!config.ADMIN_KEY && !!config.MONITORING_KEY;
     
     checks.config_valid = configValid;
 

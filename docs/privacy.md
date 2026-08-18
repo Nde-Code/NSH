@@ -64,13 +64,11 @@ Any link that does not meet these criteria will be **automatically deleted** wit
 
 ## Cloudflare Workers hosting:
 
-The online instance of this project runs on **Cloudflare Workers**, a serverless edge platform. 
+The online instance of this project runs on **Cloudflare Workers**, a serverless edge platform designed to execute code close to users.
 
-Although IP addresses are hashed with a strong secret and retained only briefly, data may be processed in jurisdictions with varying privacy laws.
+Although IP addresses are hashed with a secret salt and retained only briefly, data may be processed in different geographic regions, where different data protection and privacy laws may apply.
 
-If this is a concern, you may self-host the project in an **EU-only environment**.
-
-Cloudflare Workers operates globally to run code as close to users as possible.
+If this is a concern, you can use [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/) to influence where your Worker executes and help meet your geographic or privacy requirements.
 
 ## Changes to this privacy policy:
 

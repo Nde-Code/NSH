@@ -4,7 +4,7 @@ export interface Env {
 
     FIREBASE_HIDDEN_PATH: string;
 
-    HASH_KEY: string;
+    IP_HASH_SALT: string;
 
     ADMIN_KEY: string;
 
@@ -44,7 +44,7 @@ export interface RuntimeConfig extends StaticConfig {
 
     FIREBASE_HIDDEN_PATH: string;
 
-    HASH_KEY: string;
+    IP_HASH_SALT: string;
 
     ADMIN_KEY: string;
 

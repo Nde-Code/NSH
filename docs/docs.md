@@ -12,7 +12,7 @@ Using Codespaces is the recommended way to work on the project because it automa
 
 ### 1. Configure the required secrets:
 
-Before you start a new Codespaces environment and begin coding in it, you need to register the required secrets in the repository's GitHub Codespaces Secrets.
+Before you start a new Codespaces environment and begin coding in it, you need to register the required secrets in the repository's GitHub Codespaces secrets.
 
 See the [environment variables](#environment-variables) section for the required configuration and the [GitHub Codespaces secrets documentation](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) for more details.
 
@@ -69,6 +69,9 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 		"traces": {
 			"enabled": false
 		}
+	},
+    "placement": {
+		"mode": "smart"
 	},
 	"kv_namespaces": [
 		{
@@ -137,6 +140,23 @@ Controls **distributed tracing**:
 
 > Leave disabled if not using OpenTelemetry or a tracing system.
 
+### Worker execution location:
+
+#### `placement`
+
+Controls where Cloudflare executes your Worker using **Smart Placement**.
+
+When `mode` is set to `"smart"`, Cloudflare automatically determines the most suitable location to run your Worker based on its execution patterns and backend interactions.
+
+This can reduce latency for Workers that communicate with external services, APIs, databases, or other resources that are geographically distant from the default execution location.
+
+* `"smart"` = Enables Smart Placement
+* `"off"` = Disables Worker placement optimization
+
+> Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
+
+> For more details: [https://developers.cloudflare.com/workers/configuration/placement/](https://developers.cloudflare.com/workers/configuration/placement/)
+
 ### KV database (for the daily rate limiting system):
 
 #### `kv_namespaces`
@@ -166,9 +186,9 @@ The Worker uses environment variables for local development and Cloudflare secre
 |----------|-------------|
 | `FIREBASE_HOST_LINK` | Public or private Firebase endpoint for your Worker |
 | `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
-| `HASH_KEY` | Cryptographic key for hashing user IPs or identifiers |
-| `ADMIN_KEY` | Private key for verifying, listing, or deleting data |
-| `MONITORING_KEY` | Key for secure service status monitoring |
+| `IP_HASH_SALT` | Cryptographic salt for hashing user IP addresses |
+| `ADMIN_KEY` | Private key for verifying, listing, resynchronizing, or deleting data |
+| `MONITORING_KEY` | Key for secure service status monitoring or resynchronizing |
 
 #### Local development:
 
@@ -177,7 +197,7 @@ Create/configure the following values as GitHub Codespaces secrets. When the Cod
 ```env
 FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
 FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
-HASH_KEY="THE_KEY_USED_TO_HASH_IPS"
+IP_HASH_SALT="THE_KEY_USED_TO_HASH_IPS"
 ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
 MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
 ```
@@ -189,7 +209,7 @@ For the deployed Worker, configure the same values as Cloudflare Workers secrets
 ```bash
 wrangler secret put FIREBASE_HOST_LINK
 wrangler secret put FIREBASE_HIDDEN_PATH
-wrangler secret put HASH_KEY
+wrangler secret put IP_HASH_SALT
 wrangler secret put ADMIN_KEY
 wrangler secret put MONITORING_KEY
 ```
