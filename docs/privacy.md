@@ -70,7 +70,7 @@ Although IP addresses are hashed with a secret salt and retained only briefly, d
 
 If this is a concern, you can use [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/) to influence where your Worker executes and help meet your geographic or privacy requirements.
 
-In my case, I'm using [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
+In my case, I'm using [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience. When there aren't enough requests for Smart Placement to determine an optimal region, it automatically falls back to the default behavior: running at the edge closest to the user.
 
 ## Changes to this privacy policy:
 
