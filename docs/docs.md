@@ -20,27 +20,43 @@ See the [environment variables](#environment-variables) section for the required
 
 Open the repository on GitHub and create a new Codespace from the Code → Codespaces menu.
 
-GitHub will automatically detect the project's `.devcontainer.json` configuration and build the development environment.
+GitHub will automatically detect the project's [`.devcontainer.json`](../.devcontainer.json) configuration and build the development environment.
 
 ### 3. Automatic environment setup:
 
-The `.devcontainer.json` file defines the complete development environment:
+The [`.devcontainer.json`](../.devcontainer.json) file:
 
-- Ubuntu-based development container
+```json
+{
+  	"name": "NSH Codespaces setup script",
+  	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  	"features": {
+    	"ghcr.io/devcontainers/features/node:1": { "version": "24" }
+  	},
+  	"postCreateCommand": "npm install -g wrangler && echo \"FIREBASE_HOST_LINK=\\\"$FIREBASE_HOST_LINK\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"IP_HASH_SALT=\\\"$IP_HASH_SALT\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && wrangler types",
+  	"remoteUser": "vscode"
+}
+```
 
-- Node.js 24
+defines the Codespace development environment:
 
-- Cloudflare Wrangler (latest version, minimum v4 required)
+- **Base image:** Ubuntu-based development container.
 
-- Required environment variables
+- **Node.js:** version 24.
 
-- Generated TypeScript definitions for Cloudflare Worker bindings
+- **Cloudflare Wrangler:** latest version, with v4 or later required.
 
-The setup is executed automatically when the Codespace is created via `postCreateCommand`. The Codespace is created with environment variables that are automatically read from the Codespaces environment and written to `.dev.vars` by the dev container setup, Wrangler is installed, and types are initialized.
+- **Environment variables:** populated from the Codespaces environment and written to `.dev.vars`.
+
+- **TypeScript definitions:** generated with `wrangler types` for Cloudflare Worker bindings.
+
+- **Remote user:** `vscode`
+
+The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
 Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
 
-> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It's already been added to the `.gitignore`.
+> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It is already included in `.gitignore`.
 
 ### 4. Authenticate with Cloudflare:
 
@@ -192,7 +208,7 @@ The Worker uses environment variables for local development and Cloudflare secre
 
 #### Local development:
 
-Create/configure the following values as GitHub Codespaces secrets. When the Codespace is created, `.devcontainer.json` automatically writes them to `.dev.vars`:
+Create/configure the following values as GitHub Codespaces secrets. When the Codespace is created, [`.devcontainer.json`](../.devcontainer.json) automatically writes them to `.dev.vars`:
 
 ```env
 FIREBASE_HOST_LINK="YOUR_FIREBASE_URL"
