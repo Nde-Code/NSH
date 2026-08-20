@@ -187,7 +187,7 @@ wrangler kv namespace create YOUR_KV_NAME
 
 > For more details: [https://developers.cloudflare.com/kv/get-started/](https://developers.cloudflare.com/kv/get-started/)
 
-Complete `wrangler.jsonc` with:
+Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 
 * **`binding`**: variable name used in your code (e.g., `YOUR_KV_NAME`)
 * **`id`**: unique namespace ID from your Cloudflare dashboard
@@ -360,7 +360,7 @@ If you change your Wrangler configuration or bindings, regenerate the definition
 wrangler types
 ```
 
-> Ensure `wrangler.jsonc` is properly configured before regenerating the types.
+> Ensure [`wrangler.jsonc`](../wrangler.jsonc) is properly configured before regenerating the types.
 
 This generates TypeScript type definitions, which are already included in [`tsconfig.json`](../tsconfig.json):
 

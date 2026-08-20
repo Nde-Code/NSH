@@ -128,7 +128,7 @@ curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 
 Retrieve a paginated list of shortened links.
 
-> **Security:** requires valid Admin key (see [Authentication](#-authentication)).
+> **Security:** requires valid Admin key (see [authentication](#-authentication)).
 
 #### Query parameters:
 
@@ -180,7 +180,7 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 
 Mark a shortened URL as verified.
 
-> **Security:** requires valid Admin key (see [Authentication](#-authentication)).
+> **Security:** requires valid Admin key (see [authentication](#-authentication)).
 
 #### Path parameters:
 
@@ -211,7 +211,7 @@ curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
 
 Remove a shortened URL and decrement the counter.
 
-> **Security:** requires valid Admin key (see [Authentication](#-authentication)).
+> **Security:** requires valid Admin key (see [authentication](#-authentication)).
 
 #### Path parameters:
 
@@ -242,7 +242,7 @@ curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
 
 Recalculate and sync the metadata counter to match actual URLs in Firebase. Useful for fixing race conditions or desynchronization.
 
-> **Security:** requires valid Admin/Monitoring key (see [Authentication](#-authentication)).
+> **Security:** requires valid Admin/Monitoring key (see [authentication](#-authentication)).
 
 > The Admin key can be used to manually resynchronize the counter when needed. The Monitoring key is also accepted, allowing the endpoint to be called automatically by external monitoring tools (as with `/health`) or scheduled services.
 
@@ -278,7 +278,7 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 
 Check service health: configuration, database connectivity, counter integrity, capacity, and KV storage.
 
-> **Security:** requires valid Monitoring key (see [Authentication](#-authentication)).
+> **Security:** requires valid Monitoring key (see [authentication](#-authentication)).
 
 > *Monitoring key access is more limited than the Admin key, so they differ for security reasons.*
 
