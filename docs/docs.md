@@ -56,7 +56,7 @@ The `postCreateCommand` automatically performs the required setup when the Codes
 
 Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
 
-> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It is already included in `.gitignore`.
+> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
 
 ### 4. Authenticate with Cloudflare:
 
