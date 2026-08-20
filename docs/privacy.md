@@ -2,13 +2,13 @@
 
 ## Introduction:
 
-This Privacy Policy explains clearly and transparently what data this application processes and how that data is handled.
+This privacy policy explains clearly and transparently what data this software processes and how that data is handled.
 
 ## Information collection and use:
 
 ### Rate limiting, privacy, and security:
 
-To implement **rate limiting**, the application processes your **IP address**.  
+To implement **rate limiting**, this software processes your **IP address**.  
 However, the IP address is **immediately pseudonymized**:
 
 - It is hashed using **SHA-256**.
@@ -16,14 +16,15 @@ However, the IP address is **immediately pseudonymized**:
   - locally in `.dev.vars`,
   - and in **Cloudflare Secrets** in production.
 
-Your IP address is **never logged**, stored in plain text, or saved in any external database.  
-Only the **hashed IP** is stored in **Cloudflare Workers KV**, which allows the system to maintain rate-limiting state across serverless restarts.
+Your IP address is **never logged**, stored in plain text, or saved in any external database or external service.
+  
+For the daily rate limit, only the **hashed IP address** is stored in **Cloudflare Workers KV**.
 
 Rate-limiting entries **automatically expire** after the required retention period and are not kept longer than necessary.
 
-The application **does not intentionally collect** names, email addresses, account information, or tracking identifiers.  
+Although fingerprinting could be used, this project intentionally avoids it to remain as **privacy-friendly** as possible.
 
-The hashed IP is used **solely** for rate limiting and abuse prevention and is **automatically removed** once no longer needed.
+The hashed IP is retained **only for the time required** to apply rate limiting and is **automatically removed afterward**.
 
 You may review the implementation in the file [rate.ts](../utilities/rate.ts).
 
@@ -31,11 +32,11 @@ You may review the implementation in the file [rate.ts](../utilities/rate.ts).
 
 Processing of the hashed IP address is strictly for **protecting the service against abuse** through rate limiting.  
 
-Because the IP address is pseudonymized using a cryptographic hash and never stored in its original form, it cannot be used to personally identify you.
+Because the IP address is pseudonymized using a cryptographic hash and never stored in its original form, it **cannot be used to personally identify you**.
 
 ## Cookies:
 
-The application **does not intentionally** create or store access logs, analytics data, or tracking cookies.
+This project uses **no cookies**, **no analytics**, **no tracking logs**, and does not collect any additional data.
 
 ## Service providers:
 
@@ -86,7 +87,7 @@ Please note that this hash **cannot identify you personally** and is never linke
 
 ## Contact:
 
-If you have questions or suggestions regarding this privacy policy, feel free to contact me:
+If you have any questions or suggestions regarding this privacy policy, feel free to contact me:
 
 - Email: nathan.debilloez@outlook.com  
 - Website: [https://nde-code.github.io/](https://nde-code.github.io/)
