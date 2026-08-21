@@ -10,8 +10,6 @@ Deploy your own instance using the button below:
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 
-> **Service status:** check the [status page](https://nde-status.instatus.com/) if you experience latency or issues.
-
 ## 🚀 Key features:
 
 - **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
@@ -51,6 +49,8 @@ All measures ensure no identifiable user data is collected, stored, or shared.
 | https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
 
 CORS is enabled only for the URL-posting endpoint, for clear security reasons.
+
+Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using my public online instance.
 
 > **Notes:** feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits. The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency. I've enabled [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
 
