@@ -56,6 +56,8 @@ Check the [status page](https://nde-status.instatus.com/) if you experience late
 
 ## 📚 Available endpoints:
 
+Make sure you use the correct cURL command. In this section, I've used `https://your-worker.org.workers.dev/post-url` as an example, but you must replace it with your own instance domain if you've deployed your own instance of the project. Otherwise, you should use `https://nsh.nde-code.workers.dev/`, which is my free public online instance, as explained above.
+
 ### 1. **[POST]** `/post-url` - Create short URL:
 
 Create a short URL from a long URL. Saves to database and applies rate limiting.
