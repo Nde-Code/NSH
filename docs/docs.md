@@ -54,7 +54,7 @@ defines the Codespace development environment:
 | **Node.js** | Version `24` |
 | **Cloudflare Wrangler** | Latest version, with `v4` or later required |
 | **Environment variables** | Populated from the Codespaces environment and written to `.dev.vars` |
-| **TypeScript definitions** | Generated with `wrangler types` for [Cloudflare Worker Bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) |
+| **TypeScript definitions** | Generated with `wrangler types` |
 | **Remote user** | `vscode` |
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
@@ -194,8 +194,8 @@ Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 
 | Property      | Description                                                                                                    |
 | ------------- | -------------------------------------------------------------------------------------------------------------- |
-| **`binding`** | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*) |
-| **`id`**      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard  |
+| `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*) |
+| `id`      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard  |
 
 ### Environment variables:
 
@@ -209,7 +209,7 @@ The Worker uses standard environment variables in a `.dev.vars` file for local d
 | `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
 | `IP_HASH_SALT` | Cryptographic salt for hashing user IP addresses |
 | `ADMIN_KEY` | Private key for verifying, listing, resynchronizing, or deleting data |
-| `MONITORING_KEY` | Key for secure service status monitoring or resynchronizing |
+| `MONITORING_KEY` | Key for secure service-status monitoring or link-counter resynchronization |
 
 #### Local development:
 
@@ -289,7 +289,7 @@ export const config: StaticConfig = {
 | `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required |
 | `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 links |
 | `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5 links, max: `MAX_NUMBER_OF_LINKS_COUNT` links |
-| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10 links, max: `FIREBASE_ENTRIES_LIMIT` links |
+| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10 links |
 | `SHORT_URL_ID_LENGTH` | Length of generated shortcodes | Minimum: 10 characters |
 | `MAX_URL_LENGTH` | Maximum allowed URL length | Minimum: 100 characters |
 
@@ -299,7 +299,7 @@ export const config: StaticConfig = {
 
 - **Entry limit & collision prevention:** I use DJB2 to hash URLs and generate unique IDs, preventing duplicate database entries. `FIREBASE_ENTRIES_LIMIT` caps the database at the configured value, keeping hash-collision risk low and limiting free-tier resource usage.
 
-- **Constraint validation:** violating constraints will trigger configuration errors.
+- **Constraint validation:** violating constraints will trigger a configuration error.
 
 ## 💻 Project setup:
 
@@ -366,9 +366,7 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the TypeScript definitions required by the Worker in `worker-configuration.d.ts`.
 
-> This project currently has one binding configured: the [KV namespace](#kv-database-for-the-daily-rate-limiting-system).
-
-If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
+If you change your Wrangler configuration, regenerate the definitions manually with:
 
 ```bash
 wrangler types
