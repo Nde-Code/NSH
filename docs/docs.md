@@ -14,7 +14,7 @@ Using Codespaces is the recommended way to work on the project because it automa
 
 First, create a fork of the repository by following: [https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo).
 
-> You will obtain a repository containing your own copy of the project on your GitHub account, which allows you to use the project, make modifications, and share them with me via a pull request if you wish.
+You will obtain a repository containing your own copy of the project on your GitHub account, which allows you to use the project, make modifications, and share them with me via a pull request if you wish.
 
 ### 1. Configure the required secrets:
 
@@ -48,17 +48,14 @@ The [`.devcontainer.json`](../.devcontainer.json) file:
 
 defines the Codespace development environment:
 
-- **Base image:** Ubuntu-based development container.
-
-- **Node.js:** version 24.
-
-- **Cloudflare Wrangler:** latest version, with v4 or later required.
-
-- **Environment variables:** populated from the Codespaces environment and written to `.dev.vars`.
-
-- **TypeScript definitions:** generated with `wrangler types` for [Cloudflare Worker Bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/).
-
-- **Remote user:** `vscode`
+| Component | Configuration |
+|---|---|
+| **Base image** | Ubuntu-based development container |
+| **Node.js** | Version `24` |
+| **Cloudflare Wrangler** | Latest version, with `v4` or later required |
+| **Environment variables** | Populated from the Codespaces environment and written to `.dev.vars` |
+| **TypeScript definitions** | Generated with `wrangler types` for [Cloudflare Worker Bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/) |
+| **Remote user** | `vscode` |
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
@@ -179,7 +176,7 @@ This can reduce latency for Workers that communicate with external services, API
 
 > Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
 
-### KV database (for the daily rate limiting system):
+### KV database *(for the daily rate limiting system)*:
 
 #### `kv_namespaces`
 
@@ -195,8 +192,10 @@ wrangler kv namespace create RATE_LIMIT_KV
 
 Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 
-* **`binding`**: the variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*).
-* **`id`**: the unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard.
+| Property      | Description                                                                                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| **`binding`** | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*) |
+| **`id`**      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard  |
 
 ### Environment variables:
 
@@ -240,13 +239,18 @@ wrangler secret put MONITORING_KEY
 
 #### Security notes:
 
-- **`FIREBASE_HIDDEN_PATH`**: use a strong value with at least 45 characters. Use only uppercase and lowercase letters and numbers (no special characters).
-
-- **`IP_HASH_SALT`**, **`ADMIN_KEY`**, and **`MONITORING_KEY`**: use strong values with at least 30 characters, including uppercase and lowercase letters and numbers.
+| Variable | Requirements |
+|---|---|
+| `FIREBASE_HIDDEN_PATH` | Use a strong value with at least **45 characters**, including uppercase and lowercase letters and numbers **only** (no special characters) |
+| `IP_HASH_SALT` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
+| `ADMIN_KEY` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
+| `MONITORING_KEY` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
 
 > `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
 
-### Software configuration: [`config.ts`](../config.ts)
+### Software configuration:
+
+Take a look at the [`config.ts`](../config.ts) file at the root of the project, which looks like:
 
 ```ts
 export const config: StaticConfig = {
@@ -301,7 +305,7 @@ export const config: StaticConfig = {
 
 Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 about creating your Firebase Realtime Database. Then this section simply resumes step 2 to initialize the types and run the command to start the project in step 3.
 
-### 1. Create Firebase Realtime Database (to store the links):
+### 1. Create Firebase Realtime Database *(to store the links)*:
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and sign in with a Google account.
 
@@ -348,21 +352,21 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 #### Security rules summary:
 
-| Action             | Condition                                                                                                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Read**           | Allowed for `meta/_url_counter` and the `urls/` collection. The database root and all unspecified paths remain private by default.                                                            |
-| **Create**         | Allowed only when the shortcode does not already exist. The new node must contain a valid `long_url`, `post_date`, and `is_verified` value.                                                   |
-| **Counter update** | Writes to `meta/` are allowed only when `_url_counter` is included in the updated data. Its value must be a number greater than or equal to `0`.                                              |
-| **Delete**         | Allowed when the shortcode already exists. The Worker is responsible for updating the URL counter when deleting a URL.                                                                        |
-| **Update**         | Existing URLs can only be updated if `long_url` and `post_date` remain unchanged. This effectively allows `is_verified` to be changed without modifying the original URL or publication date. |
-| **Validation**     | `long_url` must be a valid HTTP/HTTPS URL of at most 2000 characters, `post_date` must use the expected ISO 8601 UTC format, and `is_verified` must be a boolean.                             |
-| **Extra fields**   | Forbidden. Only `long_url`, `post_date`, and `is_verified` are allowed under each `urls/$shortcode` node.                                                                                     |
+| Action             | Condition                                                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Read**           | Allowed only for `meta/_url_counter` and the `urls/` collection, while the database root and all unspecified paths remain private                                   |
+| **Create**         | Allowed only when the shortcode does not already exist and the new node contains a valid `long_url`, `post_date`, and `is_verified` value                           |
+| **Counter update** | Allowed only when `_url_counter` is included in the updated `meta/` data and its value is a number greater than or equal to `0`                                     |
+| **Delete**         | Allowed when the shortcode already exists, with the Worker responsible for updating the URL counter after deletion                                                  |
+| **Update**         | Allowed only when the existing `long_url` and `post_date` remain unchanged, effectively allowing only `is_verified` to be modified                                  |
+| **Validation**     | Requires `long_url` to be a valid HTTP/HTTPS URL of at most 2000 characters, `post_date` to use the expected ISO 8601 UTC format, and `is_verified` to be a boolean |
+| **Extra fields**   | Forbidden, with only `long_url`, `post_date`, and `is_verified` allowed under each `urls/$shortcode` node                                                           |
 
 ### 2. TypeScript types:
 
 The Dev Container automatically runs `wrangler types` when the Codespace is created, generating the TypeScript definitions required by the Worker in `worker-configuration.d.ts`.
 
-> This project currently has one binding configured: the KV namespace.
+> This project currently has one binding configured: the [KV namespace](#kv-database-for-the-daily-rate-limiting-system).
 
 If you change your Wrangler configuration or bindings, regenerate the definitions manually with:
 
