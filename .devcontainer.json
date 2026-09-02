@@ -1,0 +1,11 @@
+{
+    "name": "NSH Codespaces setup script",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "24"
+        }
+    },
+    "postCreateCommand": "npm install -g wrangler && echo \"FIREBASE_REALTIME_DATABASE_URL=\\\"$FIREBASE_REALTIME_DATABASE_URL\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"IP_HASH_SALT=\\\"$IP_HASH_SALT\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && wrangler types",
+    "remoteUser": "vscode"
+}

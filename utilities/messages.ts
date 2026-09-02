@@ -1,0 +1,67 @@
+export const MSG = {
+
+    "MISSING_CREDENTIALS": { "error": "Your credentials are missing." },
+
+    "WRONG_CONFIG": { "error": "Invalid configuration. Check config.ts." },
+
+    "ROOT_URL_MESSAGE": { "success": "Welcome on the API root. Docs: https://github.com/Nde-Code/NSH" },
+
+    "RATE_LIMIT_EXCEEDED": (s: number) => ({ "warning": `Rate limit exceeded: 1 request per ${s}s allowed.` }),
+
+    "WRONG_API_KEY_FOR_MONITOR": { "error": "Incorrect or missing API key for health check." },
+
+    "SYSTEM_OK": { "success": "All systems operational." },
+
+    "SYSTEM_DEGRADATION": { "warning": "Some systems are experiencing issues." },
+
+    "SYSTEM_DOWN": { "error": "Service is unavailable." },
+
+    "WRONG_API_KEY_FOR_SYNC": { "error": "Incorrect or missing API key for counter synchronization." },
+
+    "SYNC_OK": { "success": "Counter synchronized successfully." },
+
+    "WRONG_API_KEY_FOR_URLS_DB": { "error": "Incorrect or missing API key for URLs." },
+
+    "NOT_VALID_COUNT_PARAMETER": (max: number) => ({ "error": `Count must be 1-${max}.` }),
+
+    "NOT_VALID_CURSOR_PARAMETER": { "error": "Invalid or non-existent cursor." },
+
+    "NO_URLS_IN_DB": { "warning": "No URLs in the database." },
+
+    "NO_ID": { "error": "No valid ID provided." },
+
+    "WRONG_API_KEY_FOR_VERIFICATION": { "error": "Invalid or missing API key for verification." },
+
+    "LINK_VERIFIED": { "success": "Link verified successfully." },
+
+    "LINK_ALREADY_VERIFIED": { "warning": "Link already verified." },
+
+    "NO_LINK_FOUND_WITH_ID_IN_DB": { "error": "Link unavailable or not found." },
+
+    "WRONG_API_KEY_FOR_DELETION": { "error": "Invalid or missing API key for deletion." },
+
+    "LINK_DELETED": { "success": "Link deleted." },
+
+    "INVALID_POST_BODY": { "error": "Invalid POST body." },
+
+    "UNEXPECTED_FIELD_IN_BODY": { "error": "The request body contains unexpected field(s)." },
+
+    "NOT_A_VALID_URL": { "error": "Not a valid URL." },
+
+    "TOO_LONG_URL": (max: number) => ({ "error": `URL too long (max ${max} characters).` }),
+
+    "HASH_COLLISION": { "error": "Hash collision detected." },
+
+    "DB_LIMIT_REACHED": { "warning": "Database limit reached." },
+
+    "WRITE_LIMIT_EXCEEDED": (max: number, purge: number) => ({ "warning": `Write limit reached (max ${max} writes). Resets in about ${purge} day${(purge > 1) ? 's' : ''}.` }),
+
+    "SERVICE_TEMP_UNAVAILABLE": { "warning": "Service unavailable." },
+
+    "LINK_NOT_GENERATED": { "error": "Link could not be generated." },
+
+    "INVALID_API_ENDPOINT": { "warning": "Invalid endpoint." },
+
+    "SERVER_ERROR": { "error": "Internal server error." }
+    
+} as const;

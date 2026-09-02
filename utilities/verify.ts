@@ -1,0 +1,67 @@
+import { printLogLine } from "./utils.ts";
+
+import { readInFirebaseRTDB } from "./read.ts";
+
+export type VerificationStatus = "already_verified" | "verified_now" | "not_found" | "error";
+
+type FirebaseData = { is_verified?: boolean };
+
+export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string): Promise<VerificationStatus> {
+
+    const { data: currentData, error } = await readInFirebaseRTDB<FirebaseData>(baseURLWithSecret, timeoutValue, userAgent, pathTo);
+
+    if (error) return "error";
+
+    if (!currentData) return "not_found";
+
+    if (currentData.is_verified === true) return "already_verified";
+
+    const url: string = `${baseURLWithSecret}/${pathTo}.json`;
+
+    const controller = new AbortController();
+
+    const timeoutId = setTimeout(() => controller.abort(), timeoutValue);
+
+    try {
+
+        const res = await fetch(url, {
+
+            "method": "PATCH",
+
+            "headers": {
+                
+                "Content-Type": "application/json",
+                
+                "User-Agent": userAgent
+            
+            },
+
+            "body": JSON.stringify({ "is_verified": true }),
+
+            "signal": controller.signal
+
+        });
+
+        if (res.ok) {
+
+            printLogLine("INFO", `The link stored on ${pathTo} has been verified successfully.`);
+
+            return "verified_now";
+
+        }
+
+        return "error";
+
+    } catch (_err) {
+
+        printLogLine("ERROR", `An error occurred while trying to verify the link stored on ${pathTo}.`);
+
+        return "error";
+
+    } finally {
+
+        clearTimeout(timeoutId);
+
+    }
+    
+}

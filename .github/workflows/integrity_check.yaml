@@ -1,0 +1,84 @@
+name: NSH Integrity Check
+
+on:
+
+  # Trigger on push to the main branch:
+  push:
+    branches:
+      - main
+
+  # Plan a monthly health check to ensure proper integrity:
+  schedule:
+    - cron: '27 1 17 * *'
+
+  # Provide the option to run it manually if required:
+  workflow_dispatch:
+
+jobs:
+
+  test:
+  
+    # Use ubuntu-latest as required for compatibility:
+    runs-on: ubuntu-latest
+
+    # Define read-only permission:
+    permissions:
+      contents: read
+
+    steps:
+
+      # 0. Init project sources:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # 1. Install Node.js and npm for Wrangler:
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # 2. Set up Python for the test script:
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      # 3. Install Python dependencies:
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      # 4. Create .dev.vars with environment variables:
+      - name: Create .dev.vars file
+        run: |
+          echo "FIREBASE_REALTIME_DATABASE_URL=\"${{ secrets.FIREBASE_REALTIME_DATABASE_URL }}\"" > .dev.vars
+          echo "FIREBASE_HIDDEN_PATH=\"${{ secrets.FIREBASE_HIDDEN_PATH }}\"" >> .dev.vars
+          echo "IP_HASH_SALT=\"${{ secrets.IP_HASH_SALT }}\"" >> .dev.vars
+          echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
+          echo "MONITORING_KEY=\"${{ secrets.MONITORING_KEY }}\"" >> .dev.vars
+
+      # 5. Generate Wrangler types for the TypeScript project:
+      - name: Generate Wrangler types
+        run: npx wrangler types
+
+      # 6. Start Wrangler Dev in the background:
+      - name: Start Wrangler Dev (Background)
+        run: |
+          npx wrangler dev --show-interactive-dev-session=false --port 8787 &
+          sleep 15
+
+      # 7. Execute the health check script against the local worker:
+      - name: Run API integrity test suite
+        env:
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
+        run: |
+          curl -sL "${{ vars.GIST_TEST_SCRIPT }}" -o nsh.py && \
+          python nsh.py \
+            --link "https://test.domain.com" \
+            --remote "http://localhost:8787" \
+            --max-url-length 2000 \
+            --max-daily-write 10 \
+            --timeout 25 \
+            --delay 12
