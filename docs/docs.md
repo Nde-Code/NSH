@@ -59,7 +59,7 @@ defines the Codespace development environment:
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
-Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js project dependencies.
+Wrangler is intentionally installed globally inside the Codespace to keep the repository free of Node.js dependencies.
 
 > **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
 
@@ -208,7 +208,7 @@ The Worker uses standard environment variables in a `.dev.vars` file for local d
 | `FIREBASE_REALTIME_DATABASE_URL` | Public or private Firebase Realtime Database endpoint (e.g. `https://<project-id>-default-rtdb.<region>.firebasedatabase.app`) |
 | `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
 | `IP_HASH_SALT` | Cryptographic salt for hashing user IP addresses |
-| `ADMIN_KEY` | Private key for verifying, listing, resynchronizing, or deleting data |
+| `ADMIN_KEY` | Private key for verifying, listing, resynchronizing (counter), or deleting data |
 | `MONITORING_KEY` | Key for secure service-status monitoring or link-counter resynchronization |
 
 #### Local development:
@@ -218,9 +218,9 @@ Create/configure the following values as [GitHub Codespaces secrets](https://doc
 ```env
 FIREBASE_REALTIME_DATABASE_URL="YOUR_FIREBASE_REALTIME_DATABASE_URL"
 FIREBASE_HIDDEN_PATH="YOUR_SECRET_PATH"
-IP_HASH_SALT="THE_KEY_USED_TO_HASH_IPS"
-ADMIN_KEY="THE_ADMIN_KEY_TO_VERIFY_LIST_AND_DELETE"
-MONITORING_KEY="THE_KEY_USED_FOR_MONITORING"
+IP_HASH_SALT="THE_SALT_USED_TO_HASH"
+ADMIN_KEY="YOUR_ADMIN_KEY"
+MONITORING_KEY="YOUR_MONITORING_KEY"
 ```
 
 #### Production:
@@ -303,7 +303,7 @@ export const config: StaticConfig = {
 
 ## 💻 Project setup:
 
-Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 about creating your Firebase Realtime Database. Then this section simply resumes step 2 to initialize the types and run the command to start the project in step 3.
+Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 about creating your Firebase Realtime Database. Then this section simply explains step 2 to initialize the types and run the command to start the project in step 3.
 
 ### 1. Create Firebase Realtime Database *(to store the links)*:
 
