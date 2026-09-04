@@ -194,8 +194,8 @@ Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 
 | Property      | Description                                                                                                    |
 | ------------- | -------------------------------------------------------------------------------------------------------------- |
-| `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*) |
-| `id`      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard  |
+| `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*). |
+| `id`      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard.  |
 
 ### Environment variables:
 
@@ -205,11 +205,11 @@ The Worker uses standard environment variables in a `.dev.vars` file for local d
 
 | Variable | Description |
 |----------|-------------|
-| `FIREBASE_REALTIME_DATABASE_URL` | Public or private Firebase Realtime Database endpoint (e.g. `https://<project-id>-default-rtdb.<region>.firebasedatabase.app`) |
-| `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations |
-| `IP_HASH_SALT` | Cryptographic salt for hashing user IP addresses |
-| `ADMIN_KEY` | Private key for verifying, listing, resynchronizing (counter), or deleting data |
-| `MONITORING_KEY` | Key for secure service-status monitoring or link-counter resynchronization |
+| `FIREBASE_REALTIME_DATABASE_URL` | Public or private Firebase Realtime Database endpoint (e.g. `https://<project-id>-default-rtdb.<region>.firebasedatabase.app`). |
+| `FIREBASE_HIDDEN_PATH` | Hidden or secure subpath for sensitive Firebase operations. |
+| `IP_HASH_SALT` | Cryptographic salt for hashing user IP addresses. |
+| `ADMIN_KEY` | Private key for verifying, listing, resynchronizing (counter), or deleting data. |
+| `MONITORING_KEY` | Key for secure service-status monitoring or link-counter resynchronization. |
 
 #### Local development:
 
@@ -241,10 +241,10 @@ wrangler secret put MONITORING_KEY
 
 | Variable | Requirements |
 |---|---|
-| `FIREBASE_HIDDEN_PATH` | Use a strong value with at least **45 characters**, including uppercase and lowercase letters and numbers **only** (no special characters) |
-| `IP_HASH_SALT` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
-| `ADMIN_KEY` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
-| `MONITORING_KEY` | Use a strong value with at least **30 characters**, including uppercase and lowercase letters and numbers |
+| `FIREBASE_HIDDEN_PATH` | A strong value with at least **45 characters**, including uppercase and lowercase letters and numbers **only** (no special characters). |
+| `IP_HASH_SALT` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
+| `ADMIN_KEY` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
+| `MONITORING_KEY` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
 
 > `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
 
@@ -354,13 +354,13 @@ Once your Codespace is ready and your Cloudflare account is authenticated, compl
 
 | Action             | Condition                                                                                                                                                           |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Read**           | Allowed only for `meta/_url_counter` and the `urls/` collection, while the database root and all unspecified paths remain private                                   |
-| **Create**         | Allowed only when the shortcode does not already exist and the new node contains a valid `long_url`, `post_date`, and `is_verified` value                           |
-| **Counter update** | Allowed only when `_url_counter` is included in the updated `meta/` data and its value is a number greater than or equal to `0`                                     |
-| **Delete**         | Allowed when the shortcode already exists, with the Worker responsible for updating the URL counter after deletion                                                  |
-| **Update**         | Allowed only when the existing `long_url` and `post_date` remain unchanged, effectively allowing only `is_verified` to be modified                                  |
-| **Validation**     | Requires `long_url` to be a valid HTTP/HTTPS URL of at most 2000 characters, `post_date` to use the expected ISO 8601 UTC format, and `is_verified` to be a boolean |
-| **Extra fields**   | Forbidden, with only `long_url`, `post_date`, and `is_verified` allowed under each `urls/$shortcode` node                                                           |
+| **Read**           | Allowed only for `meta/_url_counter` and the `urls/` collection, while the database root and all unspecified paths remain private.                                   |
+| **Create**         | Allowed only when the shortcode does not already exist and the new node contains a valid `long_url`, `post_date`, and `is_verified` value.                           |
+| **Counter update** | Allowed only when `_url_counter` is included in the updated `meta/` data and its value is a number greater than or equal to `0`.                                     |
+| **Delete**         | Allowed when the shortcode already exists, with the Worker responsible for updating the URL counter after deletion.                                                  |
+| **Update**         | Allowed only when the existing `long_url` and `post_date` remain unchanged, effectively allowing only `is_verified` to be modified.                                  |
+| **Validation**     | Requires `long_url` to be a valid HTTP/HTTPS URL of at most 2000 characters, `post_date` to use the expected ISO 8601 UTC format, and `is_verified` to be a boolean. |
+| **Extra fields**   | Forbidden, with only `long_url`, `post_date`, and `is_verified` allowed under each `urls/$shortcode` node.                                                           |
 
 ### 2. TypeScript types:
 
@@ -415,20 +415,20 @@ The generated definitions are automatically picked up by TypeScript through the 
 
 | Setting                                  | Purpose                                                                                     |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `noEmit: true`                           | Prevents TypeScript from emitting JavaScript locally; Wrangler handles bundling             |
-| `allowImportingTsExtensions: true`       | Allows direct `.ts` file imports for relative paths                                         |
-| `target: "ES2020"`                       | Uses modern JavaScript syntax supported by the Workers runtime                              |
-| `lib: ["ES2020", "DOM"]`                 | Includes modern JavaScript features and Web APIs such as `fetch`, `Request`, and `Response` |
-| `module: "ESNext"`                       | Uses the ES Modules standard for Workers                                                    |
-| `moduleResolution: "Bundler"`            | Configures module resolution for bundler-based ESM environments                             |
-| `verbatimModuleSyntax: true`             | Preserves module syntax as written and requires explicit `import type` for type-only imports |
-| `strict: true`                            | Enables strict type-checking for safer code                                                 |
-| `esModuleInterop: true`                   | Facilitates interoperability with CommonJS modules                                          |
-| `skipLibCheck: true`                      | Skips type checking for `.d.ts` files to speed up compilation                               |
-| `forceConsistentCasingInFileNames: true` | Prevents file casing errors across operating systems                                        |
-| `types: ["./worker-configuration.d.ts"]` | Loads the TypeScript definitions generated by Wrangler                                      |
-| `include`                                | Specifies the source files and types to type-check                                          |
-| `exclude`                                | Specifies build artifacts and dependencies to ignore                                        |
+| `noEmit: true`                           | Prevents TypeScript from emitting JavaScript locally; Wrangler handles bundling.             |
+| `allowImportingTsExtensions: true`       | Allows direct `.ts` file imports for relative paths.                                         |
+| `target: "ES2020"`                       | Uses modern JavaScript syntax supported by the Workers runtime.                              |
+| `lib: ["ES2020", "DOM"]`                 | Includes modern JavaScript features and Web APIs such as `fetch`, `Request`, and `Response`. |
+| `module: "ESNext"`                       | Uses the ES Modules standard for Workers.                                                    |
+| `moduleResolution: "Bundler"`            | Configures module resolution for bundler-based ESM environments.                             |
+| `verbatimModuleSyntax: true`             | Preserves module syntax as written and requires explicit `import type` for type-only imports. |
+| `strict: true`                            | Enables strict type-checking for safer code.                                                 |
+| `esModuleInterop: true`                   | Facilitates interoperability with CommonJS modules.                                          |
+| `skipLibCheck: true`                      | Skips type checking for `.d.ts` files to speed up compilation.                               |
+| `forceConsistentCasingInFileNames: true` | Prevents file casing errors across operating systems.                                        |
+| `types: ["./worker-configuration.d.ts"]` | Loads the TypeScript definitions generated by Wrangler.                                      |
+| `include`                                | Specifies the source files and types to type-check.                                          |
+| `exclude`                                | Specifies build artifacts and dependencies to ignore.                                        |
 
 ### 3. Run and deploy:
 
