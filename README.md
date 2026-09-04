@@ -36,7 +36,15 @@ CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 
 Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using my public online instance.
 
-> **Notes:** feel free to use my public instance, but be aware of the limits. Keep an eye on the repository to catch any changes to these limits. The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency. I've enabled [smart placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
+**Notes:**
+
+- Feel free to use my public instance, but be aware of the limits.
+
+- Keep an eye on the repository to catch any changes to these limits.
+
+- The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency.
+
+- I've enabled [Smart Placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
 
 ## 📚 Available endpoints:
 
