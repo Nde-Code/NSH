@@ -69,7 +69,11 @@ The online instance of this project runs on [Cloudflare Workers](https://workers
 
 Although IP addresses are hashed with a secret salt and retained only briefly, data may be processed and, in the case of the KV database, stored in different geographic regions, where different data protection and privacy laws may apply.
 
-If this is a concern, you can use [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/) to influence where your Worker executes and help meet your geographic or privacy requirements.
+If geographic location is a concern, [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/) can be used to influence where your Worker executes, while [Cloudflare Workers KV](https://developers.cloudflare.com/kv/) provides persistent storage for data.
+
+By default, Workers KV data is replicated globally across Cloudflare's network and is not restricted to a specific geographic region or jurisdiction. Cloudflare offers jurisdiction-restricted KV namespaces, including the EU, although this feature is currently in private beta and only controls where data is **durably stored**; data may still be cached outside the selected jurisdiction and the Worker may access the namespace from anywhere.
+
+These limitations should be considered when geographic or privacy requirements apply. See [https://developers.cloudflare.com/kv/reference/data-location/](https://developers.cloudflare.com/kv/reference/data-location/) for more details.
 
 ## Changes to this privacy policy:
 
