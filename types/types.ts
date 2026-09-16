@@ -1,0 +1,89 @@
+export interface Env {
+
+    FIREBASE_REALTIME_DATABASE_URL: string;
+
+    FIREBASE_HIDDEN_PATH: string;
+
+    IP_HASH_SALT: string;
+
+    ADMIN_KEY: string;
+
+    MONITORING_KEY: string;
+
+    RATE_LIMIT_KV: KVNamespace;
+
+}
+
+export interface StaticConfig {
+
+    RATE_LIMIT_INTERVAL_S: number;
+
+    MAX_DAILY_WRITES: number;
+
+    DAILY_RATE_LIMIT_RESET_DAYS: number;
+
+    FIREBASE_TIMEOUT_MS: number;
+
+    FIREBASE_ENTRIES_LIMIT: number;
+
+    USER_AGENT: string;
+
+    DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: number;
+
+    MAX_NUMBER_OF_LINKS_COUNT: number;
+
+    SHORT_URL_ID_LENGTH: number;
+
+    MAX_URL_LENGTH: number;
+
+}
+
+export interface RuntimeConfig extends StaticConfig {
+
+    FIREBASE_URL: string;
+
+    FIREBASE_HIDDEN_PATH: string;
+
+    IP_HASH_SALT: string;
+
+    ADMIN_KEY: string;
+
+    MONITORING_KEY: string;
+
+}
+
+export interface HealthCheckResult {
+
+    status: "healthy" | "degraded" | "unhealthy";
+
+    timestamp: string;
+
+    checks: {
+
+        config_valid: boolean;
+
+        firebase_reachable: boolean;
+
+        counter_accessible: boolean;
+
+        kv_store_available: boolean;
+
+    };
+
+    message: string;
+
+}
+
+export interface LinkDetails {
+
+	long_url: string
+
+	post_date: string
+
+    is_verified: boolean
+
+}
+
+export type UrlPostBody = { long_url: string };
+
+export type NumericConfigKeys = { [K in keyof StaticConfig]: StaticConfig[K] extends number ? K : never }[keyof StaticConfig];
