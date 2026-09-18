@@ -1,33 +1,33 @@
 name: CI
 
 on:
-  # Trigger on push to the main branch:
+  # Run workflow when changes are pushed to the main branch:
   push:
     branches:
       - main
 
-  # Plan a monthly health check to ensure proper integrity:
+  # Run scheduled monthly integrity checks:
   schedule:
     - cron: "27 1 17 * *"
 
-  # Provide the option to run it manually if required:
+  # Allow manual workflow execution:
   workflow_dispatch:
 
 jobs:
   type-check:
-    # Use ubuntu-latest as required for compatibility:
+    # Use ubuntu-latest runner for a consistent Linux CI environment:
     runs-on: ubuntu-latest
 
-    # Define read-only permission:
+    # Restrict repository access to read-only:
     permissions:
       contents: read
 
     steps:
-      # 0. Init project sources:
+      # 0. Checkout repository sources:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # 1. Install Node.js runtime for Wrangler and TypeScript tools:
+      # 1. Set up Node.js runtime required by project tooling:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -46,19 +46,19 @@ jobs:
         run: npm run check-types
 
   integrity-test:
-    # Use ubuntu-latest as required for compatibility:
+    # Use ubuntu-latest runner for a consistent Linux CI environment:
     runs-on: ubuntu-latest
 
-    # Define read-only permission:
+    # Restrict repository access to read-only:
     permissions:
       contents: read
 
     steps:
-      # 0. Init project sources:
+      # 0. Checkout repository sources:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # 1. Install Node.js runtime for Wrangler:
+      # 1. Set up Node.js runtime required by project tooling:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -68,7 +68,7 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      # 3. Set up Python for the test script:
+      # 3. Set up Python environment for the integrity test script:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -80,7 +80,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      # 5. Create .dev.vars with environment variables:
+      # 5. Create local environment variables:
       - name: Create .dev.vars file
         run: |
           echo "FIREBASE_REALTIME_DATABASE_URL=\"${{ secrets.FIREBASE_REALTIME_DATABASE_URL }}\"" > .dev.vars
@@ -89,13 +89,13 @@ jobs:
           echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
           echo "MONITORING_KEY=\"${{ secrets.MONITORING_KEY }}\"" >> .dev.vars
 
-      # 6. Start Wrangler Dev in the background:
+      # 6. Start Wrangler development server in the background:
       - name: Start Wrangler Dev (Background)
         run: |
           npm run dev -- --show-interactive-dev-session=false --port 8787 &
           sleep 15
 
-      # 7. Execute the health check script against the local worker:
+      # 7. Execute the API integrity test suite against the local worker:
       - name: Run API integrity test suite
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
