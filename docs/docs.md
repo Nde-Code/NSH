@@ -34,7 +34,7 @@ The [`.devcontainer.json`](../.devcontainer.json) file:
 
 ```json
 {
-	"name": "NSH Codespaces setup script",
+	"name": "NSH Codespace setup script",
 	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
