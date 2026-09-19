@@ -16,7 +16,7 @@ Deploy your own instance using the button below:
 
 - **No sign-up:** no account creation, credit card, or personal data required.
 
-- **GDPR compliant:** built with privacy in mind.
+- **Privacy-conscious:** built with privacy in mind, with GDPR principles considered where relevant.
 
 - **Highly configurable:** customize behavior to your needs.
 
@@ -28,9 +28,9 @@ Deploy your own instance using the button below:
 
 ## 🌐 API access:
 
-| Endpoint | Rate limit | Maintainer | Privacy |
-|----------|-----------|-----------|-----------------|
-| https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) | [`privacy.md`](docs/privacy.md) |
+| Endpoint | Rate limit | Maintainer |
+|----------|-----------|-----------|
+| https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) |
 
 CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 
@@ -45,6 +45,8 @@ Check the [status page](https://nde-status.instatus.com/) if you experience late
 - The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency.
 
 - I've enabled [Smart Placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
+
+- The rate-limiting system temporarily processes IP addresses, which are pseudonymized using a hash combined with a secret salt before being used for rate limiting. For burst protection, the hashed value is temporarily stored in [Cloudflare Workers Cache](https://developers.cloudflare.com/workers/runtime-apis/cache/), while daily limits use [Cloudflare Workers KV](https://developers.cloudflare.com/kv/). The hashed value is retained only for the time required to enforce these limits and is automatically removed afterward.
 
 ## 📚 Available endpoints:
 
