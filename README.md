@@ -316,7 +316,7 @@ Protected endpoints require either header format:
 
 ## 🖥️ Developer documentation:
 
-For setup, configuration, and deployment using Wrangler CLI, see the [developer guide](docs/docs.md).
+For setup, configuration, and deployment using Wrangler CLI, see the [developer guide](docs/documentation.md).
 
 ## ⚖️ License:
 

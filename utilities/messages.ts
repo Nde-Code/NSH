@@ -4,7 +4,7 @@ export const MSG = {
 
     "WRONG_CONFIG": { "error": "Invalid configuration. Check config.ts." },
 
-    "ROOT_URL_MESSAGE": { "success": "Welcome on the API root. Docs: https://github.com/Nde-Code/NSH" },
+    "ROOT_URL_MESSAGE": { "success": "Welcome on the API root. Repository: https://github.com/Nde-Code/NSH" },
 
     "RATE_LIMIT_EXCEEDED": (s: number) => ({ "warning": `Rate limit exceeded: 1 request per ${s}s allowed.` }),
 
