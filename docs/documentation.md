@@ -34,15 +34,15 @@ The [`.devcontainer.json`](../.devcontainer.json) file:
 
 ```json
 {
-	"name": "NSH Codespace setup script",
-	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-	"features": {
-		"ghcr.io/devcontainers/features/node:1": {
-			"version": "24"
-		}
-	},
-	"postCreateCommand": "npm install && echo \"FIREBASE_REALTIME_DATABASE_URL=\\\"$FIREBASE_REALTIME_DATABASE_URL\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"IP_HASH_SALT=\\\"$IP_HASH_SALT\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && npm run types",
-	"remoteUser": "vscode"
+    "name": "NSH Codespace setup script",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "24"
+        }
+    },
+    "postCreateCommand": "npm install && echo \"FIREBASE_REALTIME_DATABASE_URL=\\\"$FIREBASE_REALTIME_DATABASE_URL\\\"\" > .dev.vars && echo \"FIREBASE_HIDDEN_PATH=\\\"$FIREBASE_HIDDEN_PATH\\\"\" >> .dev.vars && echo \"IP_HASH_SALT=\\\"$IP_HASH_SALT\\\"\" >> .dev.vars && echo \"ADMIN_KEY=\\\"$ADMIN_KEY\\\"\" >> .dev.vars && echo \"MONITORING_KEY=\\\"$MONITORING_KEY\\\"\" >> .dev.vars && npm run types",
+    "remoteUser": "vscode"
 }
 ```
 
@@ -77,29 +77,29 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 
 ```jsonc
 {
-	"name": "project-name",
-	"main": "main.ts",
-	"compatibility_date": "2026-08-12",
-	"preview_urls": false,
-	"observability": {
-		"enabled": true,
-		"head_sampling_rate": 1,
-		"logs": {
-			"invocation_logs": false
-		},
-		"traces": {
-			"enabled": false
-		}
-	},
-	"placement": {
-		"mode": "smart"
-	},
-	"kv_namespaces": [
-		{
-			"binding": "RATE_LIMIT_KV",
-			"id": "YOUR_KV_ID"
-		}
-	]
+    "name": "project-name",
+    "main": "main.ts",
+    "compatibility_date": "2026-08-12",
+    "preview_urls": false,
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1,
+        "logs": {
+            "invocation_logs": false
+        },
+        "traces": {
+            "enabled": false
+        }
+    },
+    "placement": {
+        "mode": "smart"
+    },
+    "kv_namespaces": [
+        {
+            "binding": "RATE_LIMIT_KV",
+            "id": "YOUR_KV_ID"
+        }
+    ]
 }
 ```
 
@@ -247,25 +247,25 @@ Take a look at the [`config.ts`](../config.ts) file at the root of the project, 
 ```ts
 export const config: StaticConfig = {
 
-	RATE_LIMIT_INTERVAL_S: 1,             // min = 1
+    "RATE_LIMIT_INTERVAL_S": 1,             // min = 1
 
-	MAX_DAILY_WRITES: 10,                 // min = 1
+    "MAX_DAILY_WRITES": 10,                 // min = 1
 
-	DAILY_RATE_LIMIT_RESET_DAYS: 1,       // min = 1
+    "DAILY_RATE_LIMIT_RESET_DAYS": 1,       // min = 1
 
-	FIREBASE_TIMEOUT_MS: 6000,            // min = 1000
+    "FIREBASE_TIMEOUT_MS": 6000,            // min = 1000
 
-	FIREBASE_ENTRIES_LIMIT: 1000,         // min = 50
+    "FIREBASE_ENTRIES_LIMIT": 1000,         // min = 50
 
-    USER_AGENT: "NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)", // required
+    "USER_AGENT": "NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)", // required
 
-	DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
+    "DEFAULT_NUMBER_OF_LINKS_FROM_COUNT": 15, // min = 5
 
-	MAX_NUMBER_OF_LINKS_COUNT: 50,        // min = 10
+    "MAX_NUMBER_OF_LINKS_COUNT": 50,        // min = 10
 
-	SHORT_URL_ID_LENGTH: 14,              // min = 10
+    "SHORT_URL_ID_LENGTH": 14,              // min = 10
 
-	MAX_URL_LENGTH: 2000                  // min = 100
+    "MAX_URL_LENGTH": 2000                  // min = 100
 
 };
 ```
@@ -311,38 +311,38 @@ To set up your Firebase Realtime Database, follow these steps:
 
 ```js
 {
-	"rules": {
-		"YOUR_SECRET_PATH": {
-			".read": false,
-			".write": false,
-			"meta": {
-				".write": "newData.hasChild('_url_counter')",
-				"_url_counter": {
-					".read": true,
-					".validate": "newData.isNumber() && newData.val() >= 0"
-				}
-			},
-			"urls": {
-				".read": true,
-				"$shortcode": {
-					".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val())",
-					".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
-					"long_url": {
-						".validate": "newData.isString() && newData.val().length <= 2000"
-					},
-					"post_date": {
-						".validate": "newData.isString()"
-					},
-					"is_verified": {
-						".validate": "newData.isBoolean()"
-					},
-					"$other": {
-						".validate": false
-					}
-				}
-			}
-		}
-	}
+    "rules": {
+        "YOUR_SECRET_PATH": {
+            ".read": false,
+            ".write": false,
+            "meta": {
+                ".write": "newData.hasChild('_url_counter')",
+                "_url_counter": {
+                    ".read": true,
+                    ".validate": "newData.isNumber() && newData.val() >= 0"
+                }
+            },
+            "urls": {
+                ".read": true,
+                "$shortcode": {
+                    ".write": "(!data.exists() && newData.exists()) || (data.exists() && !newData.exists()) || (data.exists() && newData.exists() && data.child('long_url').val() === newData.child('long_url').val() && data.child('post_date').val() === newData.child('post_date').val())",
+                    ".validate": "(!newData.exists()) || (newData.child('is_verified').isBoolean() && newData.child('long_url').isString() && newData.child('long_url').val().length <= 2000 && newData.child('long_url').val().matches(/^(ht|f)tp(s?):\\/\\/[0-9a-zA-Z]([\\-\\.\\w]*[0-9a-zA-Z])*(?::[0-9]+)?(\\/.*)?$/) && newData.child('post_date').isString() && newData.child('post_date').val().matches(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$/))",
+                    "long_url": {
+                        ".validate": "newData.isString() && newData.val().length <= 2000"
+                    },
+                    "post_date": {
+                        ".validate": "newData.isString()"
+                    },
+                    "is_verified": {
+                        ".validate": "newData.isBoolean()"
+                    },
+                    "$other": {
+                        ".validate": false
+                    }
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -376,42 +376,42 @@ The generated definitions are automatically picked up by TypeScript through the 
 
 ```json
 {
-	"compilerOptions": {
-		"noEmit": true,
-		"allowImportingTsExtensions": true,
-		"target": "ES2020",
-		"lib": [
-			"ES2020",
-			"DOM"
-		],
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"verbatimModuleSyntax": true,
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"allowUnreachableCode": false,
-		"allowUnusedLabels": false,
-		"types": [
-			"./worker-configuration.d.ts"
-		]
-	},
-	"include": [
-		"utilities",
-		"worker-configuration.d.ts",
-		"main.ts",
-		"config.ts",
-		"types"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
-	]
+    "compilerOptions": {
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "target": "ES2020",
+        "lib": [
+            "ES2020",
+            "DOM"
+        ],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "verbatimModuleSyntax": true,
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "types": [
+            "./worker-configuration.d.ts"
+        ]
+    },
+    "include": [
+        "utilities",
+        "worker-configuration.d.ts",
+        "main.ts",
+        "config.ts",
+        "types"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
 ```
 
