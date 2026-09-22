@@ -4,9 +4,9 @@ import { MSG } from "./messages.ts";
 
 import {
 
-	checkTimeRateLimit,
+    checkTimeRateLimit,
 
-	hashIP
+    hashIP
 
 } from "../utilities/rate.ts";
 
@@ -72,7 +72,7 @@ export function extractValidID(path: string, shortUrlIdLength: number): string |
 
     const id: string = path.slice(slash + 1);
 
-    if (id.length !== shortUrlIdLength ||!getIdRegex(shortUrlIdLength).test(id)) return false;
+    if (id.length !== shortUrlIdLength || !getIdRegex(shortUrlIdLength).test(id)) return false;
 
     return id;
 
@@ -94,21 +94,21 @@ export function getApiKeyFromRequest(req: Request): string | null {
 
 export function constantTimeEqual(a: string, b: string): boolean {
 
-	const maxLen: number = Math.max(a.length, b.length);
+    const maxLen: number = Math.max(a.length, b.length);
 
-	let result: number = a.length ^ b.length;
+    let result: number = a.length ^ b.length;
 
-	for (let i = 0; i < maxLen; i++) {
+    for (let i = 0; i < maxLen; i++) {
 
-		const charA: number = a.charCodeAt(i) || 0;
+        const charA: number = a.charCodeAt(i) || 0;
 
-		const charB: number = b.charCodeAt(i) || 0;
+        const charB: number = b.charCodeAt(i) || 0;
 
-		result |= charA ^ charB;
+        result |= charA ^ charB;
 
-	}
+    }
 
-	return result === 0;
+    return result === 0;
 
 }
 

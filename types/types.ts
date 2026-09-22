@@ -76,9 +76,9 @@ export interface HealthCheckResult {
 
 export interface LinkDetails {
 
-	long_url: string
+    long_url: string
 
-	post_date: string
+    post_date: string
 
     is_verified: boolean
 

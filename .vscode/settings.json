@@ -18,5 +18,12 @@
         "**/Thumbs.db": true
     },
     "search.useIgnoreFiles": true,
-    "search.useGlobalIgnoreFiles": true
+    "search.useGlobalIgnoreFiles": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "files.insertFinalNewline": true,
+    "editor.renderWhitespace": "selection",
+    "files.trimFinalNewlines": true
 }

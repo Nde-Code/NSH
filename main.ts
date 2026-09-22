@@ -109,7 +109,7 @@ function getContextualConfig(env: Env): RuntimeConfig {
 
 async function handler(req: Request, env: Env): Promise<Response> {
 
-    const activeConfig: RuntimeConfig  = getContextualConfig(env);
+    const activeConfig: RuntimeConfig = getContextualConfig(env);
 
     const baseUrl: string = activeConfig.FIREBASE_URL.replace(/\/+$/, "");
 
@@ -237,15 +237,13 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
             "urls", {
 
-                orderBy: "$key",
+            orderBy: "$key",
 
-                limitToFirst: firebaseLimit,
+            limitToFirst: firebaseLimit,
 
-                ...(cursor ? { "startAt": cursor } : {})
+            ...(cursor ? { "startAt": cursor } : {})
 
-            }
-
-        );
+        });
 
         if (error) return createJsonResponse(MSG.SERVICE_TEMP_UNAVAILABLE, 503);
 
@@ -399,7 +397,7 @@ async function handler(req: Request, env: Env): Promise<Response> {
 
     }
 
-      if (req.method === "POST" && pathname === "/post-url") {
+    if (req.method === "POST" && pathname === "/post-url") {
 
         const hashedIP: string = await hashIP(req.headers.get("cf-connecting-ip") ?? "unknown", activeConfig.IP_HASH_SALT);
 
