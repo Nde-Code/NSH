@@ -1,6 +1,6 @@
-# Developer guide for setting up, configuring, developing, and deploying the project:
+# Documentation:
 
-Complete developer guide for contributing to this project or creating your own version to run on [Cloudflare Workers](https://workers.cloudflare.com/) using [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+Complete developer guide for contributing to this project or building and deploying your own version on [Cloudflare Workers](https://workers.cloudflare.com/) with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
 > **Note:** this project uses npm to manage development dependencies, including Wrangler and TypeScript.
 

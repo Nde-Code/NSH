@@ -1,6 +1,6 @@
 # Serverless URL shortener using Firebase RTDB:
 
-A lightweight URL shortener API built with [Wrangler](https://developers.cloudflare.com/workers/wrangler/) and [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
+A lightweight serverless URL shortener API running on [Cloudflare Workers](https://workers.cloudflare.com/), developed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/), using [Firebase Realtime Database](https://firebase.google.com/products/realtime-database) to store shortened URLs and related metadata.
 
 This project is intended for personal use and small-scale deployments, and runs with minimal resource usage.
 
