@@ -25,5 +25,9 @@
     "editor.detectIndentation": false,
     "files.insertFinalNewline": true,
     "editor.renderWhitespace": "selection",
-    "files.trimFinalNewlines": true
+    "files.trimFinalNewlines": true,
+    "[yaml]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    }
 }
