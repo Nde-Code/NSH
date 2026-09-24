@@ -1,35 +1,36 @@
-import { printLogLine } from "./utils.ts";
+import { printLogLine } from './utils.ts';
 
-export type RateLimitResult = "OK" | "USER_LIMIT" | "KV_QUOTA_EXCEEDED";
+export type RateLimitResult = 'OK' | 'USER_LIMIT' | 'KV_QUOTA_EXCEEDED';
 
-interface RateLimitData { s: number; c: number; }
+interface RateLimitData {
+    s: number;
+    c: number;
+}
 
 const SECONDS_IN_DAY: number = 86400;
 
-async function safeKvPut(kv: KVNamespace, key: string, value: string, expirationTtl: number, errorMessage = "Failed to write to KV."): Promise<boolean> {
-
+async function safeKvPut(
+    kv: KVNamespace,
+    key: string,
+    value: string,
+    expirationTtl: number,
+    errorMessage = 'Failed to write to KV.'
+): Promise<boolean> {
     try {
-
         const ttl: number = Math.max(expirationTtl, 60);
 
-        await kv.put(key, value, { "expirationTtl": ttl });
+        await kv.put(key, value, { expirationTtl: ttl });
 
         return true;
-
     } catch (_err) {
-
-        printLogLine("ERROR", errorMessage);
+        printLogLine('ERROR', errorMessage);
 
         return false;
-
     }
-
 }
 
 export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number): Promise<boolean> {
-
     try {
-
         const cache = (caches as any)?.default;
 
         if (!cache) return true;
@@ -40,26 +41,27 @@ export async function checkTimeRateLimit(hashedIp: string, limitSeconds: number)
 
         if (hit) return false;
 
-        await cache.put(cacheKey, new Response("1", {
-
-            "headers": { "Cache-Control": `max-age=${limitSeconds}` }
-
-        }));
+        await cache.put(
+            cacheKey,
+            new Response('1', {
+                headers: { 'Cache-Control': `max-age=${limitSeconds}` }
+            })
+        );
 
         return true;
-
     } catch (_err) {
-
-        printLogLine("ERROR", "Cloudflare Cache API failure.");
+        printLogLine('ERROR', 'Cloudflare Cache API failure.');
 
         return false;
-
     }
-
 }
 
-export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, maxWrites: number, purgeDays: number): Promise<RateLimitResult> {
-
+export async function checkDailyRateLimit(
+    kv: KVNamespace,
+    hashedIp: string,
+    maxWrites: number,
+    purgeDays: number
+): Promise<RateLimitResult> {
     const now: number = Date.now();
 
     const key: string = `haship:${hashedIp}`;
@@ -69,71 +71,52 @@ export async function checkDailyRateLimit(kv: KVNamespace, hashedIp: string, max
     let json: string | null = null;
 
     try {
-
         json = await kv.get(key);
-
     } catch (_err) {
+        printLogLine('ERROR', 'Failed to read from KV.');
 
-        printLogLine("ERROR", "Failed to read from KV.");
-
-        return "KV_QUOTA_EXCEEDED";
-
+        return 'KV_QUOTA_EXCEEDED';
     }
 
     let data: RateLimitData;
 
-    if (!json) data = { "s": now, "c": 1 };
-
+    if (!json) data = { s: now, c: 1 };
     else {
-
         try {
-
             data = JSON.parse(json);
-
         } catch (_err) {
-
-            data = { "s": now, "c": 1 };
-
+            data = { s: now, c: 1 };
         }
 
-        if (now - data.s >= windowMs) data = { "s": now, "c": 1 };
-
+        if (now - data.s >= windowMs) data = { s: now, c: 1 };
         else {
-
-            if (data.c >= maxWrites) return "USER_LIMIT";
+            if (data.c >= maxWrites) return 'USER_LIMIT';
 
             data.c++;
-
         }
-
     }
 
     const remainingTtl: number = Math.max(60, Math.floor((windowMs - (now - data.s)) / 1000));
 
     const success: boolean = await safeKvPut(kv, key, JSON.stringify(data), remainingTtl);
 
-    return success ? "OK" : "KV_QUOTA_EXCEEDED";
-
+    return success ? 'OK' : 'KV_QUOTA_EXCEEDED';
 }
 
 export async function hashIP(ip: string, salt: string): Promise<string> {
-
     const msgBuffer = new TextEncoder().encode(ip + salt);
 
-    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
 
     const hashArray = new Uint8Array(hashBuffer);
 
-    let hexString = "";
+    let hexString = '';
 
     for (let i = 0; i < hashArray.length; i++) {
-
         const b: number = hashArray[i];
 
-        hexString += ((b < 16) ? '0' : '') + b.toString(16);
-
+        hexString += (b < 16 ? '0' : '') + b.toString(16);
     }
 
     return hexString;
-
 }

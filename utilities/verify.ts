@@ -1,20 +1,29 @@
-import { printLogLine } from "./utils.ts";
+import { printLogLine } from './utils.ts';
 
-import { readInFirebaseRTDB } from "./read.ts";
+import { readInFirebaseRTDB } from './read.ts';
 
-export type VerificationStatus = "already_verified" | "verified_now" | "not_found" | "error";
+export type VerificationStatus = 'already_verified' | 'verified_now' | 'not_found' | 'error';
 
 type FirebaseData = { is_verified?: boolean };
 
-export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string): Promise<VerificationStatus> {
+export async function setIsVerifiedTrue(
+    baseURLWithSecret: string,
+    timeoutValue: number,
+    userAgent: string,
+    pathTo: string
+): Promise<VerificationStatus> {
+    const { data: currentData, error } = await readInFirebaseRTDB<FirebaseData>(
+        baseURLWithSecret,
+        timeoutValue,
+        userAgent,
+        pathTo
+    );
 
-    const { data: currentData, error } = await readInFirebaseRTDB<FirebaseData>(baseURLWithSecret, timeoutValue, userAgent, pathTo);
+    if (error) return 'error';
 
-    if (error) return "error";
+    if (!currentData) return 'not_found';
 
-    if (!currentData) return "not_found";
-
-    if (currentData.is_verified === true) return "already_verified";
+    if (currentData.is_verified === true) return 'already_verified';
 
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
 
@@ -23,45 +32,32 @@ export async function setIsVerifiedTrue(baseURLWithSecret: string, timeoutValue:
     const timeoutId = setTimeout(() => controller.abort(), timeoutValue);
 
     try {
-
         const res = await fetch(url, {
+            method: 'PATCH',
 
-            "method": "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
 
-            "headers": {
-
-                "Content-Type": "application/json",
-
-                "User-Agent": userAgent
-
+                'User-Agent': userAgent
             },
 
-            "body": JSON.stringify({ "is_verified": true }),
+            body: JSON.stringify({ is_verified: true }),
 
-            "signal": controller.signal
-
+            signal: controller.signal
         });
 
         if (res.ok) {
+            printLogLine('INFO', `Link at ${pathTo} verified successfully.`);
 
-            printLogLine("INFO", `Link at ${pathTo} verified successfully.`);
-
-            return "verified_now";
-
+            return 'verified_now';
         }
 
-        return "error";
-
+        return 'error';
     } catch (_err) {
+        printLogLine('ERROR', `Failed to verify link at ${pathTo}.`);
 
-        printLogLine("ERROR", `Failed to verify link at ${pathTo}.`);
-
-        return "error";
-
+        return 'error';
     } finally {
-
         clearTimeout(timeoutId);
-
     }
-
 }

@@ -28,8 +28,8 @@ Deploy your own instance using the button below:
 
 ## 🌐 API access:
 
-| Endpoint | Rate limit | Maintainer |
-|----------|-----------|-----------|
+| Endpoint                          | Rate limit                        | Maintainer                        |
+| --------------------------------- | --------------------------------- | --------------------------------- |
 | https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) |
 
 CORS is enabled only for the URL-posting endpoint, for clear security reasons.
@@ -58,24 +58,24 @@ Create a short URL from a long URL. Saves to database and applies rate limiting.
 
 #### Request body:
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field      | Type   | Description                                           |
+| ---------- | ------ | ----------------------------------------------------- |
 | `long_url` | string | **Required.** Original URL to shorten (must be valid) |
 
 > **Note:** request fails if JSON contains unexpected fields or URL exceeds max length.
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
-| `201` | URL successfully shortened and saved |
-| `200` | URL already shortened previously (returns existing short link) |
+| Code  | Description                                                        |
+| ----- | ------------------------------------------------------------------ |
+| `201` | URL successfully shortened and saved                               |
+| `200` | URL already shortened previously (returns existing short link)     |
 | `400` | Invalid body, missing `long_url`, unexpected field, or invalid URL |
-| `409` | Hash collision (different URL, same hash) |
-| `429` | Rate limit exceeded (time-based or daily write limit) |
-| `500` | Server error (config, environment, or generation failure) |
-| `503` | KV quota exceeded or database read failure |
-| `507` | Firebase entry limit reached |
+| `409` | Hash collision (different URL, same hash)                          |
+| `429` | Rate limit exceeded (time-based or daily write limit)              |
+| `500` | Server error (config, environment, or generation failure)          |
+| `503` | KV quota exceeded or database read failure                         |
+| `507` | Firebase entry limit reached                                       |
 
 #### Example request:
 
@@ -99,19 +99,19 @@ Redirect to the original long URL using the short code.
 
 #### Path parameters:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `code` | string | **Required.** Unique short ID |
+| Parameter | Type   | Description                   |
+| --------- | ------ | ----------------------------- |
+| `code`    | string | **Required.** Unique short ID |
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
-| `301` | Permanent redirect (verified link) |
-| `302` | Temporary redirect (unverified link) |
-| `400` | No valid ID in path |
-| `404` | Link not found in database |
-| `500` | Server error |
+| Code  | Description                                   |
+| ----- | --------------------------------------------- |
+| `301` | Permanent redirect (verified link)            |
+| `302` | Temporary redirect (unverified link)          |
+| `400` | No valid ID in path                           |
+| `404` | Link not found in database                    |
+| `500` | Server error                                  |
 | `503` | Request timeout or storage connection failure |
 
 #### Example request:
@@ -128,21 +128,21 @@ Retrieve a paginated list of shortened links.
 
 #### Query parameters:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `count` | number | Number of links to retrieve (default: config value, max: restricted) |
-| `cursor` | string | Last item key from previous page (use `next_cursor` from response) |
+| Parameter | Type   | Description                                                          |
+| --------- | ------ | -------------------------------------------------------------------- |
+| `count`   | number | Number of links to retrieve (default: config value, max: restricted) |
+| `cursor`  | string | Last item key from previous page (use `next_cursor` from response)   |
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
-| `200` | Successfully returned URLs |
+| Code  | Description                           |
+| ----- | ------------------------------------- |
+| `200` | Successfully returned URLs            |
 | `400` | Invalid `count` or `cursor` parameter |
-| `401` | Invalid or missing API key |
-| `429` | Rate limit exceeded |
-| `500` | Server error |
-| `503` | Database retrieval failure |
+| `401` | Invalid or missing API key            |
+| `429` | Rate limit exceeded                   |
+| `500` | Server error                          |
+| `503` | Database retrieval failure            |
 
 #### Example request:
 
@@ -180,21 +180,21 @@ Mark a shortened URL as verified.
 
 #### Path parameters:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `code` | string | **Required.** Unique short ID |
+| Parameter | Type   | Description                   |
+| --------- | ------ | ----------------------------- |
+| `code`    | string | **Required.** Unique short ID |
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
+| Code  | Description                                      |
+| ----- | ------------------------------------------------ |
 | `200` | Link verified successfully (or already verified) |
-| `400` | No valid ID in path |
-| `401` | Invalid or missing admin key |
-| `404` | Link not found |
-| `429` | Rate limit exceeded |
-| `500` | Server error |
-| `503` | Database update failure |
+| `400` | No valid ID in path                              |
+| `401` | Invalid or missing admin key                     |
+| `404` | Link not found                                   |
+| `429` | Rate limit exceeded                              |
+| `500` | Server error                                     |
+| `503` | Database update failure                          |
 
 #### Example request:
 
@@ -211,21 +211,21 @@ Remove a shortened URL and decrement the counter.
 
 #### Path parameters:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `code` | string | **Required.** Unique short ID |
+| Parameter | Type   | Description                   |
+| --------- | ------ | ----------------------------- |
+| `code`    | string | **Required.** Unique short ID |
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
-| `200` | Link deleted successfully |
-| `400` | No valid ID in path |
+| Code  | Description                  |
+| ----- | ---------------------------- |
+| `200` | Link deleted successfully    |
+| `400` | No valid ID in path          |
 | `401` | Invalid or missing admin key |
-| `404` | Link not found |
-| `429` | Rate limit exceeded |
-| `500` | Server error |
-| `503` | Database deletion failure |
+| `404` | Link not found               |
+| `429` | Rate limit exceeded          |
+| `500` | Server error                 |
+| `503` | Database deletion failure    |
 
 #### Example request:
 
@@ -244,13 +244,13 @@ Recalculate and sync the metadata counter to match actual URLs in Firebase. Usef
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
+| Code  | Description                                       |
+| ----- | ------------------------------------------------- |
 | `200` | Counter resynced successfully (returns new count) |
-| `401` | Invalid or missing admin key |
-| `429` | Rate limit exceeded |
-| `500` | Server error |
-| `503` | Database communication failure |
+| `401` | Invalid or missing admin key                      |
+| `429` | Rate limit exceeded                               |
+| `500` | Server error                                      |
+| `503` | Database communication failure                    |
 
 #### Example request:
 
@@ -276,11 +276,11 @@ Check service health: configuration, database connectivity, counter integrity, c
 
 #### Response codes:
 
-| Code | Description |
-|------|-------------|
-| `200` | All systems operational |
+| Code  | Description                                                |
+| ----- | ---------------------------------------------------------- |
+| `200` | All systems operational                                    |
 | `206` | Degraded but operational (one or more non-critical issues) |
-| `503` | Service unavailable (critical failure) |
+| `503` | Service unavailable (critical failure)                     |
 
 #### Example request:
 

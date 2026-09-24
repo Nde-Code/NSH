@@ -8,7 +8,9 @@
         "deploy": "wrangler deploy",
         "types": "wrangler types",
         "login": "wrangler login",
-        "check-types": "tsc --noEmit"
+        "check-types": "tsc --noEmit",
+        "format": "prettier --write .",
+        "prettier-check": "prettier . --check"
     },
     "repository": {
         "type": "git",
@@ -22,6 +24,7 @@
     },
     "homepage": "https://github.com/Nde-Code/NSH#readme",
     "devDependencies": {
+        "prettier": "^3.9.9",
         "typescript": "^7.0.2",
         "wrangler": "^4.135.0"
     }

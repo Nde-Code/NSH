@@ -1,7 +1,12 @@
-import { printLogLine } from "./utils.ts";
+import { printLogLine } from './utils.ts';
 
-export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutValue: number, userAgent: string, pathTo: string, step: number): Promise<boolean> {
-
+export async function updateFirebaseCounter(
+    baseURLWithSecret: string,
+    timeoutValue: number,
+    userAgent: string,
+    pathTo: string,
+    step: number
+): Promise<boolean> {
     const url: string = `${baseURLWithSecret}/${pathTo}.json`;
 
     const controller = new AbortController();
@@ -9,37 +14,26 @@ export async function updateFirebaseCounter(baseURLWithSecret: string, timeoutVa
     const timeoutId = setTimeout(() => controller.abort(), timeoutValue);
 
     try {
-
         const res = await fetch(url, {
+            method: 'PATCH',
 
-            "method": "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
 
-            "headers": {
-
-                "Content-Type": "application/json",
-
-                "User-Agent": userAgent
-
+                'User-Agent': userAgent
             },
 
-            "body": JSON.stringify({ "_url_counter": { ".sv": { "increment": step } } }),
+            body: JSON.stringify({ _url_counter: { '.sv': { increment: step } } }),
 
-            "signal": controller.signal
-
+            signal: controller.signal
         });
 
         return res.ok;
-
     } catch (_err) {
-
-        printLogLine("ERROR", "Failed to update Firebase links counter.");
+        printLogLine('ERROR', 'Failed to update Firebase links counter.');
 
         return false;
-
     } finally {
-
         clearTimeout(timeoutId);
-
     }
-
 }

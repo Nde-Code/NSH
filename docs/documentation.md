@@ -48,14 +48,14 @@ The [`.devcontainer.json`](../.devcontainer.json) file:
 
 defines the Codespace development environment:
 
-| Component | Configuration |
-|---|---|
-| **Base image** | Ubuntu-based development container |
-| **Node.js** | Version `24` |
-| **Cloudflare Wrangler** | Installed locally through npm dependencies |
-| **Environment variables** | Populated from the Codespaces environment and written to `.dev.vars` |
-| **TypeScript definitions** | Generated with `wrangler types` through `npm run types` |
-| **Remote user** | `vscode` |
+| Component                  | Configuration                                                        |
+| -------------------------- | -------------------------------------------------------------------- |
+| **Base image**             | Ubuntu-based development container                                   |
+| **Node.js**                | Version `24`                                                         |
+| **Cloudflare Wrangler**    | Installed locally through npm dependencies                           |
+| **Environment variables**  | Populated from the Codespaces environment and written to `.dev.vars` |
+| **TypeScript definitions** | Generated with `wrangler types` through `npm run types`              |
+| **Remote user**            | `vscode`                                                             |
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
@@ -190,9 +190,9 @@ wrangler kv namespace create RATE_LIMIT_KV
 
 Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 
-| Property      | Description                                                                                                    |
-| ------------- | -------------------------------------------------------------------------------------------------------------- |
-| `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (*no change required*). |
+| Property  | Description                                                                                                    |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (_no change required_). |
 | `id`      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard.  |
 
 ### Environment variables:
@@ -201,13 +201,13 @@ The Worker uses standard environment variables in a `.dev.vars` file for local d
 
 #### Variables in this project:
 
-| Variable | Description |
-|----------|-------------|
+| Variable                         | Description                                                                                                       |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `FIREBASE_REALTIME_DATABASE_URL` | The Firebase Realtime Database endpoint (e.g. `https://<project-id>-default-rtdb.<region>.firebasedatabase.app`). |
-| `FIREBASE_HIDDEN_PATH` | The hidden or secure subpath for sensitive Firebase operations. |
-| `IP_HASH_SALT` | The salt used to hash IP addresses. |
-| `ADMIN_KEY` | The private key for verifying, listing, resynchronizing (counter), or deleting data. |
-| `MONITORING_KEY` | The key for secure service-status monitoring or link-counter resynchronization. |
+| `FIREBASE_HIDDEN_PATH`           | The hidden or secure subpath for sensitive Firebase operations.                                                   |
+| `IP_HASH_SALT`                   | The salt used to hash IP addresses.                                                                               |
+| `ADMIN_KEY`                      | The private key for verifying, listing, resynchronizing (counter), or deleting data.                              |
+| `MONITORING_KEY`                 | The key for secure service-status monitoring or link-counter resynchronization.                                   |
 
 #### Local development:
 
@@ -231,12 +231,12 @@ wrangler secret put MONITORING_KEY
 
 #### Security notes:
 
-| Variable | Requirements |
-|---|---|
+| Variable               | Requirements                                                                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `FIREBASE_HIDDEN_PATH` | A strong value with at least **45 characters**, including uppercase and lowercase letters and numbers **only** (no special characters). |
-| `IP_HASH_SALT` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
-| `ADMIN_KEY` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
-| `MONITORING_KEY` | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers. |
+| `IP_HASH_SALT`         | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
+| `ADMIN_KEY`            | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
+| `MONITORING_KEY`       | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
 
 > `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
 
@@ -246,44 +246,42 @@ Take a look at the [`config.ts`](../config.ts) file at the root of the project, 
 
 ```ts
 export const config: StaticConfig = {
+    RATE_LIMIT_INTERVAL_S: 1, // min = 1
 
-    "RATE_LIMIT_INTERVAL_S": 1,             // min = 1
+    MAX_DAILY_WRITES: 10, // min = 1
 
-    "MAX_DAILY_WRITES": 10,                 // min = 1
+    DAILY_RATE_LIMIT_RESET_DAYS: 1, // min = 1
 
-    "DAILY_RATE_LIMIT_RESET_DAYS": 1,       // min = 1
+    FIREBASE_TIMEOUT_MS: 6000, // min = 1000
 
-    "FIREBASE_TIMEOUT_MS": 6000,            // min = 1000
+    FIREBASE_ENTRIES_LIMIT: 1000, // min = 50
 
-    "FIREBASE_ENTRIES_LIMIT": 1000,         // min = 50
+    USER_AGENT: 'NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)', // required
 
-    "USER_AGENT": "NSH/1.0 (Serverless URL Shortener; repo=https://github.com/Nde-Code/NSH)", // required
+    DEFAULT_NUMBER_OF_LINKS_FROM_COUNT: 15, // min = 5
 
-    "DEFAULT_NUMBER_OF_LINKS_FROM_COUNT": 15, // min = 5
+    MAX_NUMBER_OF_LINKS_COUNT: 50, // min = 10
 
-    "MAX_NUMBER_OF_LINKS_COUNT": 50,        // min = 10
+    SHORT_URL_ID_LENGTH: 14, // min = 10
 
-    "SHORT_URL_ID_LENGTH": 14,              // min = 10
-
-    "MAX_URL_LENGTH": 2000                  // min = 100
-
+    MAX_URL_LENGTH: 2000 // min = 100
 };
 ```
 
 #### Configuration parameters:
 
-| Parameter | Description | Constraint(s) |
-|-----------|-------------|-------------|
-| `RATE_LIMIT_INTERVAL_S` | Rate limit interval in seconds | Minimum: 1 second |
-| `MAX_DAILY_WRITES` | Daily write limit (new links only) | Minimum: 1 write |
-| `DAILY_RATE_LIMIT_RESET_DAYS` | Days before purging hashed IPs from KV | Minimum: 1 day |
-| `FIREBASE_TIMEOUT_MS` | HTTP request timeout for Firebase (milliseconds) | Minimum: 1000 ms |
-| `USER_AGENT` | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required |
-| `FIREBASE_ENTRIES_LIMIT` | Maximum entries allowed in Firebase | Minimum: 50 links |
-| `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified | Minimum: 5 links, max: `MAX_NUMBER_OF_LINKS_COUNT` links |
-| `MAX_NUMBER_OF_LINKS_COUNT` | Maximum links retrievable via `count` parameter | Minimum: 10 links |
-| `SHORT_URL_ID_LENGTH` | Length of generated shortcodes | Minimum: 10 characters |
-| `MAX_URL_LENGTH` | Maximum allowed URL length | Minimum: 100 characters |
+| Parameter                            | Description                                                                                                                           | Constraint(s)                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `RATE_LIMIT_INTERVAL_S`              | Rate limit interval in seconds                                                                                                        | Minimum: 1 second                                        |
+| `MAX_DAILY_WRITES`                   | Daily write limit (new links only)                                                                                                    | Minimum: 1 write                                         |
+| `DAILY_RATE_LIMIT_RESET_DAYS`        | Days before purging hashed IPs from KV                                                                                                | Minimum: 1 day                                           |
+| `FIREBASE_TIMEOUT_MS`                | HTTP request timeout for Firebase (milliseconds)                                                                                      | Minimum: 1000 ms                                         |
+| `USER_AGENT`                         | The HTTP User-Agent string used when performing Firebase REST API requests. Update the repository URL if you are using your own fork. | Required                                                 |
+| `FIREBASE_ENTRIES_LIMIT`             | Maximum entries allowed in Firebase                                                                                                   | Minimum: 50 links                                        |
+| `DEFAULT_NUMBER_OF_LINKS_FROM_COUNT` | Default links returned if no `count` specified                                                                                        | Minimum: 5 links, max: `MAX_NUMBER_OF_LINKS_COUNT` links |
+| `MAX_NUMBER_OF_LINKS_COUNT`          | Maximum links retrievable via `count` parameter                                                                                       | Minimum: 10 links                                        |
+| `SHORT_URL_ID_LENGTH`                | Length of generated shortcodes                                                                                                        | Minimum: 10 characters                                   |
+| `MAX_URL_LENGTH`                     | Maximum allowed URL length                                                                                                            | Minimum: 100 characters                                  |
 
 #### Notes:
 
@@ -350,8 +348,8 @@ To set up your Firebase Realtime Database, follow these steps:
 
 #### Security rules summary:
 
-| Action             | Condition                                                                                                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Action             | Condition                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Read**           | Allowed only for `meta/_url_counter` and the `urls/` collection, while the database root and all unspecified paths remain private.                                   |
 | **Create**         | Allowed only when the shortcode does not already exist and the new node contains a valid `long_url`, `post_date`, and `is_verified` value.                           |
 | **Counter update** | Allowed only when `_url_counter` is included in the updated `meta/` data and its value is a number greater than or equal to `0`.                                     |
@@ -380,10 +378,7 @@ The generated definitions are automatically picked up by TypeScript through the 
         "noEmit": true,
         "allowImportingTsExtensions": true,
         "target": "ES2020",
-        "lib": [
-            "ES2020",
-            "DOM"
-        ],
+        "lib": ["ES2020", "DOM"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "verbatimModuleSyntax": true,
@@ -397,21 +392,10 @@ The generated definitions are automatically picked up by TypeScript through the 
         "noFallthroughCasesInSwitch": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
-        "types": [
-            "./worker-configuration.d.ts"
-        ]
+        "types": ["./worker-configuration.d.ts"]
     },
-    "include": [
-        "utilities",
-        "worker-configuration.d.ts",
-        "main.ts",
-        "config.ts",
-        "types"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ]
+    "include": ["utilities", "worker-configuration.d.ts", "main.ts", "config.ts", "types"],
+    "exclude": ["node_modules", "dist"]
 }
 ```
 
@@ -448,6 +432,14 @@ The generated definitions are automatically picked up by TypeScript through the 
 npm run dev
 ```
 
+#### Format code:
+
+Run Prettier to automatically format the codebase:
+
+```bash
+npm run format
+```
+
 #### Deploy to Cloudflare Workers:
 
 > Make sure your [Cloudflare Workers Secrets (for deployed Workers)](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) have been configured before deploying (see [environment variables](#environment-variables)).
@@ -456,7 +448,7 @@ npm run dev
 npm run deploy
 ```
 
-If the Worker is configured to use a `workers.dev` subdomain, Wrangler will display the deployed URL.
+If the Worker is configured to use a `workers.dev` subdomain, Wrangler will display the deployed URL after deployment.
 
 ## 📌 Support:
 
