@@ -26,6 +26,7 @@
     "files.insertFinalNewline": true,
     "editor.renderWhitespace": "selection",
     "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
     "[yaml]": {
         "editor.tabSize": 2,
         "editor.insertSpaces": true
