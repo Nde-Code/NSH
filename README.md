@@ -1,62 +1,77 @@
-# Serverless URL shortener using Firebase RTDB:
+<div align="center">
 
-A lightweight serverless URL shortener API running on [Cloudflare Workers](https://workers.cloudflare.com/), developed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/), using [Firebase Realtime Database](https://firebase.google.com/products/realtime-database) to store shortened URLs and related metadata.
+# 🔗 NSH — Serverless URL Shortener
 
-This project is intended for personal use and small-scale deployments, and runs with minimal resource usage.
+**A lightweight serverless URL shortener API, backed by [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).**
 
-Deploy your own instance using the button below:
+Built on [Cloudflare Workers](https://workers.cloudflare.com/) and developed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-## 🚀 Key features:
+</div>
 
-- **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
+---
 
-- **No duplicates:** prevents storing identical URLs, saving database space.
+This project is intended for **personal use and small-scale deployments**, and runs with minimal resource usage.
 
-- **No sign-up:** no account creation, credit card, or personal data required.
+## 📑 Table of contents
 
-- **Privacy-conscious:** built with privacy in mind, with GDPR principles considered where relevant.
+- [🚀 Key features](#-key-features)
+- [🌐 API access](#-api-access)
+- [📚 Available endpoints](#-available-endpoints)
+    - [1. `/post-url` — Create short URL](#1-post-post-url---create-short-url)
+    - [2. `/url/:code` — Redirect to original URL](#2-get-urlcode---redirect-to-original-url)
+    - [3. `/urls` — List all URLs](#3-get-urls---list-all-urls)
+    - [4. `/verify/:code` — Verify URL](#4-patch-verifycode---verify-url)
+    - [5. `/delete/:code` — Delete URL](#5-delete-deletecode---delete-url)
+    - [6. `/sync-counter` — Resynchronize counter](#6-patch-sync-counter---resynchronize-counter)
+    - [7. `/health` — Service health check](#7-get-health---service-health-check)
+- [🔐 Authentication](#-authentication)
+- [🖥️ Developer documentation](#️-developer-documentation)
+- [⚖️ License](#️-license)
+- [🎯 Author](#-author)
 
-- **Highly configurable:** customize behavior to your needs.
+---
 
-- **Firebase backend:** stores URL mappings in Firebase Realtime Database.
+## 🚀 Key features
 
-- **Minimal REST API:** fast, efficient, and lightweight.
+- **Rate limiting** — daily request quotas and burst traffic protection (anti-spam).
+- **No duplicates** — prevents storing identical URLs, saving database space.
+- **No sign-up** — no account creation, credit card, or personal data required.
+- **Privacy-conscious** — built with privacy in mind, with GDPR principles considered where relevant.
+- **Highly configurable** — customize behavior to your needs.
+- **Firebase backend** — stores URL mappings in Firebase Realtime Database.
+- **Minimal REST API** — fast, efficient, and lightweight.
+- **Serverless** — runs on the Cloudflare Workers free plan with strict resource limits.
 
-- **Serverless:** runs on Cloudflare Workers free plan with strict resource limits.
+## 🌐 API access
 
-## 🌐 API access:
-
-| Endpoint                          | Rate limit                        | Maintainer                        |
-| --------------------------------- | --------------------------------- | --------------------------------- |
-| https://nsh.nde-code.workers.dev/ | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) |
+| Endpoint                                                               | Rate limit                        | Maintainer                        |
+| ---------------------------------------------------------------------- | --------------------------------- | --------------------------------- |
+| [https://nsh.nde-code.workers.dev/](https://nsh.nde-code.workers.dev/) | 1 req/IP/sec, 10 new links/IP/day | [Me](https://nde-code.github.io/) |
 
 CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 
-Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using my public online instance.
+> 📡 Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using the public online instance.
 
 **Notes:**
 
-- Feel free to use my public instance, but be aware of the limits.
-
+- Feel free to use the public instance, but be aware of the limits.
 - Keep an eye on the repository to catch any changes to these limits.
-
-- The Firebase RTDB database is located in Belgium on my public instance, so users from distant countries may experience some latency.
-
-- I've enabled [Smart Placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing for a better experience.
-
+- The Firebase RTDB database is located in Belgium on the public instance, so users from distant countries may experience some latency.
+- [Smart Placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing is enabled for a better experience.
 - The rate-limiting system temporarily processes IP addresses, which are pseudonymized using a hash combined with a secret salt before being used for rate limiting. For burst protection, the hashed value is temporarily stored in [Cloudflare Workers Cache](https://developers.cloudflare.com/workers/runtime-apis/cache/), while daily limits use [Cloudflare Workers KV](https://developers.cloudflare.com/kv/). The hashed value is retained only for the time required to enforce these limits and is automatically removed afterward.
 
-## 📚 Available endpoints:
+## 📚 Available endpoints
 
-In this section, I've used `https://your-worker.org.workers.dev/` in the cURL command examples. If you've deployed your own instance of the project, replace it with your instance's domain. Otherwise, use my free public instance at `https://nsh.nde-code.workers.dev/`, as explained above.
+> ℹ️ In this section, `https://your-worker.org.workers.dev/` is used in the cURL command examples. If you've deployed your own instance of the project, replace it with your instance's domain. Otherwise, use the free public instance at `https://nsh.nde-code.workers.dev/`, as explained above.
 
-### 1. **[POST]** `/post-url` - Create short URL:
+### 1. **[POST]** `/post-url` - Create short URL
 
 Create a short URL from a long URL. Saves to database and applies rate limiting.
 
-#### Request body:
+**Request body:**
 
 | Field      | Type   | Description                                           |
 | ---------- | ------ | ----------------------------------------------------- |
@@ -64,7 +79,7 @@ Create a short URL from a long URL. Saves to database and applies rate limiting.
 
 > **Note:** request fails if JSON contains unexpected fields or URL exceeds max length.
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                                                        |
 | ----- | ------------------------------------------------------------------ |
@@ -77,7 +92,7 @@ Create a short URL from a long URL. Saves to database and applies rate limiting.
 | `503` | KV quota exceeded or database read failure                         |
 | `507` | Firebase entry limit reached                                       |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -X POST "https://your-worker.org.workers.dev/post-url" \
@@ -85,7 +100,7 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
      -d '{"long_url": "https://nde-code.github.io/"}'
 ```
 
-#### Example response:
+**Example response:**
 
 ```json
 {
@@ -93,17 +108,19 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
 }
 ```
 
-### 2. **[GET]** `/url/:code` - Redirect to original URL:
+---
+
+### 2. **[GET]** `/url/:code` - Redirect to original URL
 
 Redirect to the original long URL using the short code.
 
-#### Path parameters:
+**Path parameters:**
 
 | Parameter | Type   | Description                   |
 | --------- | ------ | ----------------------------- |
 | `code`    | string | **Required.** Unique short ID |
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                                   |
 | ----- | --------------------------------------------- |
@@ -114,26 +131,28 @@ Redirect to the original long URL using the short code.
 | `500` | Server error                                  |
 | `503` | Request timeout or storage connection failure |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 ```
 
-### 3. **[GET]** `/urls` - List all URLs:
+---
+
+### 3. **[GET]** `/urls` - List all URLs
 
 Retrieve a paginated list of shortened links.
 
-> **Security:** requires valid admin key (see [authentication](#-authentication)).
+> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
 
-#### Query parameters:
+**Query parameters:**
 
 | Parameter | Type   | Description                                                          |
 | --------- | ------ | -------------------------------------------------------------------- |
 | `count`   | number | Number of links to retrieve (default: config value, max: restricted) |
 | `cursor`  | string | Last item key from previous page (use `next_cursor` from response)   |
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                           |
 | ----- | ------------------------------------- |
@@ -144,14 +163,14 @@ Retrieve a paginated list of shortened links.
 | `500` | Server error                          |
 | `503` | Database retrieval failure            |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl "https://your-worker.org.workers.dev/urls?count=2" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-#### Example response:
+**Example response:**
 
 ```json
 {
@@ -172,19 +191,21 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 }
 ```
 
-### 4. **[PATCH]** `/verify/:code` - Verify URL:
+---
+
+### 4. **[PATCH]** `/verify/:code` - Verify URL
 
 Mark a shortened URL as verified.
 
-> **Security:** requires valid admin key (see [authentication](#-authentication)).
+> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
 
-#### Path parameters:
+**Path parameters:**
 
 | Parameter | Type   | Description                   |
 | --------- | ------ | ----------------------------- |
 | `code`    | string | **Required.** Unique short ID |
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                                      |
 | ----- | ------------------------------------------------ |
@@ -196,26 +217,28 @@ Mark a shortened URL as verified.
 | `500` | Server error                                     |
 | `503` | Database update failure                          |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-### 5. **[DELETE]** `/delete/:code` - Delete URL:
+---
+
+### 5. **[DELETE]** `/delete/:code` - Delete URL
 
 Remove a shortened URL and decrement the counter.
 
-> **Security:** requires valid admin key (see [authentication](#-authentication)).
+> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
 
-#### Path parameters:
+**Path parameters:**
 
 | Parameter | Type   | Description                   |
 | --------- | ------ | ----------------------------- |
 | `code`    | string | **Required.** Unique short ID |
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                  |
 | ----- | ---------------------------- |
@@ -227,22 +250,24 @@ Remove a shortened URL and decrement the counter.
 | `500` | Server error                 |
 | `503` | Database deletion failure    |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-### 6. **[PATCH]** `/sync-counter` - Resynchronize counter:
+---
 
-Recalculate and sync the metadata counter to match actual URLs in Firebase. Useful for fixing race conditions or desynchronization.
+### 6. **[PATCH]** `/sync-counter` - Resynchronize counter
 
-> **Security:** requires valid admin or monitoring key (see [authentication](#-authentication)).
+Recalculate and sync the metadata counter to match the actual URLs in Firebase. Useful for fixing race conditions or desynchronization.
+
+> 🔒 **Security:** requires a valid admin or monitoring key (see [authentication](#-authentication)).
 
 > **Note:** the admin key can be used to manually resynchronize the counter when needed. The monitoring key is also accepted, allowing the endpoint to be called automatically by external monitoring tools (as with `/health`) or scheduled services.
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                                       |
 | ----- | ------------------------------------------------- |
@@ -252,14 +277,14 @@ Recalculate and sync the metadata counter to match actual URLs in Firebase. Usef
 | `500` | Server error                                      |
 | `503` | Database communication failure                    |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
-#### Example response:
+**Example response:**
 
 ```json
 {
@@ -268,13 +293,15 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 }
 ```
 
-### 7. **[GET]** `/health` - Service health check:
+---
+
+### 7. **[GET]** `/health` - Service health check
 
 Check service health: configuration, database connectivity, counter integrity, capacity, and KV storage.
 
-> **Security:** requires valid monitoring key (see [authentication](#-authentication)).
+> 🔒 **Security:** requires a valid monitoring key (see [authentication](#-authentication)).
 
-#### Response codes:
+**Response codes:**
 
 | Code  | Description                                                |
 | ----- | ---------------------------------------------------------- |
@@ -282,14 +309,14 @@ Check service health: configuration, database connectivity, counter integrity, c
 | `206` | Degraded but operational (one or more non-critical issues) |
 | `503` | Service unavailable (critical failure)                     |
 
-#### Example request:
+**Example request:**
 
 ```bash
 curl -X GET "https://your-worker.org.workers.dev/health" \
      -H "x-api-key: YOUR_MONITORING_KEY"
 ```
 
-#### Example response (Healthy):
+**Example response (healthy):**
 
 ```json
 {
@@ -305,25 +332,25 @@ curl -X GET "https://your-worker.org.workers.dev/health" \
 }
 ```
 
-## 🔐 Authentication:
+## 🔐 Authentication
 
 Protected endpoints require either header format:
 
 - `Authorization: Bearer <MONITORING_or_ADMIN_KEY>`
 - `x-api-key: <MONITORING_or_ADMIN_KEY>`
 
-> **Note:** trying to access the administration endpoints on my public instance is **completely forbidden**.
+> ⛔ **Note:** trying to access the administration endpoints on the public instance is **completely forbidden**.
 
-## 🖥️ Developer documentation:
+## 🖥️ Developer documentation
 
-For setup, configuration, and deployment using Wrangler CLI, see the [developer guide](docs/documentation.md).
+For setup, configuration, and deployment using the Wrangler CLI, see the **[developer guide](docs/documentation.md)**.
 
-## ⚖️ License:
+## ⚖️ License
 
 This project is licensed under the **[Apache License v2.0](LICENSE)**.
 
-## 🎯 Author:
+## 🎯 Author
 
-Created and maintained by [Nde-Code](https://nde-code.github.io/).
+Created and maintained by **[Nde-Code](https://nde-code.github.io/)**.
 
 > Don't hesitate to open an issue or a pull request if you have any questions or would like to contribute.

@@ -1,34 +1,63 @@
-# Documentation:
+<div align="center">
 
-Complete developer guide for contributing to this project or building and deploying your own version on [Cloudflare Workers](https://workers.cloudflare.com/) with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+# 🖥️ Developer Documentation
+
+**Complete developer guide for contributing to this project or building and deploying your own version.**
+
+Built on [Cloudflare Workers](https://workers.cloudflare.com/) with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
+
+</div>
 
 > **Note:** this project uses npm to manage development dependencies, including Wrangler and TypeScript.
 
-## 🚀 Getting started with GitHub Codespaces:
+## 📑 Table of contents
+
+- [🚀 Getting started with GitHub Codespaces](#-getting-started-with-github-codespaces)
+    - [0. Fork the repository](#0-fork-the-repository)
+    - [1. Configure the required secrets](#1-configure-the-required-secrets)
+    - [2. Open the repository in GitHub Codespaces](#2-open-the-repository-in-github-codespaces)
+    - [3. Automatic environment setup](#3-automatic-environment-setup)
+    - [4. Authenticate with Cloudflare](#4-authenticate-with-cloudflare)
+- [⚙️ Configuration setup](#️-configuration-setup)
+    - [Core configuration fields](#core-configuration-fields)
+    - [Observability configuration](#observability-configuration)
+    - [Worker execution location](#worker-execution-location)
+    - [KV database](#kv-database)
+    - [Environment variables](#environment-variables)
+    - [Software configuration](#software-configuration)
+- [💻 Project setup](#-project-setup)
+    - [1. Create Firebase Realtime Database](#1-create-firebase-realtime-database)
+    - [2. TypeScript types](#2-typescript-types)
+    - [3. Run and deploy](#3-run-and-deploy)
+- [📌 Support](#-support)
+
+---
+
+## 🚀 Getting started with GitHub Codespaces
 
 The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces), making it quick and easy to start coding.
 
-Using Codespaces is the recommended way to work on the project because it automatically sets up the required elements and provides a ready-to-code environment.
+> ✅ Using Codespaces is the **recommended** way to work on the project, since it automatically sets up the required elements and provides a ready-to-code environment.
 
-### 0. Fork the repository:
+### 0. Fork the repository
 
-First, create a fork of the repository by following: [https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo).
+First, create a fork of the repository by following the [GitHub guide on forking a repo](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo).
 
-You will obtain a repository containing your own copy of the project on your GitHub account, which allows you to use the project, make modifications, and share them with me via a pull request if you wish.
+You will obtain a repository containing your own copy of the project on your GitHub account, which allows you to use the project, make modifications, and share them with the maintainer via a pull request if you wish.
 
-### 1. Configure the required secrets:
+### 1. Configure the required secrets
 
 Before you start a new Codespaces environment and begin coding in it, you need to register the required secrets in the repository's GitHub Codespaces secrets.
 
 See the [environment variables](#environment-variables) section for the required configuration and the [GitHub Codespaces documentation about secrets](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces) for more details.
 
-### 2. Open the repository in GitHub Codespaces:
+### 2. Open the repository in GitHub Codespaces
 
-Open the repository on GitHub and create a new Codespace from the Code → Codespaces menu.
+Open the repository on GitHub and create a new Codespace from the **Code → Codespaces** menu.
 
 GitHub will automatically detect the project's [`.devcontainer.json`](../.devcontainer.json) configuration and build the development environment.
 
-### 3. Automatic environment setup:
+### 3. Automatic environment setup
 
 The [`.devcontainer.json`](../.devcontainer.json) file:
 
@@ -59,11 +88,11 @@ defines the Codespace development environment:
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
-Wrangler is installed locally through npm dependencies to ensure a reproducible development environment across local machines, Codespaces, and CI workflows. This is also the approach now strongly recommended by Cloudflare for developers: [https://developers.cloudflare.com/workers/wrangler/install-and-update/](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
+Wrangler is installed locally through npm dependencies to ensure a reproducible development environment across local machines, Codespaces, and CI workflows. This is also the approach now strongly recommended by Cloudflare for developers — see the [Wrangler install & update guide](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 
-> **Note:** `.dev.vars` is a local development file and must never be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
+> ⚠️ **Note:** `.dev.vars` is a local development file and must **never** be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
 
-### 4. Authenticate with Cloudflare:
+### 4. Authenticate with Cloudflare
 
 Once the Codespace has finished initializing, authenticate Wrangler with your Cloudflare account:
 
@@ -71,7 +100,7 @@ Once the Codespace has finished initializing, authenticate Wrangler with your Cl
 npm run login
 ```
 
-## ⚙️ Configuration setup:
+## ⚙️ Configuration setup
 
 Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the complete project configuration:
 
@@ -103,82 +132,44 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 }
 ```
 
-### Core configuration fields:
+### Core configuration fields
 
-#### `name`
+| Field                | Purpose                                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`               | Defines the **Worker project name**. This determines your public URL (e.g., `https://project-name.your-subdomain.workers.dev`).       |
+| `main`               | Specifies the **entry point** of your Worker script. This file exports your main fetch handler.                                       |
+| `compatibility_date` | Locks your Worker to a specific Cloudflare Workers runtime version, ensuring compatibility even as Cloudflare updates the platform.   |
+| `preview_urls`       | Enables (`true`) or disables (`false`) [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/) for testing. |
 
-Defines the **Worker project name**.
-This determines your public URL (e.g., `https://project-name.your-subdomain.workers.dev`).
+### Observability configuration
 
-#### `main`
+| Field                                | Purpose                                                                                                                                                                                      |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `observability.enabled`              | When `true`, enables **automatic metrics and logs collection**, allowing performance and error monitoring in the Cloudflare dashboard.                                                       |
+| `observability.head_sampling_rate`   | Defines the **percentage of requests sampled for tracing** (0 to 1) — `1` = 100% sampling (useful for debugging), `0.1` = 10% sampling (better for production).                              |
+| `observability.logs.invocation_logs` | Controls **automatic invocation log collection** — `true` logs request metadata, headers, and execution details; `false` disables automatic logs, keeping only custom `console.log` entries. |
+| `observability.traces.enabled`       | Controls **distributed tracing** — `true` enables tracing spans and trace IDs, `false` disables tracing entirely.                                                                            |
 
-Specifies the **entry point** of your Worker script.
-This file exports your main fetch handler.
+> 🔒 Disabling `invocation_logs` is **recommended for GDPR compliance**, to prevent storage of sensitive request data.
+>
+> Leave `traces.enabled` disabled if not using OpenTelemetry or a tracing system.
 
-#### `compatibility_date`
+### Worker execution location
 
-Locks your Worker to a specific Cloudflare Workers runtime version.
-Ensures compatibility even as Cloudflare updates the platform.
+`placement` controls where Cloudflare executes your Worker using [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/).
 
-#### `preview_urls`
+When `mode` is set to `"smart"`, Cloudflare automatically determines the most suitable location to run your Worker based on its execution patterns and backend interactions. This can reduce latency for Workers that communicate with external services, APIs, databases, or other resources that are geographically distant from the default execution location.
 
-Enables or disables preview URLs for testing: [https://developers.cloudflare.com/workers/configuration/previews/](https://developers.cloudflare.com/workers/configuration/previews/).
+| Value     | Effect                                 |
+| --------- | -------------------------------------- |
+| `"smart"` | Enables Smart Placement                |
+| `"off"`   | Disables Worker placement optimization |
 
-- `true` = Enables preview URLs
-- `false` = Disables preview URLs
+> ⏱️ Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
 
-### Observability configuration:
+### KV database
 
-#### `observability.enabled`
-
-When `true`, enables **automatic metrics and logs collection**.
-Allows performance and error monitoring in the Cloudflare dashboard.
-
-#### `observability.head_sampling_rate`
-
-Defines the **percentage of requests sampled for tracing** (0 to 1):
-
-- `1` = 100% sampling (useful for debugging)
-- `0.1` = 10% sampling (better for production)
-
-#### `observability.logs.invocation_logs`
-
-Controls **automatic invocation log collection**:
-
-- `true` = Logs request metadata, headers, and execution details
-- `false` = Disables automatic logs, keeping only custom `console.log` entries
-
-> Disabling invocation logs is **recommended for GDPR compliance** to prevent storage of sensitive request data.
-
-#### `observability.traces.enabled`
-
-Controls **distributed tracing**:
-
-- `true` = Enables tracing spans and trace IDs
-- `false` = Disables tracing entirely
-
-> Leave disabled if not using OpenTelemetry or a tracing system.
-
-### Worker execution location:
-
-#### `placement`
-
-Controls where Cloudflare executes your Worker using [Cloudflare Workers Placement](https://developers.cloudflare.com/workers/configuration/placement/).
-
-When `mode` is set to `"smart"`, Cloudflare automatically determines the most suitable location to run your Worker based on its execution patterns and backend interactions.
-
-This can reduce latency for Workers that communicate with external services, APIs, databases, or other resources that are geographically distant from the default execution location.
-
-- `"smart"` = Enables Smart Placement
-- `"off"` = Disables Worker placement optimization
-
-> Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
-
-### KV database:
-
-#### `kv_namespaces`
-
-Binds your Worker to [Cloudflare Workers KV](https://developers.cloudflare.com/kv/) to store the data required for the daily rate-limiting system.
+`kv_namespaces` binds your Worker to [Cloudflare Workers KV](https://developers.cloudflare.com/kv/) to store the data required for the daily rate-limiting system.
 
 Create a Workers KV namespace from the Codespace using:
 
@@ -195,11 +186,11 @@ Complete [`wrangler.jsonc`](../wrangler.jsonc) with:
 | `binding` | The variable name used in the code is `RATE_LIMIT_KV`, so **do not change this value** (_no change required_). |
 | `id`      | The unique namespace ID provided by Wrangler in the command output or available in your Cloudflare dashboard.  |
 
-### Environment variables:
+### Environment variables
 
-The Worker uses standard environment variables in a `.dev.vars` file for local development and [Cloudflare Workers Secrets for deployed Workers](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) in production.
+The Worker uses standard environment variables in a `.dev.vars` file for local development, and [Cloudflare Workers Secrets](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) for deployed Workers in production.
 
-#### Variables in this project:
+**Variables used in this project:**
 
 | Variable                         | Description                                                                                                       |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -209,13 +200,13 @@ The Worker uses standard environment variables in a `.dev.vars` file for local d
 | `ADMIN_KEY`                      | The private key for verifying, listing, resynchronizing (counter), or deleting data.                              |
 | `MONITORING_KEY`                 | The key for secure service-status monitoring or link-counter resynchronization.                                   |
 
-#### Local development:
+#### Local development
 
 Create/configure the values above as [GitHub Codespaces secrets](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-your-account-specific-secrets-for-github-codespaces).
 
 > When the Codespace is created, [`.devcontainer.json`](../.devcontainer.json) automatically writes them to `.dev.vars`, as explained above.
 
-#### Production:
+#### Production
 
 For the deployed Worker, configure the same values as [Cloudflare Workers Secrets for deployed Workers](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers):
 
@@ -229,7 +220,7 @@ wrangler secret put ADMIN_KEY
 wrangler secret put MONITORING_KEY
 ```
 
-#### Security notes:
+#### Security notes
 
 | Variable               | Requirements                                                                                                                            |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -238,9 +229,9 @@ wrangler secret put MONITORING_KEY
 | `ADMIN_KEY`            | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
 | `MONITORING_KEY`       | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
 
-> `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
+> ⚠️ `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
 
-### Software configuration:
+### Software configuration
 
 Take a look at the [`config.ts`](../config.ts) file at the root of the project, which looks like:
 
@@ -268,7 +259,7 @@ export const config: StaticConfig = {
 };
 ```
 
-#### Configuration parameters:
+**Configuration parameters:**
 
 | Parameter                            | Description                                                                                                                           | Constraint(s)                                            |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -283,28 +274,24 @@ export const config: StaticConfig = {
 | `SHORT_URL_ID_LENGTH`                | Length of generated shortcodes                                                                                                        | Minimum: 10 characters                                   |
 | `MAX_URL_LENGTH`                     | Maximum allowed URL length                                                                                                            | Minimum: 100 characters                                  |
 
-#### Notes:
+**Notes:**
 
-- **Request body limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
+- **Request body limit** — a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
+- **URL hashing & deduplication** — DJB2 is used to hash URLs and generate IDs, preventing duplicate entries in the database.
+- **Constraint validation** — violating constraints will trigger a configuration error.
 
-- **URL hashing & deduplication:** I use DJB2 to hash URLs and generate IDs, preventing duplicate entries in the database.
-
-- **Constraint validation:** violating constraints will trigger a configuration error.
-
-## 💻 Project setup:
+## 💻 Project setup
 
 Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 to create your Firebase Realtime Database. This section then explains how the types are initialized in step 2 and how to run the project in step 3.
 
-### 1. Create Firebase Realtime Database:
+### 1. Create Firebase Realtime Database
 
 This database stores links and their associated data, including the post date and verification status, as well as a counter tracking the total number of URLs stored.
 
 To set up your Firebase Realtime Database, follow these steps:
 
 1. Go to [firebase.google.com](https://firebase.google.com/) and sign in with a Google account.
-
-2. Create a **project** and set up a **Realtime Database** (see: [https://firebase.google.com/docs/build?hl=en](https://firebase.google.com/docs/build?hl=en) if needed).
-
+2. Create a **project** and set up a **Realtime Database** (see [firebase.google.com/docs/build](https://firebase.google.com/docs/build?hl=en) if needed).
 3. Go to the **Rules** tab and paste this configuration:
 
 ```js
@@ -344,9 +331,9 @@ To set up your Firebase Realtime Database, follow these steps:
 }
 ```
 
-> Don't forget to set `YOUR_SECRET_PATH` correctly and click the **Save** button.
+> 📝 Don't forget to set `YOUR_SECRET_PATH` correctly and click the **Save** button.
 
-#### Security rules summary:
+**Security rules summary:**
 
 | Action             | Condition                                                                                                                                                            |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -358,7 +345,7 @@ To set up your Firebase Realtime Database, follow these steps:
 | **Validation**     | Requires `long_url` to be a valid HTTP/HTTPS URL of at most 2000 characters, `post_date` to use the expected ISO 8601 UTC format, and `is_verified` to be a boolean. |
 | **Extra fields**   | Forbidden, with only `long_url`, `post_date`, and `is_verified` allowed under each `urls/$shortcode` node.                                                           |
 
-### 2. TypeScript types:
+### 2. TypeScript types
 
 The Dev Container automatically runs `npm run types` when the Codespace is created. This executes Wrangler's type generation command and creates the TypeScript definitions required by the Worker in `worker-configuration.d.ts`.
 
@@ -399,7 +386,8 @@ The generated definitions are automatically picked up by TypeScript through the 
 }
 ```
 
-#### TypeScript configuration explanation:
+<details>
+<summary><strong>TypeScript configuration explanation</strong></summary>
 
 | Setting                                  | Purpose                                                                                       |
 | ---------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -424,15 +412,17 @@ The generated definitions are automatically picked up by TypeScript through the 
 | `include`                                | Specifies the source files and types to type-check.                                           |
 | `exclude`                                | Specifies build artifacts and dependencies to ignore.                                         |
 
-### 3. Run and deploy:
+</details>
 
-#### Start local development:
+### 3. Run and deploy
+
+**Start local development:**
 
 ```bash
 npm run dev
 ```
 
-#### Format code:
+**Format code:**
 
 Run Prettier to automatically format the codebase:
 
@@ -440,9 +430,9 @@ Run Prettier to automatically format the codebase:
 npm run format
 ```
 
-#### Deploy to Cloudflare Workers:
+**Deploy to Cloudflare Workers:**
 
-> Make sure your [Cloudflare Workers Secrets (for deployed Workers)](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) have been configured before deploying (see [environment variables](#environment-variables)).
+> ⚠️ Make sure your [Cloudflare Workers Secrets](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) (for deployed Workers) have been configured before deploying — see [environment variables](#environment-variables).
 
 ```bash
 npm run deploy
@@ -450,6 +440,6 @@ npm run deploy
 
 If the Worker is configured to use a `workers.dev` subdomain, Wrangler will display the deployed URL after deployment.
 
-## 📌 Support:
+## 📌 Support
 
 For issues or questions, open an [issue on GitHub](https://github.com/Nde-Code/NSH/issues).
