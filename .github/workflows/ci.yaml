@@ -26,10 +26,10 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install Node.js dependencies
+      - name: Install npm dependencies
         run: npm ci
 
-      - name: Prettier format check
+      - name: Check formatting with Prettier
         run: npm run prettier-check
 
   type-check:
@@ -47,13 +47,13 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install Node.js dependencies
+      - name: Install npm dependencies
         run: npm ci
 
       - name: Generate Wrangler types
         run: npm run types
 
-      - name: TypeScript type check
+      - name: Check TypeScript types
         run: npm run check-types
 
   integrity-test:
@@ -71,7 +71,7 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install Node.js dependencies
+      - name: Install npm dependencies
         run: npm ci
 
       - name: Set up Python
@@ -84,7 +84,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Create .dev.vars file
+      - name: Create environment variables file
         run: |
           echo "FIREBASE_REALTIME_DATABASE_URL=\"${{ secrets.FIREBASE_REALTIME_DATABASE_URL }}\"" > .dev.vars
           echo "FIREBASE_HIDDEN_PATH=\"${{ secrets.FIREBASE_HIDDEN_PATH }}\"" >> .dev.vars
@@ -92,12 +92,12 @@ jobs:
           echo "ADMIN_KEY=\"${{ secrets.ADMIN_KEY }}\"" >> .dev.vars
           echo "MONITORING_KEY=\"${{ secrets.MONITORING_KEY }}\"" >> .dev.vars
 
-      - name: Start Wrangler Dev
+      - name: Start Wrangler dev server
         run: |
           npm run dev -- --show-interactive-dev-session=false --port 8787 &
           sleep 15
 
-      - name: Run API integrity test suite
+      - name: Run API integrity tests
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
