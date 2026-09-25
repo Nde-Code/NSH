@@ -6,6 +6,9 @@
         "**/.wrangler": true,
         "**/worker-configuration.d.ts": true,
         "**/.DS_Store": true,
+        "**/.AppleDouble": true,
+        "**/.LSOverride": true,
+        "**/._*": true,
         "**/Thumbs.db": true
     },
     "search.exclude": {
@@ -15,6 +18,9 @@
         "**/.wrangler": true,
         "**/worker-configuration.d.ts": true,
         "**/.DS_Store": true,
+        "**/.AppleDouble": true,
+        "**/.LSOverride": true,
+        "**/._*": true,
         "**/Thumbs.db": true
     },
     "search.useIgnoreFiles": true,

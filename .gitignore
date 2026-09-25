@@ -19,6 +19,9 @@ worker-configuration.d.ts
 
 # macOS system metadata files (Finder metadata, safe to ignore):
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
 # Windows system thumbnail cache files:
 Thumbs.db
