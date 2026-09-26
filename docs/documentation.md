@@ -8,7 +8,7 @@ Built on [Cloudflare Workers](https://workers.cloudflare.com/) with [Wrangler](h
 
 </div>
 
-> **Note:** this project uses npm to manage development dependencies, including Wrangler and TypeScript.
+> **Note:** this project uses npm to manage development dependencies, including Wrangler, Prettier and TypeScript.
 
 ## 📑 Table of contents
 
@@ -208,7 +208,7 @@ Create/configure the values above as [GitHub Codespaces secrets](https://docs.gi
 
 #### Production
 
-For the deployed Worker, configure the same values as [Cloudflare Workers Secrets for deployed Workers](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers):
+For the deployed Worker, configure _the same values_ (rigorously, `IP_HASH_SALT`, `ADMIN_KEY` and `MONITORING_KEY` can be different in local and in production, but **not** `FIREBASE_REALTIME_DATABASE_URL` and `FIREBASE_HIDDEN_PATH`) as [Cloudflare Workers Secrets for deployed Workers](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers):
 
 > **Note:** copy and paste the following commands one at a time.
 
@@ -331,7 +331,7 @@ To set up your Firebase Realtime Database, follow these steps:
 }
 ```
 
-> 📝 Don't forget to set `YOUR_SECRET_PATH` correctly and click the **Save** button.
+> 📝 Don't forget to set `YOUR_SECRET_PATH` (which is the value of `FIREBASE_HIDDEN_PATH`) correctly and click the **Save** button.
 
 **Security rules summary:**
 
