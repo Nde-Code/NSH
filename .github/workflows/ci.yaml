@@ -56,7 +56,7 @@ jobs:
       - name: Check TypeScript types
         run: npm run check-types
 
-  integrity-test:
+  integration-test:
     runs-on: ubuntu-latest
 
     permissions:
@@ -97,7 +97,7 @@ jobs:
           npm run dev -- --show-interactive-dev-session=false --port 8787 &
           sleep 15
 
-      - name: Run API integrity tests
+      - name: Run API integration tests
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
