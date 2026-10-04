@@ -150,8 +150,6 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 | `observability.logs.invocation_logs` | Controls **automatic invocation log collection** — `true` logs request metadata, headers, and execution details; `false` disables automatic logs, keeping only custom `console.log` entries. |
 | `observability.traces.enabled`       | Controls **distributed tracing** — `true` enables tracing spans and trace IDs, `false` disables tracing entirely.                                                                            |
 
-> 🔒 Disabling `invocation_logs` is **recommended for GDPR compliance**, to prevent storage of sensitive request data.
->
 > Leave `traces.enabled` disabled if not using OpenTelemetry or a tracing system.
 
 ### Worker execution location
