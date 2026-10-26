@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev # Additional branch to test changes before deploying.
 
   pull_request:
 
@@ -107,12 +108,12 @@ jobs:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
           MONITORING_KEY: ${{ secrets.MONITORING_KEY }}
         run: |
-          curl -sL "${{ vars.GIST_TEST_SCRIPT }}" -o nsh.py
+          curl -fsSL "${{ vars.GIST_TEST_SCRIPT }}" -o nsh.py
           python nsh.py \
             --link "https://test.domain.com" \
             --remote "http://localhost:8787" \
             --max-url-length 2000 \
             --max-daily-write 10 \
             --timeout 25 \
-            --delay 12 \
+            --delay 8 \
             --id-length 14
