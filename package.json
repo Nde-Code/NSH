@@ -26,6 +26,6 @@
     "devDependencies": {
         "prettier": "^3.9.10",
         "typescript": "^7.0.2",
-        "wrangler": "^4.151.0"
+        "wrangler": "^4.152.0"
     }
 }
