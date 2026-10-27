@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔗 NSH — Serverless URL Shortener
+# 🔗 Serverless URL Shortener
 
 **A lightweight serverless URL shortener API, backed by [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).**
 
@@ -20,13 +20,13 @@ This project is intended for **personal use and small-scale deployments**, and r
 - [🚀 Key features](#-key-features)
 - [🌐 API access](#-api-access)
 - [📚 Available endpoints](#-available-endpoints)
-    - [1. `/post-url` — Create short URL](#1-post-post-url---create-short-url)
-    - [2. `/url/:code` — Redirect to original URL](#2-get-urlcode---redirect-to-original-url)
-    - [3. `/urls` — List all URLs](#3-get-urls---list-all-urls)
-    - [4. `/verify/:code` — Verify URL](#4-patch-verifycode---verify-url)
-    - [5. `/delete/:code` — Delete URL](#5-delete-deletecode---delete-url)
-    - [6. `/sync-counter` — Resynchronize counter](#6-patch-sync-counter---resynchronize-counter)
-    - [7. `/health` — Service health check](#7-get-health---service-health-check)
+    - [1. `/post-url` - Create short URL](#1-post-post-url---create-short-url)
+    - [2. `/url/:code` - Redirect to original URL](#2-get-urlcode---redirect-to-original-url)
+    - [3. `/urls` - List all URLs](#3-get-urls---list-all-urls)
+    - [4. `/verify/:code` - Verify URL](#4-patch-verifycode---verify-url)
+    - [5. `/delete/:code` - Delete URL](#5-delete-deletecode---delete-url)
+    - [6. `/sync-counter` - Resynchronize counter](#6-patch-sync-counter---resynchronize-counter)
+    - [7. `/health` - Service health check](#7-get-health---service-health-check)
 - [🔐 Authentication](#-authentication)
 - [🖥️ Developer documentation](#️-developer-documentation)
 - [⚖️ License](#️-license)
@@ -36,14 +36,14 @@ This project is intended for **personal use and small-scale deployments**, and r
 
 ## 🚀 Key features
 
-- **Rate limiting** — daily request quotas and burst traffic protection (anti-spam).
-- **No duplicates** — prevents storing identical URLs, saving database space.
-- **No sign-up** — no account creation, credit card, or personal data required.
-- **Privacy-conscious** — built with privacy in mind, with GDPR principles considered where relevant.
-- **Highly configurable** — customize behavior to your needs.
-- **Firebase backend** — stores URL mappings in Firebase Realtime Database.
-- **Minimal REST API** — fast, efficient, and lightweight.
-- **Serverless** — runs on the Cloudflare Workers free plan with strict resource limits.
+- **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
+- **No duplicates:** prevents storing identical URLs, saving database space.
+- **No sign-up:** no account creation, credit card, or personal data required.
+- **Privacy-conscious:** built with privacy in mind, with GDPR principles considered where relevant.
+- **Highly configurable:** customize behavior to your needs.
+- **Firebase backend:** stores URL mappings in Firebase Realtime Database.
+- **Minimal REST API:** fast, efficient, and lightweight.
+- **Serverless:** runs on the Cloudflare Workers free plan with strict resource limits.
 
 ## 🌐 API access
 

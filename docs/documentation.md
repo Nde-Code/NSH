@@ -88,7 +88,7 @@ defines the Codespace development environment:
 
 The `postCreateCommand` automatically performs the required setup when the Codespace is created.
 
-Wrangler is installed locally through npm dependencies to ensure a reproducible development environment across local machines, Codespaces, and CI workflows. This is also the approach now strongly recommended by Cloudflare for developers — see the [Wrangler install & update guide](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
+Wrangler is installed locally through npm dependencies to ensure a reproducible development environment across local machines, Codespaces, and CI workflows. This is also the approach now strongly recommended by Cloudflare for developers, see the [Wrangler install & update guide](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 
 > ⚠️ **Note:** `.dev.vars` is a local development file and must **never** be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
 
@@ -146,7 +146,7 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 | Field                                | Purpose                                                                                                                                                                                      |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `observability.enabled`              | When `true`, enables **automatic metrics and logs collection**, allowing performance and error monitoring in the Cloudflare dashboard.                                                       |
-| `observability.head_sampling_rate`   | Defines the **percentage of requests sampled for tracing** (0 to 1) — `1` = 100% sampling (useful for debugging), `0.1` = 10% sampling (better for production).                              |
+| `observability.head_sampling_rate`   | Defines the **percentage of requests sampled for tracing** (0 to 1), `1` = 100% sampling (useful for debugging), `0.1` = 10% sampling (better for production).                               |
 | `observability.logs.invocation_logs` | Controls **automatic invocation log collection** — `true` logs request metadata, headers, and execution details; `false` disables automatic logs, keeping only custom `console.log` entries. |
 | `observability.traces.enabled`       | Controls **distributed tracing** — `true` enables tracing spans and trace IDs, `false` disables tracing entirely.                                                                            |
 
@@ -274,9 +274,9 @@ export const config: StaticConfig = {
 
 **Notes:**
 
-- **Request body limit** — a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
-- **URL hashing & deduplication** — DJB2 is used to hash URLs and generate IDs, preventing duplicate entries in the database.
-- **Constraint validation** — violating constraints will trigger a configuration error.
+- **Request body limit:** a 10KB JSON payload limit is enforced for security when posting new URLs. This is hard-coded and can be modified in source code.
+- **URL hashing & deduplication:** DJB2 is used to hash URLs and generate IDs, preventing duplicate entries in the database.
+- **Constraint validation:** violating constraints will trigger a configuration error.
 
 ## 💻 Project setup
 
@@ -430,7 +430,7 @@ npm run format
 
 **Deploy to Cloudflare Workers:**
 
-> ⚠️ Make sure your [Cloudflare Workers Secrets](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) (for deployed Workers) have been configured before deploying — see [environment variables](#environment-variables).
+> ⚠️ Make sure your [Cloudflare Workers Secrets](https://developers.cloudflare.com/workers/configuration/secrets/#secrets-on-deployed-workers) (for deployed Workers) have been configured before deploying, see [environment variables](#environment-variables).
 
 ```bash
 npm run deploy
