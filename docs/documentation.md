@@ -1,43 +1,16 @@
-<div align="center">
+# Developer Documentation
 
-# 🖥️ Developer Documentation
-
-**Complete developer guide for contributing to this project or building and deploying your own version.**
+Complete developer guide for contributing to this project or building and deploying your own version.
 
 Built on [Cloudflare Workers](https://workers.cloudflare.com/) with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
-</div>
-
 > **Note:** this project uses npm to manage development dependencies, including Wrangler, Prettier and TypeScript.
 
-## 📑 Table of contents
-
-- [🚀 Getting started with GitHub Codespaces](#-getting-started-with-github-codespaces)
-    - [0. Fork the repository](#0-fork-the-repository)
-    - [1. Configure the required secrets](#1-configure-the-required-secrets)
-    - [2. Open the repository in GitHub Codespaces](#2-open-the-repository-in-github-codespaces)
-    - [3. Automatic environment setup](#3-automatic-environment-setup)
-    - [4. Authenticate with Cloudflare](#4-authenticate-with-cloudflare)
-- [⚙️ Configuration setup](#️-configuration-setup)
-    - [Core configuration fields](#core-configuration-fields)
-    - [Observability configuration](#observability-configuration)
-    - [Worker execution location](#worker-execution-location)
-    - [KV database](#kv-database)
-    - [Environment variables](#environment-variables)
-    - [Software configuration](#software-configuration)
-- [💻 Project setup](#-project-setup)
-    - [1. Create Firebase Realtime Database](#1-create-firebase-realtime-database)
-    - [2. TypeScript types](#2-typescript-types)
-    - [3. Run and deploy](#3-run-and-deploy)
-- [📌 Support](#-support)
-
----
-
-## 🚀 Getting started with GitHub Codespaces
+## Getting started with GitHub Codespaces
 
 The project provides a pre-configured [Dev Container](https://containers.dev/) environment for [GitHub Codespaces](https://github.com/features/codespaces), making it quick and easy to start coding.
 
-> ✅ Using Codespaces is the **recommended** way to work on the project, since it automatically sets up the required elements and provides a ready-to-code environment.
+> Using Codespaces is the **recommended** way to work on the project, since it automatically sets up the required elements and provides a ready-to-code environment.
 
 ### 0. Fork the repository
 
@@ -90,7 +63,7 @@ The `postCreateCommand` automatically performs the required setup when the Codes
 
 Wrangler is installed locally through npm dependencies to ensure a reproducible development environment across local machines, Codespaces, and CI workflows. This is also the approach now strongly recommended by Cloudflare for developers, see the [Wrangler install & update guide](https://developers.cloudflare.com/workers/wrangler/install-and-update/).
 
-> ⚠️ **Note:** `.dev.vars` is a local development file and must **never** be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
+> **Note:** `.dev.vars` is a local development file and must **never** be committed to the repository. It is already included in [`.gitignore`](../.gitignore).
 
 ### 4. Authenticate with Cloudflare
 
@@ -100,7 +73,7 @@ Once the Codespace has finished initializing, authenticate Wrangler with your Cl
 npm run login
 ```
 
-## ⚙️ Configuration setup
+## Configuration setup
 
 Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the complete project configuration:
 
@@ -143,12 +116,12 @@ Review the [`wrangler.jsonc`](../wrangler.jsonc) file, which contains the comple
 
 ### Observability configuration
 
-| Field                                | Purpose                                                                                                                                                                                      |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `observability.enabled`              | When `true`, enables **automatic metrics and logs collection**, allowing performance and error monitoring in the Cloudflare dashboard.                                                       |
-| `observability.head_sampling_rate`   | Defines the **percentage of requests sampled for tracing** (0 to 1), `1` = 100% sampling (useful for debugging), `0.1` = 10% sampling (better for production).                               |
-| `observability.logs.invocation_logs` | Controls **automatic invocation log collection** — `true` logs request metadata, headers, and execution details; `false` disables automatic logs, keeping only custom `console.log` entries. |
-| `observability.traces.enabled`       | Controls **distributed tracing** — `true` enables tracing spans and trace IDs, `false` disables tracing entirely.                                                                            |
+| Field                                | Purpose                                                                                                                                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `observability.enabled`              | When `true`, enables **automatic metrics and logs collection**, allowing performance and error monitoring in the Cloudflare dashboard.                                                      |
+| `observability.head_sampling_rate`   | Defines the **percentage of requests sampled for tracing** (0 to 1), `1` = 100% sampling (useful for debugging), `0.1` = 10% sampling (better for production).                              |
+| `observability.logs.invocation_logs` | Controls **automatic invocation log collection**: `true` logs request metadata, headers, and execution details; `false` disables automatic logs, keeping only custom `console.log` entries. |
+| `observability.traces.enabled`       | Controls **distributed tracing**: `true` enables tracing spans and trace IDs, `false` disables tracing entirely.                                                                            |
 
 > Leave `traces.enabled` disabled if not using OpenTelemetry or a tracing system.
 
@@ -163,7 +136,7 @@ When `mode` is set to `"smart"`, Cloudflare automatically determines the most su
 | `"smart"` | Enables Smart Placement                |
 | `"off"`   | Disables Worker placement optimization |
 
-> ⏱️ Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
+> Smart Placement requires sufficient traffic for Cloudflare to analyze the Worker and determine whether moving its execution location provides a performance benefit. The placement decision may take some time after deployment and can change as traffic patterns evolve.
 
 ### KV database
 
@@ -227,7 +200,7 @@ wrangler secret put MONITORING_KEY
 | `ADMIN_KEY`            | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
 | `MONITORING_KEY`       | A strong value with at least **30 characters**, including uppercase and lowercase letters and numbers.                                  |
 
-> ⚠️ `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
+> `FIREBASE_HIDDEN_PATH`, `IP_HASH_SALT`, `ADMIN_KEY`, and `MONITORING_KEY` are sensitive secrets and must be handled with extreme caution. You may use scripts or tools to generate them, but make sure you never leak, log, or expose them.
 
 ### Software configuration
 
@@ -278,7 +251,7 @@ export const config: StaticConfig = {
 - **URL hashing & deduplication:** DJB2 is used to hash URLs and generate IDs, preventing duplicate entries in the database.
 - **Constraint validation:** violating constraints will trigger a configuration error.
 
-## 💻 Project setup
+## Project setup
 
 Once your Codespace is ready and your Cloudflare account is authenticated, complete step 1 to create your Firebase Realtime Database. This section then explains how the types are initialized in step 2 and how to run the project in step 3.
 
@@ -329,7 +302,7 @@ To set up your Firebase Realtime Database, follow these steps:
 }
 ```
 
-> 📝 Don't forget to set `YOUR_SECRET_PATH` (which is the value of `FIREBASE_HIDDEN_PATH`) correctly and click the **Save** button.
+> Don't forget to set `YOUR_SECRET_PATH` (which is the value of `FIREBASE_HIDDEN_PATH`) correctly and click the **Save** button.
 
 **Security rules summary:**
 
@@ -438,6 +411,6 @@ npm run deploy
 
 If the Worker is configured to use a `workers.dev` subdomain, Wrangler will display the deployed URL after deployment.
 
-## 📌 Support
+## Support
 
 For issues or questions, open an [issue on GitHub](https://github.com/Nde-Code/NSH/issues).

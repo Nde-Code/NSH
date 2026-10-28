@@ -1,40 +1,15 @@
-<div align="center">
+# Serverless URL Shortener
 
-# 🔗 Serverless URL Shortener
-
-**A lightweight serverless URL shortener API, backed by [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).**
+A lightweight serverless URL shortener API, backed by [Firebase Realtime Database](https://firebase.google.com/products/realtime-database).
 
 Built on [Cloudflare Workers](https://workers.cloudflare.com/) and developed with [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Nde-Code/NSH)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-</div>
-
----
-
 This project is intended for **personal use and small-scale deployments**, and runs with minimal resource usage.
 
-## 📑 Table of contents
-
-- [🚀 Key features](#-key-features)
-- [🌐 API access](#-api-access)
-- [📚 Available endpoints](#-available-endpoints)
-    - [1. `/post-url` - Create short URL](#1-post-post-url---create-short-url)
-    - [2. `/url/:code` - Redirect to original URL](#2-get-urlcode---redirect-to-original-url)
-    - [3. `/urls` - List all URLs](#3-get-urls---list-all-urls)
-    - [4. `/verify/:code` - Verify URL](#4-patch-verifycode---verify-url)
-    - [5. `/delete/:code` - Delete URL](#5-delete-deletecode---delete-url)
-    - [6. `/sync-counter` - Resynchronize counter](#6-patch-sync-counter---resynchronize-counter)
-    - [7. `/health` - Service health check](#7-get-health---service-health-check)
-- [🔐 Authentication](#-authentication)
-- [🖥️ Developer documentation](#️-developer-documentation)
-- [⚖️ License](#️-license)
-- [🎯 Author](#-author)
-
----
-
-## 🚀 Key features
+## Key features
 
 - **Rate limiting:** daily request quotas and burst traffic protection (anti-spam).
 - **No duplicates:** prevents storing identical URLs, saving database space.
@@ -45,7 +20,7 @@ This project is intended for **personal use and small-scale deployments**, and r
 - **Minimal REST API:** fast, efficient, and lightweight.
 - **Serverless:** runs on the Cloudflare Workers free plan with strict resource limits.
 
-## 🌐 API access
+## API access
 
 | Endpoint                                                               | Rate limit                        | Maintainer                        |
 | ---------------------------------------------------------------------- | --------------------------------- | --------------------------------- |
@@ -53,7 +28,7 @@ This project is intended for **personal use and small-scale deployments**, and r
 
 CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 
-> 📡 Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using the public online instance.
+> Check the [status page](https://nde-status.instatus.com/) if you experience latency or other issues while using the public online instance.
 
 **Notes:**
 
@@ -63,9 +38,9 @@ CORS is enabled only for the URL-posting endpoint, for clear security reasons.
 - [Smart Placement](https://developers.cloudflare.com/workers/configuration/placement/#enable-smart-placement-1) routing is enabled for a better experience.
 - The rate-limiting system temporarily processes IP addresses, which are pseudonymized using a hash combined with a secret salt before being used for rate limiting. For burst protection, the hashed value is temporarily stored in [Cloudflare Workers Cache](https://developers.cloudflare.com/workers/runtime-apis/cache/), while daily limits use [Cloudflare Workers KV](https://developers.cloudflare.com/kv/). The hashed value is retained only for the time required to enforce these limits and is automatically removed afterward.
 
-## 📚 Available endpoints
+## Available endpoints
 
-> ℹ️ In this section, `https://your-worker.org.workers.dev/` is used in the cURL command examples. If you've deployed your own instance of the project, replace it with your instance's domain. Otherwise, use the free public instance at `https://nsh.nde-code.workers.dev/`, as explained above.
+> In this section, `https://your-worker.org.workers.dev/` is used in the cURL command examples. If you've deployed your own instance of the project, replace it with your instance's domain. Otherwise, use the free public instance at `https://nsh.nde-code.workers.dev/`, as explained above.
 
 ### 1. **[POST]** `/post-url` - Create short URL
 
@@ -108,8 +83,6 @@ curl -X POST "https://your-worker.org.workers.dev/post-url" \
 }
 ```
 
----
-
 ### 2. **[GET]** `/url/:code` - Redirect to original URL
 
 Redirect to the original long URL using the short code.
@@ -137,13 +110,11 @@ Redirect to the original long URL using the short code.
 curl -i "https://your-worker.org.workers.dev/url/11i7yev0000000"
 ```
 
----
-
 ### 3. **[GET]** `/urls` - List all URLs
 
 Retrieve a paginated list of shortened links.
 
-> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
+> **Security:** requires a valid admin key (see [authentication](#authentication)).
 
 **Query parameters:**
 
@@ -191,13 +162,11 @@ curl "https://your-worker.org.workers.dev/urls?count=2" \
 }
 ```
 
----
-
 ### 4. **[PATCH]** `/verify/:code` - Verify URL
 
 Mark a shortened URL as verified.
 
-> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
+> **Security:** requires a valid admin key (see [authentication](#authentication)).
 
 **Path parameters:**
 
@@ -224,13 +193,11 @@ curl -X PATCH "https://your-worker.org.workers.dev/verify/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
----
-
 ### 5. **[DELETE]** `/delete/:code` - Delete URL
 
 Remove a shortened URL and decrement the counter.
 
-> 🔒 **Security:** requires a valid admin key (see [authentication](#-authentication)).
+> **Security:** requires a valid admin key (see [authentication](#authentication)).
 
 **Path parameters:**
 
@@ -257,13 +224,11 @@ curl -X DELETE "https://your-worker.org.workers.dev/delete/11i7yev0000000" \
      -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
----
-
 ### 6. **[PATCH]** `/sync-counter` - Resynchronize counter
 
 Recalculate and sync the metadata counter to match the actual URLs in Firebase. Useful for fixing race conditions or desynchronization.
 
-> 🔒 **Security:** requires a valid admin or monitoring key (see [authentication](#-authentication)).
+> **Security:** requires a valid admin or monitoring key (see [authentication](#authentication)).
 
 > **Note:** the admin key can be used to manually resynchronize the counter when needed. The monitoring key is also accepted, allowing the endpoint to be called automatically by external monitoring tools (as with `/health`) or scheduled services.
 
@@ -293,13 +258,11 @@ curl -X PATCH "https://your-worker.org.workers.dev/sync-counter" \
 }
 ```
 
----
-
 ### 7. **[GET]** `/health` - Service health check
 
 Check service health: configuration, database connectivity, counter integrity, capacity, and KV storage.
 
-> 🔒 **Security:** requires a valid monitoring key (see [authentication](#-authentication)).
+> **Security:** requires a valid monitoring key (see [authentication](#authentication)).
 
 **Response codes:**
 
@@ -332,24 +295,24 @@ curl -X GET "https://your-worker.org.workers.dev/health" \
 }
 ```
 
-## 🔐 Authentication
+## Authentication
 
 Protected endpoints require either header format:
 
 - `Authorization: Bearer <MONITORING_or_ADMIN_KEY>`
 - `x-api-key: <MONITORING_or_ADMIN_KEY>`
 
-> ⛔ **Note:** trying to access the administration endpoints on the public instance is **completely forbidden**.
+> **Note:** trying to access the administration endpoints on the public instance is **completely forbidden**.
 
-## 🖥️ Developer documentation
+## Developer documentation
 
 For setup, configuration, and deployment using the Wrangler CLI, see the **[developer guide](docs/documentation.md)**.
 
-## ⚖️ License
+## License
 
 This project is licensed under the **[Apache License v2.0](LICENSE)**.
 
-## 🎯 Author
+## Author
 
 Created and maintained by **[Nde-Code](https://nde-code.github.io/)**.
 
